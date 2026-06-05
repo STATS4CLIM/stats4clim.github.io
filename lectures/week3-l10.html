@@ -64,6 +64,96 @@
         transform: translate(var(--review-map-x), var(--review-map-y));
       }
 
+      .intuition-games {
+        --intuition-games-x: -50px;
+        --intuition-games-y: 50px;
+        --intuition-card-padding: 0px;
+        --intuition-card-width: 720px;
+        align-self: start;
+        position: relative;
+        height: 560px;
+        transform: translate(var(--intuition-games-x), var(--intuition-games-y));
+      }
+
+      .intuition-games-grid {
+        position: relative;
+        height: 100%;
+      }
+
+      .intuition-game-card {
+        position: absolute;
+        top: var(--card-y);
+        left: var(--card-x);
+        z-index: var(--card-z);
+        display: block;
+        width: var(--intuition-card-width);
+        aspect-ratio: 16 / 9;
+        padding: var(--intuition-card-padding);
+        overflow: hidden;
+        border: 2px solid rgba(25, 62, 135, 0.38);
+        border-radius: 8px;
+        background: #ffffff;
+        color: var(--site-blue-dark);
+        text-decoration: none;
+        box-shadow: 0 18px 42px rgba(25, 62, 135, 0.16);
+        transform: rotate(var(--card-rotate));
+        transform-origin: center;
+        transition:
+          border-color 180ms ease,
+          box-shadow 180ms ease,
+          transform 180ms ease,
+          z-index 0ms linear 180ms;
+      }
+
+      .intuition-game-card.standardise {
+        --card-x: 70px;
+        --card-y: 52px;
+        --card-z: 1;
+        --card-rotate: -6deg;
+      }
+
+      .intuition-game-card.correlation {
+        --card-x: 420px;
+        --card-y: 88px;
+        --card-z: 2;
+        --card-rotate: 2deg;
+      }
+
+      .intuition-game-card.preprocessing {
+        --card-x: 770px;
+        --card-y: 48px;
+        --card-z: 3;
+        --card-rotate: 6deg;
+      }
+
+      .intuition-game-card:hover {
+        border-color: #cb0a2a;
+        z-index: 10;
+        box-shadow: 0 26px 70px rgba(25, 62, 135, 0.26);
+        transform: translateY(-22px) scale(1.08) rotate(0deg);
+        transition:
+          border-color 180ms ease,
+          box-shadow 180ms ease,
+          transform 180ms ease,
+          z-index 0ms;
+      }
+
+      .intuition-game-preview {
+        position: relative;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        background: #ffffff;
+      }
+
+      .intuition-game-preview iframe {
+        display: block;
+        width: 100%;
+        height: 100%;
+        border: 0;
+        pointer-events: none;
+      }
+
       .review-flow {
         position: absolute;
         left: var(--review-flow-x);
@@ -1603,9 +1693,9 @@
                 <div class="review-flow-arrow review-reveal review-step-3"></div>
                 <a class="review-flow-box review-reveal review-step-3 review-link-block" href="week3-l6.html?slide=3&amp;step=5" target="_blank" rel="noopener">Calculate Summary Statistics</a>
                 <div class="review-flow-arrow review-reveal review-step-4"></div>
-                <a class="review-flow-box warning review-reveal review-step-4 review-link-block" href="week3-l6.html?slide=7&amp;step=4" target="_blank" rel="noopener">Do data follow a Normal distribution?</a>
+                <a class="review-flow-box warning review-reveal review-step-4 review-link-block" href="week3-l6.html?slide=8&amp;step=4" target="_blank" rel="noopener">Do data follow a Normal distribution?</a>
                 <div class="review-flow-arrow review-reveal review-step-5"></div>
-                <a class="review-flow-box test review-reveal review-step-5 review-link-block" href="week3-l6.html?slide=9&amp;step=6" target="_blank" rel="noopener">Lilliefors test</a>
+                <a class="review-flow-box test review-reveal review-step-5 review-link-block" href="week3-l6.html?slide=10&amp;step=6" target="_blank" rel="noopener">Lilliefors test</a>
                 <div class="review-flow-arrow review-reveal review-step-6"></div>
                 <p class="review-flow-question review-reveal review-step-6">p-value?</p>
               </div>
@@ -1623,17 +1713,17 @@
                 <p><strong>Central Limit Theorem:</strong><br>Likely Gaussian when average or sum over <span class="hot">&gt;30 independent</span> samples.</p>
               </div>
 
-              <a class="review-clt-charts review-reveal review-step-4 review-link-block" href="week3-l6.html?slide=6&amp;step=5" target="_blank" rel="noopener" aria-label="Open Lecture 6 central limit theorem slide">
+              <a class="review-clt-charts review-reveal review-step-4 review-link-block" href="week3-l6.html?slide=7&amp;step=5" target="_blank" rel="noopener" aria-label="Open Lecture 6 central limit theorem slide">
                 <svg id="reviewCltDaily" viewBox="0 0 245 205" role="img" aria-label="Daily rainfall PDF"></svg>
                 <svg id="reviewCltMonthly" viewBox="0 0 245 205" role="img" aria-label="Monthly rainfall PDF"></svg>
                 <svg id="reviewCltAnnual" viewBox="0 0 245 205" role="img" aria-label="Annual rainfall PDF"></svg>
               </a>
 
-              <a class="review-mini-chart review-ks-chart review-reveal review-step-5 review-link-block" href="week3-l6.html?slide=8&amp;step=4" target="_blank" rel="noopener" aria-label="Open Lecture 6 distance simulation slide">
+              <a class="review-mini-chart review-ks-chart review-reveal review-step-5 review-link-block" href="week3-l6.html?slide=9&amp;step=4" target="_blank" rel="noopener" aria-label="Open Lecture 6 distance simulation slide">
                 <svg id="reviewKsMini" viewBox="0 0 360 185" role="img" aria-label="K-S null distribution"></svg>
               </a>
 
-              <a class="review-test-workflow review-reveal review-step-6 review-link-block" href="week3-l6.html?slide=9&amp;step=5" target="_blank" rel="noopener" aria-label="Open Lecture 6 hypothesis testing workflow slide">
+              <a class="review-test-workflow review-reveal review-step-6 review-link-block" href="week3-l6.html?slide=10&amp;step=5" target="_blank" rel="noopener" aria-label="Open Lecture 6 hypothesis testing workflow slide">
                 <span class="review-test-workflow-step">1. Define<br>H₀ and H₁</span>
                 <span class="review-test-workflow-step">2. Define<br>a distance</span>
                 <span class="review-test-workflow-step">3. Simulate<br>randomness</span>
@@ -1670,9 +1760,9 @@
                 <div class="corr-arrow corr-reveal corr-step-4"></div>
                 <div class="corr-flow-box gaussian corr-reveal corr-step-4">Is data Gaussian?</div>
                 <div class="corr-arrow corr-reveal corr-step-5"></div>
-                <a class="corr-flow-box ks corr-reveal corr-step-5 corr-link-block" href="week3-l6.html?slide=9&amp;step=6" target="_blank" rel="noopener">Lilliefors test</a>
+                <a class="corr-flow-box ks corr-reveal corr-step-5 corr-link-block" href="week3-l6.html?slide=10&amp;step=6" target="_blank" rel="noopener">Lilliefors test</a>
                 <div class="corr-arrow corr-reveal corr-step-5"></div>
-                <a class="corr-flow-box pvalue corr-reveal corr-step-5 corr-link-block" href="week3-l7.html?slide=7&amp;step=5" target="_blank" rel="noopener">use scipy's p value to evaluate significance</a>
+                <a class="corr-flow-box pvalue corr-reveal corr-step-5 corr-link-block" href="week3-l7.html?slide=8&amp;step=5" target="_blank" rel="noopener">use scipy's p value to evaluate significance</a>
               </div>
 
               <span class="corr-branch no-linear corr-reveal corr-step-2">No</span>
@@ -1691,12 +1781,12 @@
                 Use other methods, e.g., quadratic/cubic regression
               </a>
 
-              <a class="corr-pearson-code corr-reveal corr-step-3 corr-link-block" href="week3-l7.html?slide=7&amp;step=1" target="_blank" rel="noopener">
+              <a class="corr-pearson-code corr-reveal corr-step-3 corr-link-block" href="week3-l7.html?slide=8&amp;step=1" target="_blank" rel="noopener">
                 r, p = scipy.stats.pearsonr(x, y)
               </a>
 
-              <a class="corr-flow-box bootstrap corr-bootstrap-button corr-reveal corr-step-6 corr-link-block" href="week3-l7.html?slide=8&amp;step=5" target="_blank" rel="noopener">Bootstrapping</a>
-              <a class="corr-bootstrap-plot corr-reveal corr-step-6 corr-link-block" href="week3-l7.html?slide=8&amp;step=5" target="_blank" rel="noopener" aria-label="Open Lecture 7 bootstrap correlation slide">
+              <a class="corr-flow-box bootstrap corr-bootstrap-button corr-reveal corr-step-6 corr-link-block" href="week3-l7.html?slide=9&amp;step=5" target="_blank" rel="noopener">Bootstrapping</a>
+              <a class="corr-bootstrap-plot corr-reveal corr-step-6 corr-link-block" href="week3-l7.html?slide=9&amp;step=5" target="_blank" rel="noopener" aria-label="Open Lecture 7 bootstrap correlation slide">
                 <svg id="corrReviewBootstrap" viewBox="0 0 300 220" role="img" aria-label="Bootstrap PDF of correlation"></svg>
               </a>
 
@@ -1870,7 +1960,7 @@ Kurtosis:                       3.767   Cond. No.                         3.71
                 U, D, V' = np.linalg.svd(A)
               </a>
               <div class="pca-review-notes pca-step-analysis">
-                <a class="pca-review-note-link reg-link-block" href="week3-l9.html?slide=6&amp;step=0" target="_blank" rel="noopener">
+                <a class="pca-review-note-link reg-link-block" href="week3-l9.html?slide=6&amp;step=1" target="_blank" rel="noopener">
                   <p>(1) Individual columns of <strong>V</strong> are <strong>orthogonal</strong>.</p>
                 </a>
                 <a class="pca-review-note-link reg-link-block" href="week3-l9.html?slide=7&amp;step=0" target="_blank" rel="noopener">
@@ -1893,6 +1983,32 @@ Kurtosis:                       3.767   Cond. No.                         3.71
               <div class="pca-review-lecture-label">Lecture/Practical 9</div>
               <span class="step-marker fragment" aria-hidden="true"></span>
               <span class="step-marker fragment" aria-hidden="true"></span>
+            </div>
+          </div>
+        </section>
+
+        <section class="slide">
+          <header class="slide-kicker"></header>
+          <div class="slide-body content-layout">
+            <h2 class="slide-title">Games for Your Statistical and Data Intuition</h2>
+            <div class="slide-content intuition-games">
+              <div class="intuition-games-grid">
+                <a class="intuition-game-card standardise" href="week3-l6.html?slide=6" target="_blank" rel="noopener" aria-label="Open Standardisation check">
+                  <div class="intuition-game-preview" aria-hidden="true">
+                    <iframe src="week3-l6.html?slide=6&amp;preview=1" tabindex="-1"></iframe>
+                  </div>
+                </a>
+                <a class="intuition-game-card correlation" href="week3-l7.html?slide=6" target="_blank" rel="noopener" aria-label="Open Guess the correlation">
+                  <div class="intuition-game-preview" aria-hidden="true">
+                    <iframe src="week3-l7.html?slide=6&amp;preview=1" tabindex="-1"></iframe>
+                  </div>
+                </a>
+                <a class="intuition-game-card preprocessing" href="week3-l9.html?slide=12" target="_blank" rel="noopener" aria-label="Open Preprocessing match">
+                  <div class="intuition-game-preview" aria-hidden="true">
+                    <iframe src="week3-l9.html?slide=12&amp;preview=1" tabindex="-1"></iframe>
+                  </div>
+                </a>
+              </div>
             </div>
           </div>
         </section>
