@@ -1,0 +1,996 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>L5 Prepare</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;520;650;720;820&display=swap" rel="stylesheet">
+    <link href="https://fonts.cdnfonts.com/css/intel-one-mono" rel="stylesheet">
+    <link rel="stylesheet" href="../assets/css/course.css">
+  </head>
+  <body class="deck-page">
+    <template id="deckHeaderTemplate">
+      <span class="slide-section">
+        <a class="deck-home" href="../index.html" aria-label="Back to course home">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M3 11.5L12 4l9 7.5"></path>
+            <path d="M6.5 10.5V20h11v-9.5"></path>
+            <path d="M10 20v-5h4v5"></path>
+          </svg>
+        </a>
+        <span>SOES3042/6025 · Statistics</span>
+      </span>
+      <span class="slide-lecture-nav">
+        <span>Week 3 · Lecture 5</span>
+        <span class="lecture-jump" aria-label="Lecture navigation">
+          <span class="lecture-jump-disabled lecture-jump-prev" aria-disabled="true" aria-label="No previous lecture" title="No previous lecture"></span>
+          <a class="lecture-jump-link lecture-jump-next" href="week3-l6.html" aria-label="Next lecture" title="Next lecture"></a>
+          <a class="lecture-jump-link lecture-jump-home" href="week3-l5.html?slide=1" aria-label="Restart this lecture" title="Restart this lecture"></a>
+        </span>
+      </span>
+    </template>
+
+    <div class="deck-viewport">
+      <main class="deck-stage" aria-live="polite">
+        <section class="slide active">
+          <header class="slide-kicker"></header>
+          <div class="slide-body title-layout">
+            <div class="title-lockup">
+              <h1>Lecture 5</h1>
+              <h2>Prepare your data & Math 101</h2>
+            </div>
+            <aside class="title-meta">
+              <p>1. <b>Data Structure</b>: numpy.array of different dimensions (1D: Vector, 2D: Matrix, 3D: Tensor)</p>
+              <p>2. <b>Frequently-used Operations</b>: Average, Reshape, and Index</p>
+              <p>3. <b>NetCDF Files</b>: Read data from NetCDF files into a numpy.array</p>
+              <p>4. <b>Plotting Maps</b>: Add coastlines on your plot to indicate geographical information</p>
+              <p>5. <b>Basic Math</b>: Matrix multiplication</p>
+            </aside>
+          </div>
+        </section>
+
+        <section class="slide">
+          <header class="slide-kicker"></header>
+          <div class="slide-body content-layout">
+            <h2 class="slide-title">Numpy Array Data Structure</h2>
+            <div class="slide-content array-slide">
+              <p class="array-intro">
+                A <strong><em><a href="https://numpy.org/" target="_blank" rel="noreferrer">numpy</a><a href="https://numpy.org/doc/stable/reference/generated/numpy.array.html" target="_blank" rel="noreferrer">.array</a></em></strong> is a grid of values that lets you store and do math on data quickly and efficiently.
+                You should always use <a class="shape-link" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.shape.html" target="_blank" rel="noreferrer"><code>.shape</code></a> to check the dimension of an array.
+                Typical ways to organise data are:
+              </p>
+
+              <div class="array-reveal">
+                <div class="array-types" aria-label="Array dimensions">
+                <article class="array-type">
+                  <h3>1D vector</h3>
+                  <svg class="array-diagram" viewBox="0 0 220 210" role="img" aria-label="One dimensional vector">
+                    <g transform="translate(10,0)">
+                      <path class="axis-line" d="M72 30V184"></path>
+                      <path class="axis-arrow" d="M67 179l5 9 5-9"></path>
+                      <text class="axis-label vertical" x="-90" y="40">axis 0</text>
+                      <g class="cells">
+                        <rect x="90" y="30" width="30" height="30"></rect>
+                        <rect x="90" y="62" width="30" height="30"></rect>
+                        <rect x="90" y="94" width="30" height="30"></rect>
+                        <rect x="90" y="126" width="30" height="30"></rect>
+                        <rect x="90" y="158" width="30" height="30"></rect>
+                      </g>
+                    </g>
+                  </svg>
+                  <p class="shape-label">shape: (5,)</p>
+                </article>
+
+                <article class="array-type">
+                  <h3>2D matrix</h3>
+                  
+                  <svg class="array-diagram" viewBox="0 0 260 210" role="img" aria-label="Two dimensional matrix">
+                    <g transform="translate(5,0)">
+                      <path class="axis-line" d="M40 30V160M56 172H210"></path>
+                      <path class="axis-arrow" d="M35 155l5 9 5-9M204 167l9 5-9 5"></path>
+                      <text class="axis-label vertical" x="-80" y="10">axis 0</text>
+                      <text class="axis-label" x="100" y="197">axis 1</text>
+                      <g class="matrix-cells">
+                        <rect x="55" y="30" width="24" height="24"></rect><rect x="81" y="30" width="24" height="24"></rect><rect x="107" y="30" width="24" height="24"></rect><rect x="133" y="30" width="24" height="24"></rect><rect x="159" y="30" width="24" height="24"></rect><rect x="185" y="30" width="24" height="24"></rect>
+                        <rect x="55" y="56" width="24" height="24"></rect><rect x="81" y="56" width="24" height="24"></rect><rect x="107" y="56" width="24" height="24"></rect><rect x="133" y="56" width="24" height="24"></rect><rect x="159" y="56" width="24" height="24"></rect><rect x="185" y="56" width="24" height="24"></rect>
+                        <rect x="55" y="82" width="24" height="24"></rect><rect x="81" y="82" width="24" height="24"></rect><rect x="107" y="82" width="24" height="24"></rect><rect x="133" y="82" width="24" height="24"></rect><rect x="159" y="82" width="24" height="24"></rect><rect x="185" y="82" width="24" height="24"></rect>
+                        <rect x="55" y="108" width="24" height="24"></rect><rect x="81" y="108" width="24" height="24"></rect><rect x="107" y="108" width="24" height="24"></rect><rect x="133" y="108" width="24" height="24"></rect><rect x="159" y="108" width="24" height="24"></rect><rect x="185" y="108" width="24" height="24"></rect>
+                        <rect x="55" y="134" width="24" height="24"></rect><rect x="81" y="134" width="24" height="24"></rect><rect x="107" y="134" width="24" height="24"></rect><rect x="133" y="134" width="24" height="24"></rect><rect x="159" y="134" width="24" height="24"></rect><rect x="185" y="134" width="24" height="24"></rect>
+                      </g>
+                    </g>
+                  </svg>
+                  <p class="shape-label">shape: (5,6)</p>
+                </article>
+
+                <article class="array-type">
+                  <h3>3D tensor</h3>
+                  <svg class="array-diagram" viewBox="0 0 300 210" role="img" aria-label="Three dimensional tensor">
+                    <g transform="translate(-15,0)">
+                      <g class="tensor-layers">
+                        <polygon points="86,132 222,132 258,96 122,96"></polygon>
+                        <polygon points="86,112 222,112 258,76 122,76"></polygon>
+                        <polygon points="86,92 222,92 258,56 122,56"></polygon>
+                        <polygon points="86,72 222,72 258,36 122,36"></polygon>
+                        <path class="grid-on-plane" d="M144.7 36L108.7 72M167.3 36L131.3 72M190 36L154 72M212.7 36L176.7 72M235.3 36L199.3 72M116 42H252M110 48H246M104 54H240M98 60H234M92 66H228"></path>
+                      </g>
+                      <g transform="translate(0,-10)">
+                        <path class="axis-line" d="M72 82V145 M98 154H223 M235 145l34-38"></path>
+                        <path class="axis-arrow" d="M67 136l5 10 5-10 M214 149l10 5-10 5 M259 111l11-6-1 9"></path>
+                        <text class="axis-label" x="127" y="181">axis 2</text>
+                        <text class="axis-label rotate" x="65" y="285">axis 1</text>
+                        <text class="axis-label vertical" x="-100" y="40">axis 0</text>
+                      </g>
+                    </g>
+                  </svg>
+                  <p class="shape-label">shape: (4,6,6)</p>
+                </article>
+
+                <article class="array-type">
+                  <h3>4D tensor</h3>
+                  <svg class="array-diagram" viewBox="0 0 360 210" role="img" aria-label="Four dimensional tensor">
+                    <g transform="translate(-100,0)">
+                      <g class="tensor-layers compact" transform="translate(30,-10) scale(0.98)">
+                        <polygon points="86,132 222,132 258,96 122,96"></polygon>
+                        <polygon points="86,112 222,112 258,76 122,76"></polygon>
+                        <polygon points="86,92 222,92 258,56 122,56"></polygon>
+                        <path class="grid-on-plane" d="M144.7 56L108.7 92M167.3 56L131.3 92M190 56L154 92M212.7 56L176.7 92M235.3 56L199.3 92M116 62H252M110 68H246M104 74H240M98 80H234M92 86H228"></path>
+                      </g>
+                      <g class="tensor-layers compact" transform="translate(200,-10) scale(0.98)">
+                        <polygon points="86,132 222,132 258,96 122,96"></polygon>
+                        <polygon points="86,112 222,112 258,76 122,76"></polygon>
+                        <polygon points="86,92 222,92 258,56 122,56"></polygon>
+                        <path class="grid-on-plane" d="M144.7 56L108.7 92M167.3 56L131.3 92M190 56L154 92M212.7 56L176.7 92M235.3 56L199.3 92M116 62H252M110 68H246M104 74H240M98 80H234M92 86H228"></path>
+                      </g>
+                      <g transform="translate(35,-30) scale(1.18)">
+                        <path class="axis-line" d="M55 95V125 M72 137H174 M222 137H322 M70 175H324 M333 132l28-30"></path>
+                        <path class="axis-arrow" d="M50 118l5 10 5-10 M165 132l10 5-10 5 M315 132l10 5-10 5 M318 170l10 5-10 5 M350 108l11-6-1 9"></path>
+                      </g>
+                      <g transform="translate(30,-30)">
+                        <text class="axis-label" x="115" y="190">axis 3</text>
+                        <text class="axis-label" x="290" y="190">axis 3</text>
+                        <text class="axis-label" x="210" y="235">axis 0</text>
+                        <text class="axis-label rotate" x="155" y="415">axis 2</text>
+                        <text class="axis-label vertical" x="-115" y="40">axis 1</text>
+                      </g>
+                    </g>
+                  </svg>
+                  <p class="shape-label">shape: (2,3,6,6)</p>
+                </article>
+                </div>
+
+                <div class="array-examples">
+                  <span class="examples-label">Examples</span>
+                  <div>
+                    <p>time</p>
+                    <p>lat <span class="axis-x">x</span> lon<br>year <span class="axis-x">x</span> mon</p>
+                    <p>time <span class="axis-x">x</span> lat <span class="axis-x">x</span> lon<br>year <span class="axis-x">x</span> mon <span class="axis-x">x</span> day</p>
+                    <p>year <span class="axis-x">x</span> mon <span class="axis-x">x</span> lat <span class="axis-x">x</span> lon</p>
+                  </div>
+                </div>
+
+                <div class="array-mask" aria-hidden="true"></div>
+              </div>
+
+              <p class="array-note">
+                <strong>Note:</strong> we will focus on analysing data blocks using <em>NumPy</em>. 
+                Other packages built on top of NumPy, such as <em><a href="https://xarray.dev/" target="_blank" rel="noreferrer">xarray</a></em>, also exist, 
+                but they hide much of the underlying logic and introduce additional syntax and data structures. 
+                We therefore recommend exploring those packages only after you are fully comfortable 
+                working with NumPy itself.
+              </p>
+
+              <span class="step-marker fragment" aria-hidden="true"></span>
+              <span class="step-marker fragment" aria-hidden="true"></span>
+              <span class="step-marker fragment" aria-hidden="true"></span>
+              <span class="step-marker fragment" aria-hidden="true"></span>
+              <span class="step-marker fragment" aria-hidden="true"></span>
+            </div>
+          </div>
+        </section>
+
+        <section class="slide">
+          <header class="slide-kicker"></header>
+          <div class="slide-body content-layout">
+            <h2 class="slide-title">Frequently-used Operations</h2>
+            <div class="slide-content mean-slide">
+              <p class="mean-intro">
+                <span class="step-number">1.</span>
+                <strong>Calculate the mean</strong> value across a certain dimension, using either
+                <a href="https://numpy.org/doc/stable/reference/generated/numpy.mean.html" target="_blank" rel="noreferrer">numpy.mean()</a>
+                or
+                <a href="https://numpy.org/doc/stable/reference/generated/numpy.nanmean.html" target="_blank" rel="noreferrer">numpy.nanmean()</a>.
+              </p>
+
+              <div class="mean-callout">
+                <code>data_mean = np.mean(data, <span>axis = x</span>)</code>
+                <div class="callout-notes fragment">
+                  <p class="axis-note">Always assign which axis to average over</p>
+                  <p class="missing-note">Useful when the data contain missing values</p>
+                  <svg class="callout-arrows" viewBox="0 0 1200 190" aria-hidden="true">
+                    <path class="callout-arrow-line" d="M530 52V84"></path>
+                    <path class="callout-arrow-head" d="M525 55l5-5 5 5"></path>
+                    <path class="callout-arrow-line" d="M830 -40V-10"></path>
+                    <path class="callout-arrow-head" d="M825 -35l5-5 5 5"></path>
+                  </svg>
+                </div>
+              </div>
+
+              <div class="mean-panels">
+                <section class="mean-panel compact-panel">
+                  <div class="mean-equation mean-example">
+                    <span class="mean-part rhs-part fragment">
+                      <span>= np.mean(</span>
+                      <span class="mini-array cell-grid vector three-cells">
+                        <span class="mini-cell"></span>
+                        <span class="mini-cell"></span>
+                        <span class="mini-cell"></span>
+                      </span>
+                      <span>, axis = 0)</span>
+                    </span>
+                    <span class="mean-part answer-part fragment">
+                      <span class="mini-array cell-grid result one-cell">
+                        <span class="mini-cell"></span>
+                      </span>
+                    </span>
+                  </div>
+                  <div class="mean-equation mean-example">
+                    <span class="mean-part rhs-part fragment">
+                      <span>= np.mean(</span>
+                      <span class="mini-array cell-grid matrix three-by-two">
+                        <span class="mini-cell"></span>
+                        <span class="mini-cell"></span>
+                        <span class="mini-cell"></span>
+                        <span class="mini-cell"></span>
+                        <span class="mini-cell"></span>
+                        <span class="mini-cell"></span>
+                      </span>
+                      <span>, axis = 0)</span>
+                    </span>
+                    <span class="mean-part answer-part fragment">
+                      <span class="mini-array cell-grid vector two-cells align-up">
+                        <span class="mini-cell"></span>
+                        <span class="mini-cell"></span>
+                      </span>
+                    </span>
+                  </div>
+                  <div class="mean-equation mean-example">
+                    <span class="mean-part rhs-part fragment">
+                      <span>= np.mean(</span>
+                      <span class="mini-array cell-grid matrix three-by-two">
+                        <span class="mini-cell"></span>
+                        <span class="mini-cell"></span>
+                        <span class="mini-cell"></span>
+                        <span class="mini-cell"></span>
+                        <span class="mini-cell"></span>
+                        <span class="mini-cell"></span>
+                      </span>
+                      <span>, axis = 1)</span>
+                    </span>
+                    <span class="mean-part answer-part fragment">
+                      <span class="mini-array cell-grid vector three-cells">
+                        <span class="mini-cell"></span>
+                        <span class="mini-cell"></span>
+                        <span class="mini-cell"></span>
+                      </span>
+                    </span>
+                  </div>
+                  <p class="panel-caption right">Calculate annual from monthly values</p>
+                </section>
+
+                <section class="mean-panel">
+                  <div class="mean-equation mean-example">
+                    <span class="mean-part rhs-part fragment">
+                      <span>= np.mean(</span>
+                      <svg class="mini-stack" viewBox="24 8 86 82" aria-hidden="true">
+                        <polygon class="mean-stack-plane" points="30,78 78,78 104,40 56,40"></polygon>
+                        <polygon class="mean-stack-plane" points="30,56 78,56 104,18 56,18"></polygon>
+                        <polygon class="mean-stack-plane" points="30,34 78,34 104,-4 56,-4"></polygon>
+                        <path class="mean-stack-grid" d="M80 -4L54 34M49.5 5.5H97.5M43 15H91M36.5 24.5H84.5"></path>
+                      </svg>
+                      <span>, axis = 0)</span>
+                    </span>
+                    <span class="mean-part answer-part fragment">
+                      <span class="mini-array cell-grid matrix four-by-two">
+                        <span class="mini-cell"></span>
+                        <span class="mini-cell"></span>
+                        <span class="mini-cell"></span>
+                        <span class="mini-cell"></span>
+                        <span class="mini-cell"></span>
+                        <span class="mini-cell"></span>
+                        <span class="mini-cell"></span>
+                        <span class="mini-cell"></span>
+                      </span>
+                    </span>
+                  </div>
+                  <div class="mean-equation mean-example">
+                    <span class="mean-part rhs-part fragment">
+                      <span>= np.mean(</span>
+                      <svg class="mini-stack" viewBox="24 8 86 82" aria-hidden="true">
+                        <polygon class="mean-stack-plane" points="30,78 78,78 104,40 56,40"></polygon>
+                        <polygon class="mean-stack-plane" points="30,56 78,56 104,18 56,18"></polygon>
+                        <polygon class="mean-stack-plane" points="30,34 78,34 104,-4 56,-4"></polygon>
+                        <path class="mean-stack-grid" d="M80 -4L54 34M49.5 5.5H97.5M43 15H91M36.5 24.5H84.5"></path>
+                      </svg>
+                      <span>, axis = 1)</span>
+                    </span>
+                    <span class="mean-part answer-part fragment">
+                      <span class="mini-array cell-grid matrix three-by-two">
+                        <span class="mini-cell"></span>
+                        <span class="mini-cell"></span>
+                        <span class="mini-cell"></span>
+                        <span class="mini-cell"></span>
+                        <span class="mini-cell"></span>
+                        <span class="mini-cell"></span>
+                      </span>
+                    </span>
+                  </div>
+                  <div class="mean-equation mean-example">
+                    <span class="mean-part rhs-part fragment">
+                      <span>= np.mean(</span>
+                      <svg class="mini-stack" viewBox="24 8 86 82" aria-hidden="true">
+                        <polygon class="mean-stack-plane" points="30,78 78,78 104,40 56,40"></polygon>
+                        <polygon class="mean-stack-plane" points="30,56 78,56 104,18 56,18"></polygon>
+                        <polygon class="mean-stack-plane" points="30,34 78,34 104,-4 56,-4"></polygon>
+                        <path class="mean-stack-grid" d="M80 -4L54 34M49.5 5.5H97.5M43 15H91M36.5 24.5H84.5"></path>
+                      </svg>
+                      <span>, axis = 2)</span>
+                    </span>
+                    <span class="mean-part answer-part fragment">
+                      <span class="mini-array cell-grid matrix three-by-four">
+                        <span class="mini-cell"></span>
+                        <span class="mini-cell"></span>
+                        <span class="mini-cell"></span>
+                        <span class="mini-cell"></span>
+                        <span class="mini-cell"></span>
+                        <span class="mini-cell"></span>
+                        <span class="mini-cell"></span>
+                        <span class="mini-cell"></span>
+                        <span class="mini-cell"></span>
+                        <span class="mini-cell"></span>
+                        <span class="mini-cell"></span>
+                        <span class="mini-cell"></span>
+                      </span>
+                    </span>
+                  </div>
+                  <div class="panel-captions">
+                    <p>Calculate mean over time</p>
+                    <p>Calculate monthly from daily values</p>
+                  </div>
+                </section>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="slide">
+          <header class="slide-kicker"></header>
+          <div class="slide-body content-layout">
+            <h2 class="slide-title">Frequently-used Operations</h2>
+            <div class="slide-content mean-slide reshape-slide">
+              <p class="mean-intro">
+                <span class="step-number">2.</span>
+                <strong>Reshape</strong> data into different dimensions, using
+                <a href="https://numpy.org/doc/stable/reference/generated/numpy.reshape.html" target="_blank" rel="noreferrer">numpy.reshape()</a>.
+              </p>
+
+              <div class="mean-callout reshape-callout">
+                <code>data_reshaped = np.reshape(data, <span>new_shape</span>)</code>
+              </div>
+
+              <div class="reshape-panels">
+                <section class="reshape-panel reshape-vector-panel">
+                  <p class="reshape-note reshape-reveal reshape-step-v1-prompt">In NumPy, the <strong>last axis</strong> changes fastest when you reshape.</p>
+
+                  <div class="reshape-row reshape-row-top reshape-vector-top-row">
+                    <div class="reshape-source reshape-reveal reshape-step-v1-answer">
+                      <div class="reshape-grid matrix-two-three" aria-label="Two by three matrix">
+                        <span class="reshape-cell mon-0">0</span>
+                        <span class="reshape-cell mon-1">1</span>
+                        <span class="reshape-cell mon-2">2</span>
+                        <span class="reshape-cell mon-0">3</span>
+                        <span class="reshape-cell mon-1">4</span>
+                        <span class="reshape-cell mon-2">5</span>
+                      </div>
+                      <p>year <span class="axis-x">x</span> mon</p>
+                    </div>
+                    <span class="reshape-equals eq-vector-top reshape-reveal reshape-step-v1-prompt">=</span>
+                    <div class="reshape-target reshape-reveal reshape-step-v1-prompt">
+                      <div class="reshape-grid vector-six" aria-label="Time vector with six values">
+                        <span class="reshape-cell mon-0">0</span>
+                        <span class="reshape-cell mon-1">1</span>
+                        <span class="reshape-cell mon-2">2</span>
+                        <span class="reshape-cell mon-0">3</span>
+                        <span class="reshape-cell mon-1">4</span>
+                        <span class="reshape-cell mon-2">5</span>
+                      </div>
+                      <p>time</p>
+                    </div>
+                    <code class="reshape-reveal reshape-step-v1-prompt">.reshape(2,3)</code>
+                  </div>
+
+                  <div class="reshape-row">
+                    <div class="reshape-source reshape-reveal reshape-step-v2-answer">
+                      <div class="reshape-grid vector-six" aria-label="Time vector with six values">
+                        <span class="reshape-cell mon-0">0</span>
+                        <span class="reshape-cell mon-1">1</span>
+                        <span class="reshape-cell mon-2">2</span>
+                        <span class="reshape-cell mon-0">3</span>
+                        <span class="reshape-cell mon-1">4</span>
+                        <span class="reshape-cell mon-2">5</span>
+                      </div>
+                      <p>time</p>
+                    </div>
+                    <span class="reshape-equals eq-vector-bottom reshape-reveal reshape-step-v2-prompt">=</span>
+                    <div class="reshape-target reshape-reveal reshape-step-v2-prompt">
+                      <div class="reshape-grid matrix-two-three" aria-label="Two by three matrix">
+                        <span class="reshape-cell mon-0">0</span>
+                        <span class="reshape-cell mon-1">1</span>
+                        <span class="reshape-cell mon-2">2</span>
+                        <span class="reshape-cell mon-0">3</span>
+                        <span class="reshape-cell mon-1">4</span>
+                        <span class="reshape-cell mon-2">5</span>
+                      </div>
+                      <p>year <span class="axis-x">x</span> mon</p>
+                    </div>
+                    <code class="reshape-reveal reshape-step-v2-prompt">.reshape(-1)</code>
+                    <p class="vectorise-note reshape-reveal reshape-step-v2-prompt">We call this vectorisation</p>
+                  </div>
+                </section>
+
+                <section class="reshape-panel reshape-tensor-panel">
+                  <div class="reshape-tensor-row reshape-tensor-top-row">
+                    <div class="tensor-shape-group tensor-pair tensor-top-left reshape-reveal reshape-step-t1-answer">
+                      <svg class="reshape-stack stack-three" viewBox="0 0 150 100" aria-label="Three layers, each six by six">
+                        <g class="stack-layers">
+                          <polygon points="18,80 92,80 130,42 56,42"></polygon>
+                          <polygon points="18,66 92,66 130,28 56,28"></polygon>
+                          <polygon points="18,52 92,52 130,14 56,14"></polygon>
+                          <path class="reshape-stack-grid" d="M68.3 14L30.3 52M80.7 14L42.7 52M93 14L55 52M105.3 14L67.3 52M117.7 14L79.7 52M49.7 20.3H123.7M43.3 26.7H117.3M37 33H111M30.7 39.3H104.7M24.3 45.7H98.3"></path>
+                        </g>
+                      </svg>
+                      <svg class="reshape-stack stack-three" viewBox="0 0 150 100" aria-label="Three layers, each six by six">
+                        <g class="stack-layers">
+                          <polygon points="18,80 92,80 130,42 56,42"></polygon>
+                          <polygon points="18,66 92,66 130,28 56,28"></polygon>
+                          <polygon points="18,52 92,52 130,14 56,14"></polygon>
+                          <path class="reshape-stack-grid" d="M68.3 14L30.3 52M80.7 14L42.7 52M93 14L55 52M105.3 14L67.3 52M117.7 14L79.7 52M49.7 20.3H123.7M43.3 26.7H117.3M37 33H111M30.7 39.3H104.7M24.3 45.7H98.3"></path>
+                        </g>
+                      </svg>
+                      <p>year <span class="axis-x">x</span> mon <span class="axis-x">x</span> lat <span class="axis-x">x</span> lon<br><span>(2,3,6,6)</span></p>
+                    </div>
+                    <span class="reshape-equals eq-tensor-top reshape-reveal reshape-step-t1-prompt">=</span>
+                    <div class="tensor-shape-group tensor-top-right reshape-reveal reshape-step-t1-prompt">
+                      <svg class="reshape-stack stack-six" viewBox="0 0 150 132" aria-label="Six layers, each six by six">
+                        <g class="stack-layers">
+                          <polygon points="18,108 92,108 130,70 56,70"></polygon>
+                          <polygon points="18,94 92,94 130,56 56,56"></polygon>
+                          <polygon points="18,80 92,80 130,42 56,42"></polygon>
+                          <polygon points="18,66 92,66 130,28 56,28"></polygon>
+                          <polygon points="18,52 92,52 130,14 56,14"></polygon>
+                          <polygon points="18,38 92,38 130,0 56,0"></polygon>
+                          <path class="reshape-stack-grid" d="M68.3 0L30.3 38M80.7 0L42.7 38M93 0L55 38M105.3 0L67.3 38M117.7 0L79.7 38M49.7 6.3H123.7M43.3 12.7H117.3M37 19H111M30.7 25.3H104.7M24.3 31.7H98.3"></path>
+                        </g>
+                      </svg>
+                      <p>time <span class="axis-x">x</span> lat <span class="axis-x">x</span> lon<br><span>(6,6,6)</span></p>
+                    </div>
+                    <code class="reshape-reveal reshape-step-t1-prompt">.reshape(2,3,6,6)</code>
+                  </div>
+
+                  <p class="reshape-warning reshape-reveal reshape-step-t1-answer">Later, you can calculate seasonal cycles over axis 0.</p>
+
+                  <div class="reshape-tensor-row">
+                    <div class="tensor-shape-group tensor-bottom-left reshape-reveal reshape-step-t2-answer">
+                      <svg class="reshape-stack stack-six" viewBox="0 0 150 132" aria-label="Six layers, each six by six">
+                        <g class="stack-layers">
+                          <polygon points="18,108 92,108 130,70 56,70"></polygon>
+                          <polygon points="18,94 92,94 130,56 56,56"></polygon>
+                          <polygon points="18,80 92,80 130,42 56,42"></polygon>
+                          <polygon points="18,66 92,66 130,28 56,28"></polygon>
+                          <polygon points="18,52 92,52 130,14 56,14"></polygon>
+                          <polygon points="18,38 92,38 130,0 56,0"></polygon>
+                          <path class="reshape-stack-grid" d="M68.3 0L30.3 38M80.7 0L42.7 38M93 0L55 38M105.3 0L67.3 38M117.7 0L79.7 38M49.7 6.3H123.7M43.3 12.7H117.3M37 19H111M30.7 25.3H104.7M24.3 31.7H98.3"></path>
+                        </g>
+                      </svg>
+                      <p>time <span class="axis-x">x</span> lat <span class="axis-x">x</span> lon<br><span>(6,6,6)</span></p>
+                    </div>
+                    <span class="reshape-equals eq-tensor-bottom reshape-reveal reshape-step-t2-prompt">=</span>
+                    <div class="tensor-shape-group tensor-pair tensor-bottom-right reshape-reveal reshape-step-t2-prompt">
+                      <svg class="reshape-stack stack-three" viewBox="0 0 150 100" aria-label="Three layers, each six by six">
+                        <g class="stack-layers">
+                          <polygon points="18,80 92,80 130,42 56,42"></polygon>
+                          <polygon points="18,66 92,66 130,28 56,28"></polygon>
+                          <polygon points="18,52 92,52 130,14 56,14"></polygon>
+                          <path class="reshape-stack-grid" d="M68.3 14L30.3 52M80.7 14L42.7 52M93 14L55 52M105.3 14L67.3 52M117.7 14L79.7 52M49.7 20.3H123.7M43.3 26.7H117.3M37 33H111M30.7 39.3H104.7M24.3 45.7H98.3"></path>
+                        </g>
+                      </svg>
+                      <svg class="reshape-stack stack-three" viewBox="0 0 150 100" aria-label="Three layers, each six by six">
+                        <g class="stack-layers">
+                          <polygon points="18,80 92,80 130,42 56,42"></polygon>
+                          <polygon points="18,66 92,66 130,28 56,28"></polygon>
+                          <polygon points="18,52 92,52 130,14 56,14"></polygon>
+                          <path class="reshape-stack-grid" d="M68.3 14L30.3 52M80.7 14L42.7 52M93 14L55 52M105.3 14L67.3 52M117.7 14L79.7 52M49.7 20.3H123.7M43.3 26.7H117.3M37 33H111M30.7 39.3H104.7M24.3 45.7H98.3"></path>
+                        </g>
+                      </svg>
+                      <p>year <span class="axis-x">x</span> mon <span class="axis-x">x</span> lat <span class="axis-x">x</span> lon<br><span>(2,3,6,6)</span></p>
+                    </div>
+                    <code class="reshape-reveal reshape-step-t2-prompt">.reshape(6,6,6)</code>
+                  </div>
+                </section>
+              </div>
+              <span class="step-marker fragment" aria-hidden="true"></span>
+              <span class="step-marker fragment" aria-hidden="true"></span>
+              <span class="step-marker fragment" aria-hidden="true"></span>
+              <span class="step-marker fragment" aria-hidden="true"></span>
+              <span class="step-marker fragment" aria-hidden="true"></span>
+              <span class="step-marker fragment" aria-hidden="true"></span>
+              <span class="step-marker fragment" aria-hidden="true"></span>
+              <span class="step-marker fragment" aria-hidden="true"></span>
+            </div>
+          </div>
+        </section>
+
+        <section class="slide">
+          <header class="slide-kicker"></header>
+          <div class="slide-body content-layout">
+            <h2 class="slide-title">Frequently-used Operations</h2>
+            <div class="slide-content mean-slide transpose-slide">
+              <p class="mean-intro">
+                <span class="step-number">3.</span>
+                <strong>Transpose</strong> a 2D matrix, using
+                <a href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.transpose.html" target="_blank" rel="noreferrer">ndarray.transpose()</a>.
+              </p>
+
+              <div class="transpose-callout-row">
+                <div class="mean-callout transpose-callout">
+                  <code>data_transposed = data.<span>transpose</span>()</code>
+                </div>
+                <p class="transpose-note">For a 2D matrix, rows and columns are swapped</p>
+              </div>
+
+              <section class="transpose-mini-panel transpose-reveal transpose-step-mini-prompt">
+                <div class="transpose-expression">
+                  <div class="transpose-matrix matrix-three-two transpose-reveal transpose-step-mini-answer" aria-label="Three by two transposed matrix">
+                    <span class="transpose-cell t-red"></span>
+                    <span class="transpose-cell t-red"></span>
+                    <span class="transpose-cell t-blue"></span>
+                    <span class="transpose-cell t-blue"></span>
+                    <span class="transpose-cell t-green"></span>
+                    <span class="transpose-cell t-green"></span>
+                  </div>
+                  <span class="transpose-equals">=</span>
+                  <div class="transpose-matrix matrix-two-three" aria-label="Two by three matrix">
+                    <span class="transpose-cell t-red"></span>
+                    <span class="transpose-cell t-blue"></span>
+                    <span class="transpose-cell t-green"></span>
+                    <span class="transpose-cell t-red"></span>
+                    <span class="transpose-cell t-blue"></span>
+                    <span class="transpose-cell t-green"></span>
+                  </div>
+                  <code>.transpose()</code>
+                </div>
+              </section>
+
+              <p class="transpose-caption transpose-reveal transpose-step-large-prompt">
+                When we need to convert <span>time <span class="axis-x">x</span> lat <span class="axis-x">x</span> lon</span>
+                into the shape of <span>space <span class="axis-x">x</span> time</span> for certain analysis
+              </p>
+
+              <section class="transpose-large-panel transpose-reveal transpose-step-large-prompt">
+                <div class="transpose-expression">
+                  <div class="transpose-matrix matrix-eight-three transpose-reveal transpose-step-large-answer" aria-label="Eight by three space by time matrix">
+                    <span class="transpose-cell s-red l1"></span>
+                    <span class="transpose-cell s-red "></span>
+                    <span class="transpose-cell s-red d1"></span>
+                    <span class="transpose-cell s-red l1"></span>
+                    <span class="transpose-cell s-red"></span>
+                    <span class="transpose-cell s-red d1"></span>
+                    <span class="transpose-cell s-blue l1"></span>
+                    <span class="transpose-cell s-blue"></span>
+                    <span class="transpose-cell s-blue d1"></span>
+                    <span class="transpose-cell s-blue l1"></span>
+                    <span class="transpose-cell s-blue"></span>
+                    <span class="transpose-cell s-blue d1"></span>
+                    <span class="transpose-cell s-green l1"></span>
+                    <span class="transpose-cell s-green"></span>
+                    <span class="transpose-cell s-green d1"></span>
+                    <span class="transpose-cell s-green l1"></span>
+                    <span class="transpose-cell s-green"></span>
+                    <span class="transpose-cell s-green d1"></span>
+                    <span class="transpose-cell s-yellow l1"></span>
+                    <span class="transpose-cell s-yellow"></span>
+                    <span class="transpose-cell s-yellow d1"></span>
+                    <span class="transpose-cell s-yellow l1"></span>
+                    <span class="transpose-cell s-yellow"></span>
+                    <span class="transpose-cell s-yellow d1"></span>
+                  </div>
+                  <span class="transpose-equals">=</span>
+                  <svg class="transpose-stack" viewBox="0 0 150 150" aria-label="Three time layers, each four by two">
+                    <g class="transpose-layer-svg layer-svg-deep" transform="translate(30,45) scale(1.4)">
+                      <polygon class="transpose-tile s-red d1" points="18,24 40,24 52,14 30,14"></polygon>
+                      <polygon class="transpose-tile s-red d1" points="42,24 64,24 76,14 54,14"></polygon>
+                      <g transform="translate(-7,-6)">
+                        <polygon class="transpose-tile s-blue d1" points="12,41 34,41 46,31 24,31"></polygon>
+                        <polygon class="transpose-tile s-blue d1" points="36,41 58,41 70,31 48,31"></polygon>
+                      </g>
+                      <g transform="translate(-14,-12)">
+                        <polygon class="transpose-tile s-green d1" points="6,58 28,58 40,48 18,48"></polygon>
+                        <polygon class="transpose-tile s-green d1" points="30,58 52,58 64,48 42,48"></polygon>
+                      </g>
+                      <g transform="translate(-21,-18)">
+                        <polygon class="transpose-tile s-yellow d1" points="0,75 22,75 34,65 12,65"></polygon>
+                        <polygon class="transpose-tile s-yellow d1" points="24,75 46,75 58,65 36,65"></polygon>
+                      </g>
+                    </g>
+                    <g class="transpose-layer-svg layer-svg-mid" transform="translate(30,20) scale(1.4)">
+                      <polygon class="transpose-tile s-red" points="18,24 40,24 52,14 30,14"></polygon>
+                      <polygon class="transpose-tile s-red" points="42,24 64,24 76,14 54,14"></polygon>
+                      <g transform="translate(-7,-6)">
+                        <polygon class="transpose-tile s-blue" points="12,41 34,41 46,31 24,31"></polygon>
+                        <polygon class="transpose-tile s-blue" points="36,41 58,41 70,31 48,31"></polygon>
+                      </g>
+                      <g transform="translate(-14,-12)">
+                        <polygon class="transpose-tile s-green" points="6,58 28,58 40,48 18,48"></polygon>
+                        <polygon class="transpose-tile s-green" points="30,58 52,58 64,48 42,48"></polygon>
+                      </g>
+                      <g transform="translate(-21,-18)">
+                        <polygon class="transpose-tile s-yellow" points="0,75 22,75 34,65 12,65"></polygon>
+                        <polygon class="transpose-tile s-yellow" points="24,75 46,75 58,65 36,65"></polygon>
+                      </g>
+                    </g>
+                    <g class="transpose-layer-svg layer-svg-front" transform="translate(30,-5) scale(1.4)">
+                      <polygon class="transpose-tile s-red l1" points="18,24 40,24 52,14 30,14"></polygon>
+                      <polygon class="transpose-tile s-red l1" points="42,24 64,24 76,14 54,14"></polygon>
+                      <g transform="translate(-7,-6)">
+                        <polygon class="transpose-tile s-blue l1" points="12,41 34,41 46,31 24,31"></polygon>
+                        <polygon class="transpose-tile s-blue l1" points="36,41 58,41 70,31 48,31"></polygon>
+                      </g>
+                      <g transform="translate(-14,-12)">
+                        <polygon class="transpose-tile s-green l1" points="6,58 28,58 40,48 18,48"></polygon>
+                        <polygon class="transpose-tile s-green l1" points="30,58 52,58 64,48 42,48"></polygon>
+                      </g>
+                      <g transform="translate(-21,-18)">
+                        <polygon class="transpose-tile s-yellow l1" points="0,75 22,75 34,65 12,65"></polygon>
+                        <polygon class="transpose-tile s-yellow l1" points="24,75 46,75 58,65 36,65"></polygon>
+                      </g>
+                    </g>
+                  </svg>
+                  <code>.reshape(3,4*2).transpose()</code>
+                </div>
+              </section>
+              <span class="step-marker fragment" aria-hidden="true"></span>
+              <span class="step-marker fragment" aria-hidden="true"></span>
+              <span class="step-marker fragment" aria-hidden="true"></span>
+              <span class="step-marker fragment" aria-hidden="true"></span>
+            </div>
+          </div>
+        </section>
+
+        <section class="slide">
+          <header class="slide-kicker"></header>
+          <div class="slide-body content-layout">
+            <h2 class="slide-title">Frequently-used Operations</h2>
+            <div class="slide-content mean-slide index-slide">
+              <p class="mean-intro">
+                <span class="step-number">4.</span>
+                <strong><a href="https://numpy.org/doc/stable/user/how-to-index.html" target="_blank" rel="noreferrer">Index or slice across a dimension</a></strong>
+              </p>
+
+              <div class="index-top-grid">
+                <div class="index-slice-block">
+                  <div class="mean-callout index-callout">
+                    <code>data_subset = data[start : end : stride]</code>
+                    <p class="index-dimension-note index-reveal index-step-left-example">You need to specify which dimension to be indexed</p>
+                  </div>
+
+                  <div class="index-example-card index-jan-card index-reveal index-step-left-example">
+                    <code>data_subset = <span class="index-data-with-label">data<span class="index-dim-label">monthly data: time <span class="axis-x">x</span> lat <span class="axis-x">x</span> lon</span></span>[0::12, :, :]</code>
+                    <p class="index-reveal index-step-left-caption">Returns data from all Januarys</p>
+                  </div>
+                </div>
+
+                <div class="index-boolean-block">
+                  <p class="index-boolean-note index-reveal index-step-bool-box">
+                    Using a boolean array to index only at the location that is true.<br>
+                    A boolean array consists of true and false values.
+                  </p>
+
+                  <div class="mean-callout index-callout index-bool-callout index-reveal index-step-bool-box">
+                    <code>bool = (some condition or judgment)</code>
+                    <code>data_subset = data[bool]</code>
+                  </div>
+
+                  <div class="index-boolean-examples">
+                    <div class="index-code-example index-reveal index-step-example-1-code">
+                      <code>Idx_subset = <a href="https://numpy.org/doc/stable/reference/generated/numpy.isin.html" target="_blank" rel="noreferrer">np.isin</a>(mon, [12, 1, 2])</code>
+                      <code>data_subset = data[Idx_subset, :, :]</code>
+                      <p class="index-reveal index-step-example-1-caption">Returns only wintertime data</p>
+                    </div>
+                    <div class="index-code-example index-reveal index-step-example-2-code">
+                      <code>Idx_subset = lat &gt; 0</code>
+                      <code>data_NH= data[:, Idx_subset, :]</code>
+                      <p class="index-reveal index-step-example-2-caption">Returns northern hemispheric data</p>
+                    </div>
+                    <div class="index-code-example index-reveal index-step-example-3-code">
+                      <code>data_subset = data[~<a href="https://numpy.org/doc/stable/reference/generated/numpy.isnan.html" target="_blank" rel="noreferrer">np.isnan</a>(data)]</code>
+                      <p class="index-reveal index-step-example-3-caption">Remove missing values</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <span class="step-marker fragment" aria-hidden="true"></span>
+              <span class="step-marker fragment" aria-hidden="true"></span>
+              <span class="step-marker fragment" aria-hidden="true"></span>
+              <span class="step-marker fragment" aria-hidden="true"></span>
+              <span class="step-marker fragment" aria-hidden="true"></span>
+              <span class="step-marker fragment" aria-hidden="true"></span>
+              <span class="step-marker fragment" aria-hidden="true"></span>
+              <span class="step-marker fragment" aria-hidden="true"></span>
+              <span class="step-marker fragment" aria-hidden="true"></span>
+            </div>
+          </div>
+        </section>
+
+        <section class="slide">
+          <header class="slide-kicker"></header>
+          <div class="slide-body content-layout">
+            <h2 class="slide-title">Read in Data Stored in NetCDF Files</h2>
+            <div class="slide-content netcdf-slide">
+              <p class="netcdf-lead">
+                A NetCDF file is a self-describing, portable format for storing and sharing
+                multi-dimensional scientific data along with its metadata.
+              </p>
+
+              <div class="netcdf-grid">
+                <div class="netcdf-code-flow">
+                  <div class="netcdf-code-box netcdf-install-box netcdf-reveal netcdf-step-install">
+                    <code>pip install <a href="https://unidata.github.io/netcdf4-python/" target="_blank" rel="noreferrer">netCDF4</a></code>
+                  </div>
+
+                  <div class="netcdf-code-box netcdf-reveal netcdf-step-list">
+                    <code>from netCDF4 import Dataset</code>
+                    <code>with Dataset("*.nc") as nc:</code>
+                    <code class="netcdf-indent">print(nc.variables.keys())</code>
+                  </div>
+
+                  <code class="netcdf-output netcdf-reveal netcdf-step-list">dict_keys(['lat', 'lon', 'time', 'slp'])</code>
+
+                  <div class="netcdf-code-box netcdf-reveal netcdf-step-read">
+                    <code>with Dataset("*.nc") as nc:</code>
+                    <code class="netcdf-indent">variable = nc.variables["varname"][:]</code>
+                    <code class="netcdf-indent">...</code>
+                  </div>
+                </div>
+
+                <div class="netcdf-notes">
+                  <p class="netcdf-reveal netcdf-step-install">If the <code><a href="https://unidata.github.io/netcdf4-python/" target="_blank" rel="noreferrer">netCDF4</a></code> package is not installed, <br>
+                    install it in a new code cell.</p>
+                  <p class="netcdf-reveal netcdf-step-list">After importing the toolbox, <br>
+                    open a NetCDF file and list all variables in the file.</p>
+                  <p class="netcdf-reveal netcdf-step-read">Read variables as needed.<br>
+                    You can then use <span>.shape</span> to check their dimensions.
+                  </p>
+                </div>
+              </div>
+              <span class="step-marker fragment" aria-hidden="true"></span>
+              <span class="step-marker fragment" aria-hidden="true"></span>
+              <span class="step-marker fragment" aria-hidden="true"></span>
+            </div>
+          </div>
+        </section>
+
+        <section class="slide">
+          <header class="slide-kicker"></header>
+          <div class="slide-body content-layout">
+            <h2 class="slide-title seasonal-title">Data Preprocessing :: Remove Seasonal Cycle</h2>
+            <div class="slide-content seasonal-slide">
+              <p class="seasonal-lead">
+                Removing the seasonal cycle means subtracting the regular, repeating annual pattern
+                from the data to highlight anomalies or long-term changes.
+              </p>
+
+              <figure class="seasonal-chart seasonal-timeseries">
+                <svg id="bournemouthTimeSeries" viewBox="0 0 1180 260" role="img" aria-label="Monthly temperature near Bournemouth"></svg>
+                <figcaption>Monthly temperature near Southampton</figcaption>
+                <div class="seasonal-anomaly-title-cover">Monthly temperature anomalies near Southampton</div>
+                <p class="seasonal-anomaly-zero-note">The new series should be centred around zero!</p>
+              </figure>
+
+              <div class="seasonal-bottom">
+                <figure class="seasonal-chart seasonal-monthly">
+                  <svg id="bournemouthMonthlyMean" viewBox="0 0 430 260" role="img" aria-label="Monthly mean temperature seasonal cycle"></svg>
+                </figure>
+
+                <div class="seasonal-code-panel">
+                  <pre><code>data_anm = np.zeros(data.shape)
+for ct in np.arange(12):
+    data_anm[ct::12] = data[ct::12] - np.nanmean(data[ct::12], axis=0)</code></pre>
+                  <span class="seasonal-code-underline" aria-hidden="true"></span>
+                  <div class="seasonal-code-notes">
+                    <p class="seasonal-note-allocate">Allocate empty space for anomalies</p>
+                    <p class="seasonal-note-loop">Loop over month</p>
+                    <p class="seasonal-note-subset">Subset that month across all years</p>
+                    <p class="seasonal-note-mean">Calculate the mean across years</p>
+                    <p class="seasonal-note-remove">Remove the mean value from each year</p>
+                    <p class="seasonal-note-assign">Assign data to corresponding locations in the array for anomalies</p>
+                  </div>
+                </div>
+              </div>
+              <span class="step-marker fragment" aria-hidden="true"></span>
+              <span class="step-marker fragment" aria-hidden="true"></span>
+              <span class="step-marker fragment" aria-hidden="true"></span>
+              <span class="step-marker fragment" aria-hidden="true"></span>
+              <span class="step-marker fragment" aria-hidden="true"></span>
+              <span class="step-marker fragment" aria-hidden="true"></span>
+              <span class="step-marker fragment" aria-hidden="true"></span>
+              <span class="step-marker fragment" aria-hidden="true"></span>
+              <span class="step-marker fragment" aria-hidden="true"></span>
+              <span class="step-marker fragment" aria-hidden="true"></span>
+            </div>
+          </div>
+        </section>
+
+        <section class="slide">
+          <header class="slide-kicker"></header>
+          <div class="slide-body content-layout">
+            <h2 class="slide-title seasonal-title">Data Preprocessing :: Remove Seasonal Cycle</h2>
+            <div class="slide-content heatmap-slide">
+              <p class="seasonal-lead">
+                A monthly time series can be reshaped into a <strong>year <span class="axis-x">x</span> month</strong>
+                matrix, making the seasonal cycle visible as a two-dimensional pattern.
+              </p>
+
+              <div class="heatmap-layout">
+                <figure class="seasonal-chart heatmap-figure">
+                  <svg id="bournemouthHeatmap" viewBox="0 0 560 560" role="img" aria-label="Monthly temperature heatmap by year and month"></svg>
+                </figure>
+
+                <div class="heatmap-notes">
+                  <div class="heatmap-case heatmap-step-matrix">
+                    <p class="heatmap-case-title">If data come as a 2D matrix with dimension: <span>year <span class="axis-x">x</span> mon</span></p>
+                    <div class="code-box heatmap-code">data_anm = data - np.nanmean(data, axis = 0)</div>
+                  </div>
+
+                  <div class="heatmap-case heatmap-step-vector">
+                    <p class="heatmap-case-title">If data come as a 1D vector with dimension: <span>time</span></p>
+                    <p class="heatmap-vector-text">
+                      We can reshape data into 2D first,<br>
+                      and then apply the method above.
+                    </p>
+                  </div>
+
+                  <div class="heatmap-case heatmap-step-cube">
+                    <p class="heatmap-case-title">If data come as a 3D array with dimension: <span>time <span class="axis-x">x</span> lat <span class="axis-x">x</span> lon</span></p>
+                    <div class="heatmap-options">
+                      <p><strong>Option 1:</strong> keep it as 3D and loop over month, as in the previous slide.</p>
+                      <p><strong>Option 2:</strong> reshape the time axis into <strong>year <span class="axis-x">x</span> mon <span class="axis-x">x</span> lat <span class="axis-x">x</span> lon</strong>.</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <span class="step-marker fragment" aria-hidden="true"></span>
+              <span class="step-marker fragment" aria-hidden="true"></span>
+              <span class="step-marker fragment" aria-hidden="true"></span>
+              <span class="step-marker fragment" aria-hidden="true"></span>
+              <span class="step-marker fragment" aria-hidden="true"></span>
+            </div>
+          </div>
+        </section>
+
+        <section class="slide">
+          <header class="slide-kicker"></header>
+          <div class="slide-body content-layout">
+            <h2 class="slide-title">Plot a Map of Your Data</h2>
+            <div class="slide-content map-slide">
+              <div class="map-layout">
+                <div class="map-code-column">
+                  <div class="map-install map-reveal map-step-install">
+                    <div class="code-box map-install-code">pip install <a href="https://scitools.org.uk/cartopy/docs/latest/" target="_blank" rel="noreferrer">cartopy</a></div>
+                    <p>If the <a href="https://scitools.org.uk/cartopy/docs/latest/" target="_blank" rel="noreferrer">cartopy</a> package is not installed,<br>
+                      install it in a new code cell.</p>
+                  </div>
+
+                  <div class="map-code-panel map-reveal map-step-code">
+                    <pre><code>import cartopy.crs as ccrs
+
+fig = plt.figure(figsize=(10, 5))
+<span class="code-comment"># Choose a projection, see this <a href="https://cartopy.readthedocs.io/stable/gallery/index.html" target="_blank" rel="noreferrer">gallery</a> for more examples.</span>
+ax = fig.add_subplot(1, 1, 1, <span class="map-code-highlight">projection=ccrs.PlateCarree()</span>)
+<span class="code-comment"># Always tell your plotting function which projection you choose, <br># see this <a href="https://cartopy.readthedocs.io/stable/tutorials/understanding_transform.html" target="_blank" rel="noreferrer">guide</a> for how transform and projection works.</span>
+ax.set_extent([lon0, lon1, lat0, lat1], <span class="map-code-highlight">crs=ccrs.PlateCarree()</span>)
+
+plot_name = ax.pcolormesh(..., <span class="map-code-highlight">transform=ccrs.PlateCarree()</span>, ...)
+cbar = plt.colorbar(plot_name, ...)
+cbar.set_label('Variable [unit]') <span class="code-comment"># Whenever available, include the </span><u style="color:deeppink">UNIT</u><b style="color:deeppink">!!!</b>
+
+<span class="code-comment"># Add costlines and gridlines to make the map easier to read.</span>
+<span class="map-code-highlight">ax.coastlines()
+ax.gridlines(draw_labels=True, dms=True, x_inline=False, y_inline=False)</span></code></pre>
+                  </div>
+
+                <figure class="map-output map-reveal map-step-output">
+                  <img src="../figures/slp_map.png" alt="Python Cartopy output showing global sea-level pressure anomalies">
+                </figure>
+              </div>
+
+              <span class="step-marker fragment" aria-hidden="true"></span>
+              <span class="step-marker fragment" aria-hidden="true"></span>
+              <span class="step-marker fragment" aria-hidden="true"></span>
+            </div>
+          </div>
+        </section>
+
+        <section class="slide">
+          <header class="slide-kicker"></header>
+          <div class="slide-body content-layout">
+            <h2 class="slide-title">Matrix Multiplication</h2>
+            <div class="slide-content matrix-multiply-slide">
+              <p class="matrix-linear-algebra-link">
+                Want to know more about <a href="https://www.youtube.com/watch?v=fNk_zzaMoSs&amp;list=PLZHQObOWTQDPD3MizzM2xVFitgF8hE_ab" target="_blank" rel="noopener">Linear Algebra</a>?
+              </p>
+              <p class="matrix-multiply-lead">
+                A <strong>matrix</strong> is simply a way to organise 2D data.
+                We have already met this structure as a 2D <strong>numpy.array</strong>.
+              </p>
+
+              <p class="matrix-multiply-lead matrix-product-reveal">
+                <strong>Matrix multiplication</strong> is a simplifying notation in many data analysis techniques, <br>
+                &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp 
+                including <b>Regression</b> & <b>Principal Component Analysis</b>, which will be covered in later lectures.
+              </p>
+
+              <div class="matrix-multiply-stage">
+                <div class="matrix-block matrix-a matrix-product-reveal">
+                  <h3>A</h3>
+                  <div class="matrix-grid" data-matrix="A" data-rows="5" data-cols="4" aria-label="Matrix A with five rows and four columns"></div>
+                  <p>Dimension: (5x4)</p>
+                </div>
+
+                <span class="matrix-symbol matrix-equals matrix-product-reveal">=</span>
+
+                <div class="matrix-block matrix-b">
+                  <h3>B</h3>
+                  <div class="matrix-grid" data-matrix="B" data-rows="5" data-cols="3" aria-label="Matrix B with five rows and three columns"></div>
+                  <p>Dimension: (5x3)</p>
+                </div>
+
+                <span class="matrix-symbol matrix-times matrix-product-reveal">x</span>
+
+                <div class="matrix-block matrix-c matrix-product-reveal">
+                  <h3>C</h3>
+                  <div class="matrix-grid" data-matrix="C" data-rows="3" data-cols="4" aria-label="Matrix C with three rows and four columns"></div>
+                  <p>Dimension: (3x4)</p>
+                </div>
+
+                <div class="matrix-formula matrix-product-reveal">
+                  <p class="matrix-formula-generic">A<sub>i,j</sub> = &Sigma;<sub>k</sub> B<sub>i,k</sub> x C<sub>k,j</sub></p>
+                  <p class="matrix-formula-specific">Hover over a cell in A</p>
+                </div>
+              </div>
+
+              <p class="matrix-multiply-rule matrix-product-reveal">
+                The number of <strong>columns</strong> in the first matrix must equal the number of
+                <strong>rows</strong> in the second matrix: <strong>(m x n) = (m x k) x (k x n)</strong>.
+              </p>
+
+              <span class="step-marker fragment" aria-hidden="true"></span>
+            </div>
+          </div>
+        </section>
+
+      </main>
+    </div>
+
+    <nav class="deck-controls" aria-label="Slide controls">
+      <button class="nav-button" id="prevSlide" type="button" aria-label="Previous slide">‹</button>
+      <div class="dot-rail" aria-label="Slide map"></div>
+      <button class="nav-button" id="skipSteps" type="button" aria-label="Reveal all steps on this slide">»</button>
+      <button class="nav-button" id="nextSlide" type="button" aria-label="Next slide">›</button>
+    </nav>
+    <div class="deck-status" aria-live="polite"></div>
+
+    <script src="../assets/js/deck.js"></script>
+  </body>
+</html>

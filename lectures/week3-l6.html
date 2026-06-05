@@ -1,0 +1,3844 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>L6 Distribution</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;520;650;720;820&display=swap" rel="stylesheet">
+    <link href="https://fonts.cdnfonts.com/css/intel-one-mono" rel="stylesheet">
+    <link rel="stylesheet" href="../assets/css/course.css">
+    <style>
+      .title-lockup {
+        width: 1400px;
+      }
+
+      .title-lockup h2 {
+        font-size: 46px;
+        white-space: nowrap;
+      }
+
+      .distribution-slide {
+        display: grid;
+        align-self: start;
+      }
+
+      .daily-temperature-chart {
+        height: 280px;
+        margin: 0;
+      }
+
+      .daily-temperature-chart svg {
+        display: block;
+        width: 100%;
+        height: 100%;
+      }
+
+      .daily-temperature-title {
+        fill: var(--site-blue-dark);
+        font-family: var(--font-body);
+        font-size: 22px;
+        font-weight: 820;
+        text-anchor: middle;
+      }
+
+      .daily-temperature-axis {
+        stroke: rgba(25, 62, 135, 0.72);
+        stroke-width: 1.4;
+      }
+
+      .daily-temperature-grid {
+        stroke: rgba(25, 62, 135, 0.16);
+        stroke-width: 1;
+      }
+
+      .daily-temperature-line {
+        fill: none;
+        stroke: #5aa9e6;
+        stroke-width: 1.1;
+      }
+
+      .daily-temperature-anomaly-layer {
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 300ms ease;
+      }
+
+      .slide:not([data-step="0"]) .daily-temperature-anomaly-layer {
+        opacity: 1;
+      }
+
+      .daily-temperature-anomaly-background {
+        fill: #ffffff;
+      }
+
+      .daily-temperature-zero {
+        stroke: #cb0a2a;
+        stroke-dasharray: 7 7;
+        stroke-width: 1.4;
+      }
+
+      .daily-temperature-label,
+      .daily-temperature-tick {
+        fill: #24468d;
+        font-family: var(--font-body);
+      }
+
+      .daily-temperature-label {
+        font-size: 17px;
+        font-weight: 760;
+      }
+
+      .daily-temperature-tick {
+        font-size: 15px;
+        font-weight: 620;
+      }
+
+      .daily-temperature-hit-area {
+        fill: transparent;
+        cursor: crosshair;
+      }
+
+      .daily-temperature-hover-dot {
+        fill: #cb0a2a;
+        stroke: #ffffff;
+        stroke-width: 2.4;
+        pointer-events: none;
+      }
+
+      .daily-temperature-tooltip {
+        pointer-events: none;
+      }
+
+      .daily-temperature-tooltip rect {
+        fill: rgba(255, 255, 255, 0.96);
+        stroke: rgba(25, 62, 135, 0.26);
+        stroke-width: 1.2;
+        filter: drop-shadow(0 8px 16px rgba(25, 62, 135, 0.18));
+      }
+
+      .daily-temperature-tooltip text {
+        fill: var(--site-blue-dark);
+        font-family: var(--font-body);
+        font-size: 15px;
+        font-weight: 760;
+      }
+
+      .daily-temperature-error {
+        fill: #cb0a2a;
+        font-family: var(--font-body);
+        font-size: 18px;
+        font-weight: 760;
+      }
+
+      .distribution-panels {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 28px;
+        min-height: 150px;
+        margin-top: 4px;
+      }
+
+      .distribution-panel {
+        min-width: 0;
+        margin: 0;
+      }
+
+      .histogram-panel {
+        opacity: 0;
+        transition: opacity 220ms ease;
+      }
+
+      .slide:not([data-step="0"]):not([data-step="1"]) .histogram-panel {
+        opacity: 1;
+      }
+
+      .histogram-panel svg {
+        display: block;
+        width: 100%;
+        height: 250px;
+      }
+
+      .histogram-doc-link {
+        display: block;
+        margin: 25px 0 0;
+        color: #e75480;
+        font-size: 22px;
+        font-weight: 820;
+        text-align: center;
+        text-decoration-thickness: 2px;
+        text-underline-offset: 4px;
+      }
+
+      .histogram-title {
+        fill: var(--site-blue-dark);
+        font-family: var(--font-body);
+        font-size: 22px;
+        font-weight: 820;
+        text-anchor: middle;
+      }
+
+      .histogram-axis {
+        stroke: rgba(25, 62, 135, 0.72);
+        stroke-width: 1.4;
+      }
+
+      .histogram-grid {
+        stroke: rgba(25, 62, 135, 0.16);
+        stroke-width: 1;
+      }
+
+      .histogram-bar {
+        fill: #5aa9e6;
+        opacity: 0.84;
+      }
+
+      .histogram-drop {
+        fill: #cb0a2a;
+        opacity: 0;
+      }
+
+      .histogram-label,
+      .histogram-tick {
+        fill: #24468d;
+        font-family: var(--font-body);
+      }
+
+      .histogram-label {
+        font-size: 15px;
+        font-weight: 760;
+      }
+
+      .histogram-tick {
+        font-size: 13px;
+        font-weight: 620;
+      }
+
+      .pdf-panel {
+        opacity: 0;
+        transition: opacity 220ms ease;
+      }
+
+      .slide:not([data-step="0"]):not([data-step="1"]):not([data-step="2"]) .pdf-panel {
+        opacity: 1;
+      }
+
+      .pdf-panel svg {
+        display: block;
+        width: 100%;
+        height: 250px;
+        overflow: visible;
+      }
+
+      .pdf-moving-layer {
+        transform-box: fill-box;
+        transform-origin: center;
+      }
+
+      .pdf-note {
+        margin: 25px 0 0;
+        transform: translateX(30px);
+        color: #cb0a2a;
+        font-size: 16px;
+        font-weight: 650;
+        text-align: center;
+      }
+
+      .cdf-panel {
+        opacity: 0;
+        transition: opacity 220ms ease;
+      }
+
+      .slide[data-step="4"] .cdf-panel {
+        opacity: 1;
+      }
+
+      .cdf-panel svg {
+        display: block;
+        width: 100%;
+        height: 250px;
+      }
+
+      .cdf-note {
+        margin: 25px 80px 0px;
+        color: #cb0a2a;
+        font-size: 16px;
+        font-weight: 650;
+        line-height: 1.3;
+        text-align: center;
+        transform: translateX(20px);
+      }
+
+      .pdf-bar-highlight {
+        fill: #0a6ecb;
+        opacity: 0.9;
+      }
+
+      .cdf-bar-highlight {
+        fill: #0a6ecb;
+        opacity: 0.95;
+      }
+
+      .cdf-hit-area {
+        fill: transparent;
+        cursor: crosshair;
+      }
+
+      .summary-slide {
+        align-self: start;
+      }
+
+      .summary-lead,
+      .summary-slide {
+        transform: translateY(-30px);
+      }
+
+      .summary-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 20px;
+      }
+
+      .summary-card {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) 250px;
+        gap: 18px;
+        min-height: 250px;
+        padding: 20px 22px;
+        border: 1px solid var(--line-strong);
+        border-radius: 8px;
+        background: var(--paper-soft);
+      }
+
+      .summary-copy {
+        display: grid;
+        align-content: start;
+        gap: 10px;
+      }
+
+      .variance-card {
+        position: relative;
+      }
+
+      .variance-copy-wrap {
+        position: relative;
+        z-index: 3;
+        min-height: 205px;
+      }
+
+      .variance-face {
+        display: grid;
+        align-content: start;
+        gap: 10px;
+        animation: variance-face-in 240ms ease;
+      }
+
+      .variance-face[hidden] {
+        display: none;
+      }
+
+      @keyframes variance-face-in {
+        from {
+          opacity: 0;
+          transform: translateY(5px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      .variance-flip {
+        position: absolute;
+        top: 10px;
+        right: 12px;
+        z-index: 2;
+        border: 1px solid var(--line-strong);
+        border-radius: 999px;
+        padding: 6px 10px;
+        background: #ffffff;
+        color: #0a6ecb;
+        font-family: var(--font-body);
+        font-size: 13px;
+        font-weight: 720;
+        cursor: pointer;
+      }
+
+      .variance-flip:hover {
+        background: var(--site-blue-pale);
+      }
+
+      .std-example {
+        color: #cb0a2a !important;
+        font-weight: 720;
+      }
+
+      .summary-card h3 {
+        margin: 0;
+        color: var(--site-blue-dark);
+        font-size: 29px;
+      }
+
+      .summary-card p {
+        margin: 0;
+        color: var(--body);
+        font-size: 17px;
+        line-height: 1.38;
+      }
+
+      .summary-function {
+        position: relative;
+        z-index: 4;
+        color: #e75480;
+        cursor: pointer;
+        font-family: var(--font-code);
+        font-size: 18px;
+        font-weight: 820;
+        text-decoration-thickness: 2px;
+        text-underline-offset: 4px;
+      }
+
+      .summary-control {
+        display: grid;
+        gap: 8px;
+        margin-top: 4px;
+      }
+
+      .summary-control label {
+        color: var(--site-blue-dark);
+        font-size: 14px;
+        font-weight: 720;
+      }
+
+      .summary-control input {
+        width: 100%;
+        accent-color: #0a6ecb;
+        cursor: grab;
+      }
+
+      .summary-control output {
+        color: #cb0a2a;
+        font-family: var(--font-code);
+        font-size: 15px;
+        font-weight: 720;
+      }
+
+      .summary-chart {
+        align-self: center;
+        width: 250px;
+        height: 180px;
+      }
+
+      .summary-chart svg {
+        display: block;
+        width: 100%;
+        height: 100%;
+      }
+
+      .summary-axis {
+        stroke: rgba(25, 62, 135, 0.55);
+        stroke-width: 1.2;
+      }
+
+      .summary-curve {
+        fill: rgba(90, 169, 230, 0.2);
+        stroke: #5aa9e6;
+        stroke-width: 3;
+        stroke-linejoin: round;
+      }
+
+      .summary-reference {
+        stroke: #cb0a2a;
+        stroke-dasharray: 5 5;
+        stroke-width: 1.6;
+      }
+
+      .summary-chart-label {
+        fill: var(--site-blue-dark);
+        font-family: var(--font-body);
+        font-size: 13px;
+        font-weight: 720;
+      }
+
+      .gaussian-slide {
+        display: grid;
+        grid-template-columns: minmax(0, 0.95fr) 620px;
+        gap: 30px;
+        align-items: start;
+        transform: translateY(-18px);
+      }
+
+      .gaussian-chart {
+        margin: 74px 0 0;
+      }
+
+      .gaussian-chart svg {
+        display: block;
+        width: 100%;
+        height: 500px;
+      }
+
+      .gaussian-axis {
+        stroke: rgba(25, 62, 135, 0.72);
+        stroke-width: 1.5;
+      }
+
+      .gaussian-grid {
+        stroke: rgba(25, 62, 135, 0.16);
+        stroke-width: 1;
+      }
+
+      .gaussian-curve {
+        fill: none;
+        stroke: #0a6ecb;
+        stroke-width: 4;
+      }
+
+      .gaussian-area-1 {
+        fill: rgba(10, 110, 203, 0.34);
+      }
+
+      .gaussian-area-2 {
+        fill: rgba(10, 110, 203, 0.20);
+      }
+
+      .gaussian-area-3 {
+        fill: rgba(10, 110, 203, 0.11);
+      }
+
+      .gaussian-mean {
+        stroke: #cb0a2a;
+        stroke-dasharray: 7 7;
+        stroke-width: 2;
+      }
+
+      .gaussian-bound {
+        stroke: rgba(203, 10, 42, 0.72);
+        stroke-dasharray: 4 4;
+        stroke-width: 1.5;
+      }
+
+      .gaussian-label,
+      .gaussian-tick,
+      .gaussian-rule-label {
+        fill: var(--site-blue-dark);
+        font-family: var(--font-body);
+      }
+
+      .gaussian-label {
+        font-size: 22px;
+        font-weight: 600;
+      }
+
+      .gaussian-tick {
+        font-size: 20px;
+        font-weight: 500;
+        text-anchor: middle;
+      }
+
+      .gaussian-rule-label {
+        fill: #cb0a2a;
+        font-size: 20px;
+        font-weight: 820;
+        text-anchor: middle;
+      }
+
+      .gaussian-panel {
+        display: grid;
+        gap: 17px;
+        align-content: start;
+        padding: 20px 22px;
+        border-left: 1px solid var(--site-blue-dark);
+      }
+
+      .gaussian-panel p {
+        margin: 0;
+        color: var(--body);
+        font-size: 20px;
+        line-height: 1.42;
+      }
+
+      .gaussian-panel strong {
+        color: var(--site-blue-dark);
+      }
+
+      .gaussian-control {
+        display: grid;
+        gap: 7px;
+      }
+
+      .gaussian-control label {
+        color: var(--site-blue-dark);
+        font-size: 18px;
+        font-weight: 720;
+      }
+
+      .gaussian-control input {
+        width: 100%;
+        accent-color: #0a6ecb;
+        cursor: grab;
+      }
+
+      .gaussian-control output {
+        color: #cb0a2a;
+        font-family: var(--font-code);
+        font-size: 17px;
+        font-weight: 720;
+      }
+
+      .gaussian-rule {
+        margin: 0;
+        color: var(--site-blue-dark);
+        font-size: 20px;
+        font-weight: 720;
+        line-height: 1.45;
+      }
+
+      .gaussian-formula {
+        margin: 24px 0 0;
+        color: var(--muted);
+        font-family: Georgia, serif;
+        visibility: hidden;
+        opacity: 0;
+      }
+
+      .slide[data-step="4"] .gaussian-formula {
+        visibility: visible;
+        opacity: 1;
+        transform: translateY(0);
+      }
+
+      .gaussian-equation {
+        display: flex;
+        align-items: center;
+        gap: 7px;
+        color: var(--site-blue-dark);
+        font-size: 25px;
+        white-space: nowrap;
+      }
+
+      .gaussian-fraction {
+        display: inline-grid;
+        grid-template-rows: auto auto;
+        align-items: center;
+        text-align: center;
+        line-height: 1.12;
+      }
+
+      .gaussian-fraction > span:first-child {
+        padding: 0 5px 3px;
+        border-bottom: 1.4px solid currentColor;
+      }
+
+      .gaussian-fraction > span:last-child {
+        padding: 3px 5px 0;
+      }
+
+      .gaussian-root {
+        display: inline-flex;
+        align-items: flex-start;
+        gap: 0;
+      }
+
+      .gaussian-radicand {
+        margin-top: 2px;
+        padding: 1px 2px 0;
+        border-top: 1.4px solid currentColor;
+        line-height: 1;
+      }
+
+      .gaussian-formula-note {
+        display: block;
+        margin-top: 5px;
+        color: #cb0a2a;
+        font-family: var(--font-body);
+        font-size: 15px;
+        font-weight: 100;
+      }
+
+      .gaussian-formula-note b {
+        font-weight: 600;
+      }
+
+      .standardise-slide {
+        display: grid;
+        grid-template-columns: 600px minmax(0, 1fr);
+        gap: 44px;
+        align-items: start;
+        transform: translateY(-10px);
+      }
+
+      .standardise-explain {
+        display: grid;
+        gap: 22px;
+        padding: 20px 24px;
+        border-right: 1px solid var(--site-blue-dark);
+      }
+
+      .standardise-explain p {
+        margin: 0;
+        color: var(--body);
+        font-size: 21px;
+        line-height: 1.46;
+      }
+
+      .standardise-explain strong {
+        color: var(--site-blue-dark);
+      }
+
+      .standardise-equation {
+        display: grid;
+        justify-items: center;
+        gap: 12px;
+        padding: 18px 0;
+        color: var(--site-blue-dark);
+        font: 36px/1.25 Georgia, serif;
+      }
+
+      .standardise-formula-row {
+        display: flex;
+        align-items: center;
+        gap: 11px;
+      }
+
+      .standardise-note {
+        color: #cb0a2a !important;
+        font-size: 22px !important;
+        font-weight: 720;
+      }
+
+      .standardise-visual {
+        display: grid;
+        gap: 10px;
+      }
+
+      .standardise-chart {
+        margin: 0;
+      }
+
+      .standardise-chart svg {
+        display: block;
+        width: 100%;
+        height: 520px;
+      }
+
+      .standardise-axis {
+        stroke: rgba(25, 62, 135, 0.72);
+        stroke-width: 1.4;
+      }
+
+      .standardise-guide {
+        stroke: rgba(25, 62, 135, 0.16);
+        stroke-width: 1;
+      }
+
+      .standardise-zero {
+        stroke: #cb0a2a;
+        stroke-dasharray: 7 7;
+        stroke-width: 1.6;
+      }
+
+      .standardise-curve {
+        fill: none;
+        stroke-width: 4;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+      }
+
+      .standardise-tick,
+      .standardise-label {
+        fill: var(--site-blue-dark);
+        font-family: var(--font-body);
+      }
+
+      .standardise-tick {
+        font-size: 15px;
+        font-weight: 620;
+        text-anchor: middle;
+      }
+
+      .standardise-label {
+        font-size: 18px;
+        font-weight: 760;
+      }
+
+      .standardise-button {
+        justify-self: center;
+        border: 1px solid var(--line-strong);
+        border-radius: 999px;
+        padding: 11px 22px;
+        background: #ffffff;
+        color: #0a6ecb;
+        font-family: var(--font-body);
+        font-size: 18px;
+        font-weight: 820;
+        cursor: pointer;
+        transform: translate(15px, -30px);
+      }
+
+      .standardise-button:hover {
+        background: var(--site-blue-pale);
+      }
+
+      .clt-slide {
+        display: grid;
+        gap: 20px;
+        align-self: start;
+        transform: translateY(-8px);
+      }
+
+      .clt-intro {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) auto;
+        gap: 24px;
+        align-items: end;
+      }
+
+      .clt-intro p {
+        margin: 0;
+        color: var(--body);
+        font-size: 21px;
+        line-height: 1.45;
+      }
+
+      .clt-intro strong {
+        color: var(--site-blue-dark);
+      }
+
+      .clt-doc-link {
+        color: #e75480;
+        font-family: var(--font-code);
+        font-size: 20px;
+        font-weight: 820;
+        text-decoration-thickness: 2px;
+        text-underline-offset: 4px;
+        white-space: nowrap;
+      }
+
+      .clt-callouts {
+        display: flex;
+        justify-content: space-between;
+        gap: 24px;
+        color: #cb0a2a;
+        font-size: 24px;
+        font-weight: 720;
+      }
+
+      .clt-chart-grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 22px;
+      }
+
+      .clt-card {
+        margin: 0;
+        min-width: 0;
+      }
+
+      .clt-card svg {
+        display: block;
+        width: 100%;
+        height: 395px;
+      }
+
+      .clt-axis {
+        stroke: rgba(25, 62, 135, 0.72);
+        stroke-width: 1.3;
+      }
+
+      .clt-gridline {
+        stroke: rgba(25, 62, 135, 0.14);
+        stroke-width: 1;
+      }
+
+      .clt-bar {
+        fill: #5aa9e6;
+        opacity: 0.84;
+      }
+
+      .clt-normal {
+        fill: none;
+        stroke: #193e87;
+        stroke-width: 3.2;
+      }
+
+      .clt-title,
+      .clt-label,
+      .clt-tick,
+      .clt-count {
+        fill: var(--site-blue-dark);
+        font-family: var(--font-body);
+      }
+
+      .clt-title {
+        font-size: 22px;
+        font-weight: 820;
+        text-anchor: middle;
+      }
+
+      .clt-label {
+        font-size: 15px;
+        font-weight: 720;
+      }
+
+      .clt-tick {
+        font-size: 13px;
+        font-weight: 620;
+        text-anchor: middle;
+      }
+
+      .clt-count {
+        font-size: 16px;
+        font-weight: 820;
+        text-anchor: end;
+      }
+
+      .clt-caption {
+        fill: var(--muted);
+        font-family: var(--font-body);
+        font-size: 22px;
+        font-weight: 620;
+        text-anchor: middle;
+      }
+
+      .clt-caption-delayed {
+        opacity: 0;
+        transition: opacity 220ms ease;
+      }
+
+      .clt-page:not([data-step="0"]):not([data-step="1"]) .clt-caption-delayed {
+        opacity: 1;
+      }
+
+      .clt-legend {
+        display: flex;
+        justify-content: center;
+        gap: 24px;
+        color: var(--body);
+        font-size: 16px;
+        font-weight: 650;
+        opacity: 0;
+        transition: opacity 220ms ease;
+      }
+
+      .clt-page:not([data-step="0"]) .clt-legend {
+        opacity: 1;
+      }
+
+      .clt-legend span::before {
+        content: "";
+        display: inline-block;
+        width: 24px;
+        height: 4px;
+        margin-right: 8px;
+        vertical-align: middle;
+      }
+
+      .clt-legend .observed::before {
+        height: 12px;
+        background: #5aa9e6;
+      }
+
+      .clt-legend .normal::before {
+        background: #193e87;
+      }
+
+      .normality-slide {
+        display: grid;
+        gap: 20px;
+        align-self: start;
+      }
+
+      .normality-lead {
+        margin: 0;
+        color: var(--body);
+        font-size: 22px;
+        line-height: 1.45;
+      }
+
+      .normality-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 460px);
+        justify-content: center;
+        gap: 110px;
+        margin-top: 128px;
+      }
+
+      .normality-card {
+        margin: 0;
+        min-width: 0;
+      }
+
+      .normality-page.active .normality-pdf-card {
+        animation: normality-pdf-slide-left 950ms ease both;
+      }
+
+      @keyframes normality-pdf-slide-left {
+        from {
+          transform: translateX(773px);
+        }
+
+        to {
+          transform: translateX(0);
+        }
+      }
+
+      .normality-card svg {
+        display: block;
+        width: 460px;
+        height: 395px;
+      }
+
+      .normality-axis {
+        stroke: rgba(25, 62, 135, 0.72);
+        stroke-width: 1.4;
+      }
+
+      .normality-gridline {
+        stroke: rgba(25, 62, 135, 0.14);
+        stroke-width: 1;
+      }
+
+      .normality-bar {
+        fill: #5aa9e6;
+        opacity: 0.86;
+      }
+
+      .normality-bar-highlight {
+        fill: #0a6ecb;
+      }
+
+      .normality-normal {
+        fill: none;
+        stroke: #193e87;
+        stroke-width: 3.5;
+      }
+
+      .normality-title,
+      .normality-label,
+      .normality-tick {
+        fill: var(--site-blue-dark);
+        font-family: var(--font-body);
+      }
+
+      .normality-title {
+        font-size: 25px;
+        font-weight: 820;
+        text-anchor: middle;
+      }
+
+      .normality-label {
+        font-size: 17px;
+        font-weight: 720;
+      }
+
+      .normality-tick {
+        font-size: 14px;
+        font-weight: 620;
+        text-anchor: middle;
+      }
+
+      .normality-note {
+        min-height: 10px;
+        margin: -2px 0 0;
+        color: #cb0a2a;
+        font-size: 21px;
+        font-weight: 720;
+        text-align: center;
+        opacity: 0;
+        transition: opacity 220ms ease;
+        transform: translateY(-30px);
+      }
+
+      .normality-page:not([data-step="0"]):not([data-step="1"]):not([data-step="2"]) .normality-note {
+        opacity: 1;
+      }
+
+      .normality-flip {
+        position: absolute;
+        top: 122px;
+        right: 54px;
+        border: 1px solid var(--line-strong);
+        border-radius: 999px;
+        padding: 10px 18px;
+        background: #ffffff;
+        color: #0a6ecb;
+        font-family: var(--font-body);
+        font-size: 16px;
+        font-weight: 820;
+        cursor: pointer;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 220ms ease, background 180ms ease;
+      }
+
+      .normality-page:not([data-step="0"]):not([data-step="1"]) .normality-flip {
+        opacity: 1;
+        pointer-events: auto;
+      }
+
+      .normality-flip:hover {
+        background: var(--site-blue-pale);
+      }
+
+      .sampling-slide {
+        display: grid;
+        gap: 16px;
+        align-self: start;
+      }
+
+      .sampling-intro {
+        display: grid;
+        grid-template-columns: 0.92fr 1.08fr;
+        gap: 42px;
+        align-items: start;
+      }
+
+      .sampling-sources,
+      .sampling-definition {
+        margin: 0;
+        color: var(--body);
+        font-size: 20px;
+        line-height: 1.38;
+      }
+
+      .sampling-sources strong {
+        color: var(--site-blue-dark);
+      }
+
+      .sampling-definition {
+        color: #cb0a2a;
+      }
+
+      .sampling-controls {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 12px;
+      }
+
+      .sampling-controls label {
+        color: var(--site-blue-dark);
+        font-size: 17px;
+        font-weight: 760;
+      }
+
+      .sampling-controls input {
+        width: 132px;
+        border: 1px solid var(--line-strong);
+        border-radius: 8px;
+        padding: 8px 10px;
+        color: var(--site-blue-dark);
+        font-family: var(--font-body);
+        font-size: 17px;
+        font-weight: 720;
+      }
+
+      .sampling-button {
+        border: 1px solid var(--line-strong);
+        border-radius: 999px;
+        padding: 9px 17px;
+        background: #ffffff;
+        color: #0a6ecb;
+        font-family: var(--font-body);
+        font-size: 16px;
+        font-weight: 820;
+        cursor: pointer;
+      }
+
+      .sampling-button:hover {
+        background: var(--site-blue-pale);
+      }
+
+      .sampling-button:disabled {
+        cursor: not-allowed;
+        opacity: 0.42;
+      }
+
+      .sampling-button:disabled:hover {
+        background: #ffffff;
+      }
+
+      .sampling-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 560px);
+        justify-content: center;
+        gap: 86px;
+        margin-top: 12px;
+      }
+
+      .sampling-card {
+        margin: 0;
+      }
+
+      .sampling-pdf-card {
+        position: relative;
+      }
+
+      .sampling-cdf-card {
+        position: relative;
+      }
+
+      .sampling-pdf-cover {
+        position: absolute;
+        inset: 0;
+        background: #ffffff;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 360ms ease;
+      }
+
+      .sampling-page:not([data-step="0"]) .sampling-pdf-cover {
+        opacity: 1;
+        pointer-events: auto;
+      }
+
+      .sampling-distance-chart {
+        display: block;
+        width: 560px;
+        height: 400px;
+        opacity: 0;
+        transition: opacity 320ms ease;
+      }
+
+      .sampling-page:not([data-step="0"]):not([data-step="1"]):not([data-step="2"]) .sampling-distance-chart {
+        opacity: 1;
+      }
+
+      .sampling-distance-label {
+        fill: var(--site-blue-dark);
+        font-size: 14px;
+        font-weight: 760;
+      }
+
+      .sampling-distance-note {
+        font-size: 20px;
+        font-weight: 760;
+        transform: translateY(7px);
+      }
+
+      .sampling-distance-explanation {
+        box-sizing: border-box;
+        height: 100%;
+        padding: 7px 9px;
+        border: 1px solid var(--line);
+        border-radius: 7px;
+        background: rgba(255, 255, 255, 0.9);
+        font-family: var(--font-body);
+        font-size: 16px;
+        font-weight: 760;
+        line-height: 1.25;
+      }
+
+      .sampling-distance-explanation p {
+        margin: 0 0 5px;
+      }
+
+      .sampling-distance-explanation p:last-child {
+        margin-bottom: 0;
+      }
+
+      .sampling-card svg {
+        display: block;
+        width: 560px;
+        height: 400px;
+      }
+
+      .sampling-empirical-line {
+        fill: none;
+        stroke-width: 2.2;
+      }
+
+      .sampling-theoretical-line {
+        fill: none;
+        stroke: #193e87;
+        stroke-width: 3.4;
+      }
+
+      .sampling-rainfall-line {
+        fill: none;
+        stroke-width: 4;
+      }
+
+      .sampling-cdf-legend {
+        position: absolute;
+        bottom: 72px;
+        right: 2px;
+        display: grid;
+        gap: 7px;
+        padding: 9px 11px;
+        border: 1px solid var(--line);
+        border-radius: 9px;
+        background: rgba(255, 255, 255, 0.9);
+        color: var(--site-blue-dark);
+        font-size: 14px;
+        font-weight: 760;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 260ms ease;
+      }
+
+      .sampling-page:not([data-step="0"]):not([data-step="1"]) .sampling-cdf-legend {
+        opacity: 1;
+      }
+
+      .sampling-cdf-legend span {
+        display: flex;
+        align-items: center;
+        gap: 7px;
+      }
+
+      .sampling-cdf-legend i {
+        width: 20px;
+        border-top: 4px solid;
+      }
+
+      .sampling-draw-count {
+        color: var(--muted);
+        font-size: 20px;
+        font-weight: 720;
+        text-align: center;
+        transform: translateY(-20px);
+      }
+
+      .sampling-footer {
+        position: relative;
+        width: 1206px;
+        min-height: 24px;
+        margin: 0 auto;
+      }
+
+      .sampling-code-link {
+        position: absolute;
+        left: 0;
+        color: #e75480;
+        font-size: 21px;
+        font-weight: 820;
+        text-decoration: underline;
+        
+      }
+
+      .test-slide {
+        display: grid;
+        grid-template-columns: 265px 1fr;
+        grid-template-rows: auto 1fr;
+        min-height: 590px;
+        column-gap: 28px;
+        row-gap: 18px;
+        align-self: start;
+      }
+
+      .test-lead {
+        grid-column: 1 / -1;
+        margin: 0;
+        color: var(--site-blue-dark);
+        font-size: 25px;
+        font-weight: 720;
+        line-height: 1.35;
+      }
+
+      .test-workflow {
+        display: grid;
+        grid-column: 1;
+        grid-row: 2;
+        grid-template-rows: repeat(5, 1fr);
+      }
+
+      .test-workflow span {
+        position: relative;
+        align-self: center;
+        padding: 20px 10px;
+        border: 1px solid var(--line-strong);
+        border-radius: 12px;
+        background: var(--site-blue-pale);
+        color: var(--site-blue-dark);
+        font-size: 19px;
+        font-weight: 790;
+        text-align: center;
+      }
+
+      .test-workflow span:not(:last-child)::after {
+        position: absolute;
+        right: 50%;
+        bottom: -40px;
+        transform: translateX(50%);
+        color: #0a6ecb;
+        font-size: 27px;
+        content: "↓";
+        opacity: 0;
+        transition: opacity 220ms ease;
+      }
+
+      .test-page:not([data-step="0"]):not([data-step="1"]) .test-workflow span:nth-child(1)::after,
+      .test-page:not([data-step="0"]):not([data-step="1"]):not([data-step="2"]) .test-workflow span:nth-child(2)::after,
+      .test-page:not([data-step="0"]):not([data-step="1"]):not([data-step="2"]):not([data-step="3"]) .test-workflow span:nth-child(3)::after,
+      .test-page[data-step="5"] .test-workflow span:nth-child(4)::after {
+        opacity: 1;
+      }
+
+      .test-right {
+        display: grid;
+        grid-column: 2;
+        grid-row: 2;
+        grid-template-rows: repeat(5, 1fr);
+      }
+
+      .test-workflow span,
+      .test-row {
+        opacity: 0;
+        transform: translateY(12px);
+        transition:
+          opacity 220ms ease,
+          transform 220ms ease;
+      }
+
+      .test-page:not([data-step="0"]) .test-workflow span:nth-child(1),
+      .test-page:not([data-step="0"]) .test-row:nth-child(1),
+      .test-page:not([data-step="0"]):not([data-step="1"]) .test-workflow span:nth-child(2),
+      .test-page:not([data-step="0"]):not([data-step="1"]) .test-row:nth-child(2),
+      .test-page:not([data-step="0"]):not([data-step="1"]):not([data-step="2"]) .test-workflow span:nth-child(3),
+      .test-page:not([data-step="0"]):not([data-step="1"]):not([data-step="2"]) .test-row:nth-child(3),
+      .test-page:not([data-step="0"]):not([data-step="1"]):not([data-step="2"]):not([data-step="3"]) .test-workflow span:nth-child(4),
+      .test-page:not([data-step="0"]):not([data-step="1"]):not([data-step="2"]):not([data-step="3"]) .test-row:nth-child(4),
+      .test-page[data-step="5"] .test-workflow span:nth-child(5),
+      .test-page[data-step="5"] .test-row:nth-child(5) {
+        opacity: 1;
+        transform: translateY(0);
+      }
+
+      .test-row {
+        align-self: center;
+      }
+
+      .test-distance-definition {
+        margin: 0;
+        color: var(--site-blue-dark);
+        font-size: 20px;
+        font-weight: 720;
+        line-height: 1.38;
+        white-space: nowrap;
+      }
+
+      .test-distance-definition strong {
+        color: #e75480;
+      }
+
+      .test-card {
+        padding: 19px 21px;
+        border: 1px solid var(--line-strong);
+        border-radius: 14px;
+        background: #ffffff;
+      }
+
+      .test-card h3 {
+        margin: 0 0 12px;
+        color: var(--site-blue-dark);
+        font-size: 23px;
+      }
+
+      .test-card p {
+        margin: 8px 0;
+        color: var(--body);
+        font-size: 18px;
+        line-height: 1.38;
+      }
+
+      .test-hypotheses {
+        position: relative;
+        top: 10px;
+        padding: 0 0;
+        border: 0;
+        background: transparent;
+      }
+
+      .test-hypotheses p {
+        margin: 0 0 20px;
+        color: var(--site-blue-dark);
+        font-size: 20px;
+        line-height: 1.38;
+        white-space: nowrap;
+      }
+
+      .test-hypotheses strong {
+        color: #e75480;
+      }
+
+      .test-code-wrap {
+        display: flex;
+        align-items: center;
+        gap: 18px;
+        width: 100%;
+        padding: 0;
+        border: 0;
+        background: transparent;
+        margin: 0;
+      }
+
+      .test-code {
+        width: 660px;
+        margin: 0;
+        padding: 18px 20px;
+        border: 2px solid var(--site-blue-dark);
+        background: var(--paper);
+        color: var(--site-blue-dark);
+        font-family: var(--font-body);
+        font-size: 19px;
+        font-weight: 820;
+        line-height: 1.5;
+        white-space: pre;
+      }
+
+      .test-code a {
+        color: #e75480;
+        text-underline-offset: 3px;
+      }
+
+      .test-pvalue-definition {
+        width: 420px;
+        margin: 0;
+        color: var(--site-blue-dark);
+        font-size: 17px;
+        font-weight: 720;
+        line-height: 1.35;
+      }
+
+      .test-pvalue-definition strong {
+        color: #e75480;
+      }
+
+      .test-rule {
+        display: flex;
+        align-items: center;
+        justify-content: flex-start;
+        gap: 18px;
+      }
+
+      .test-rule p {
+        margin: 0;
+        width: 455px;
+        padding: 12px 15px;
+        border-radius: 11px;
+        font-size: 17px;
+        font-weight: 750;
+        line-height: 1.35;
+        text-align: center;
+      }
+
+      .test-rule p br + * {
+        white-space: nowrap;
+      }
+
+      .test-rule p {
+        white-space: nowrap;
+      }
+
+      .test-rule .reject {
+        background: #fdebe8;
+        color: #ba0505;
+      }
+
+      .test-rule .retain {
+        background: #e8f9fc;
+        color: #5bacc2;
+      }
+
+      .test-vs {
+        color: #2d558e;
+        font-size: 22px;
+        font-weight: 820;
+      }
+
+      .test-threshold {
+        width: 830px;
+        margin: 0;
+        padding: 10px 16px;
+        border-left: 4px solid #cb0a2a;
+        background: #fff3f5;
+        color: #cb0a2a;
+        font-size: 18px;
+        font-weight: 720;
+        line-height: 1.35;
+      }
+
+      .test-threshold strong {
+        font-size: 22px;
+      }
+    </style>
+  </head>
+  <body class="deck-page">
+    <template id="deckHeaderTemplate">
+      <span class="slide-section">
+        <a class="deck-home" href="../index.html" aria-label="Back to course home">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M3 11.5L12 4l9 7.5"></path>
+            <path d="M6.5 10.5V20h11v-9.5"></path>
+            <path d="M10 20v-5h4v5"></path>
+          </svg>
+        </a>
+        <span>SOES3042/6025 · Statistics</span>
+      </span>
+      <span class="slide-lecture-nav">
+        <span>Week 3 · Lecture 6</span>
+        <span class="lecture-jump" aria-label="Lecture navigation">
+          <a class="lecture-jump-link lecture-jump-prev" href="week3-l5.html" aria-label="Previous lecture" title="Previous lecture"></a>
+          <a class="lecture-jump-link lecture-jump-next" href="week3-l7.html" aria-label="Next lecture" title="Next lecture"></a>
+          <a class="lecture-jump-link lecture-jump-home" href="week3-l6.html?slide=1" aria-label="Restart this lecture" title="Restart this lecture"></a>
+        </span>
+      </span>
+    </template>
+
+    <div class="deck-viewport">
+      <main class="deck-stage" aria-live="polite">
+        <section class="slide active">
+          <header class="slide-kicker"></header>
+          <div class="slide-body title-layout">
+            <div class="title-lockup">
+              <h1>Lecture 6</h1>
+              <h2>Summary Statistics & Hypothesis Testing</h2>
+            </div>
+            <aside class="title-meta">
+              <p>1. <b>Visualise Data Distributions</b>: Histogram, Probability Density Function (PDF), and Cumulative Density Function (CDF)</p>
+              <p>2. <b>Summary Statistics</b>: Mean, Variance, Skewness, & Kurtosis</p>
+              <p>3. <b>Normal Distribution</b>: Central limit theorem | Standardise data</p>
+              <p>4. <b>Hypothesis Testing</b>: Testing if the data fits a normal distribution</p>
+            </aside>
+          </div>
+        </section>
+
+        <section class="slide">
+          <header class="slide-kicker"></header>
+          <div class="slide-body content-layout">
+            <h2 class="slide-title">Visualise Data Distributions</h2>
+            <div class="slide-content distribution-slide">
+              <figure class="daily-temperature-chart">
+                <svg id="dailyTemperatureTimeSeries" viewBox="0 0 1460 330" role="img" aria-label="Daily temperature near Southampton from 1973 to 2023"></svg>
+              </figure>
+              <span class="step-marker fragment" aria-hidden="true"></span>
+              <div class="distribution-panels">
+                <figure class="distribution-panel histogram-panel">
+                  <svg id="temperatureAnomalyHistogram" viewBox="0 0 460 250" role="img" aria-label="Histogram of daily temperature anomalies"></svg>
+                  <figcaption>
+                    <a class="histogram-doc-link" href="https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.hist.html" target="_blank" rel="noreferrer">plt.hist()</a>
+                  </figcaption>
+                </figure>
+                <figure class="distribution-panel pdf-panel">
+                  <svg id="temperatureAnomalyPdf" viewBox="0 0 460 250" role="img" aria-label="Probability density function of daily temperature anomalies"></svg>
+                  <figcaption class="pdf-note">Area under the PDF curve is 1.</figcaption>
+                </figure>
+                <figure class="distribution-panel cdf-panel">
+                  <svg id="temperatureAnomalyCdf" viewBox="0 0 460 250" role="img" aria-label="Cumulative distribution function of daily temperature anomalies"></svg>
+                  <figcaption class="cdf-note">CDF shows the probability that T' is less than or equal to a given value.</figcaption>
+                </figure>
+              </div>
+              <span class="step-marker fragment" aria-hidden="true"></span>
+              <span class="step-marker fragment" aria-hidden="true"></span>
+              <span class="step-marker fragment" aria-hidden="true"></span>
+            </div>
+          </div>
+        </section>
+
+        <section class="slide">
+          <header class="slide-kicker"></header>
+          <div class="slide-body content-layout">
+            <h2 class="slide-title">Summary Statistics</h2>
+            <p class="summary-lead" style="font-size:30px">Providing quick summaries for understanding your data at a glance.</p>
+            <div class="slide-content summary-slide">
+              <div class="summary-grid">
+                <article class="summary-card fragment" data-stat="mean">
+                  <div class="summary-copy">
+                    <h3>Mean</h3>
+                    <a class="summary-function" href="https://numpy.org/doc/stable/reference/generated/numpy.mean.html" target="_blank" rel="noreferrer">np.mean()</a>
+                    <p>The centre of your data.</p>
+                    <div class="summary-control">
+                      <label for="meanSlider">Move the centre</label>
+                      <input id="meanSlider" type="range" min="-3" max="3" step="0.1" value="0">
+                      <output id="meanValue">mean = 0.0</output>
+                    </div>
+                  </div>
+                  <div class="summary-chart"><svg viewBox="0 0 250 180" aria-label="Interactive mean distribution"></svg></div>
+                </article>
+
+                <article class="summary-card variance-card fragment" data-stat="variance">
+                  <button class="variance-flip" type="button" aria-label="Toggle standard deviation explanation">↻ Standard Deviation</button>
+                  <div class="variance-copy-wrap">
+                    <div class="summary-copy variance-face variance-front">
+                      <h3>Variance</h3>
+                      <a class="summary-function" href="https://numpy.org/doc/stable/reference/generated/numpy.var.html" target="_blank" rel="noreferrer">np.var()</a>
+                      <p>How spread out the values are around the mean.</p>
+                      <div class="summary-control">
+                        <label for="varianceSlider">Change the spread</label>
+                        <input id="varianceSlider" type="range" min="0.5" max="2.5" step="0.1" value="1">
+                        <output id="varianceValue">variance = 1.0</output>
+                      </div>
+                    </div>
+                    <div class="summary-copy variance-face variance-back" hidden>
+                      <h3>Standard Deviation (std) </h3>
+                      <a class="summary-function" href="https://numpy.org/doc/stable/reference/generated/numpy.std.html" target="_blank" rel="noreferrer">np.std()</a>
+                      <p><b>std = square root of variance</b></p>
+                      <p>std is easier to interpret because it has the same units as the original data.</p>
+                      <p class="std-example">variance = 4 °C² → std = 2 °C</p>
+                    </div>
+                  </div>
+                  <div class="summary-chart"><svg viewBox="0 0 250 180" aria-label="Interactive variance distribution"></svg></div>
+                </article>
+
+                <article class="summary-card fragment" data-stat="skewness">
+                  <div class="summary-copy">
+                    <h3>Skewness</h3>
+                    <a class="summary-function" href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.skew.html" target="_blank" rel="noreferrer">scipy.stats.skew()</a>
+                    <p>Whether the distribution has a longer tail on the left or right.</p>
+                    <div class="summary-control">
+                      <label for="skewnessSlider">Shift weight into a tail</label>
+                      <input id="skewnessSlider" type="range" min="-6" max="6" step="0.1" value="0">
+                      <output id="skewnessValue">skewness = 0.0</output>
+                    </div>
+                  </div>
+                  <div class="summary-chart"><svg viewBox="0 0 250 180" aria-label="Interactive skewness distribution"></svg></div>
+                </article>
+
+                <article class="summary-card fragment" data-stat="kurtosis">
+                  <div class="summary-copy">
+                    <h3>Kurtosis</h3>
+                    <a class="summary-function" href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.kurtosis.html" target="_blank" rel="noreferrer">scipy.stats.kurtosis()</a>
+                    <p>How strongly the distribution concentrates values in its centre and tails.</p>
+                    <div class="summary-control">
+                      <label for="kurtosisSlider">Change the tails</label>
+                      <input id="kurtosisSlider" type="range" min="-0.9" max="5.5" step="0.1" value="0">
+                      <output id="kurtosisValue">kurtosis = 0.00</output>
+                    </div>
+                  </div>
+                  <div class="summary-chart"><svg viewBox="0 0 250 180" aria-label="Interactive kurtosis distribution"></svg></div>
+                </article>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="slide gaussian-page">
+          <header class="slide-kicker"></header>
+          <div class="slide-body content-layout">
+            <h2 class="slide-title">Normal / Gaussian Distribution</h2>
+            <div class="slide-content gaussian-slide">
+              <figure class="gaussian-chart">
+                <svg id="gaussianChart" viewBox="0 0 980 430" role="img" aria-label="Interactive Normal distribution"></svg>
+              </figure>
+              <aside class="gaussian-panel">
+                <p>A <strong>symmetric, bell-shaped</strong> theoretical distribution.</p>
+                <p>It is defined by only two parameters:</p>
+                <div class="gaussian-control">
+                  <label for="gaussianMean">μ: mean, controlling the centre</label>
+                  <input id="gaussianMean" type="range" min="-2" max="2" step="0.1" value="0">
+                  <output id="gaussianMeanValue">μ = 0.0</output>
+                </div>
+                <div class="gaussian-control">
+                  <label for="gaussianStd">σ: standard deviation, controlling the spread</label>
+                  <input id="gaussianStd" type="range" min="0.6" max="1.8" step="0.1" value="1">
+                  <output id="gaussianStdValue">σ = 1.0</output>
+                </div>
+                <p>For a Normal distribution: <strong>skewness = 0</strong> and <strong>kurtosis = 0</strong>.</p>
+                <p class="gaussian-rule fragment" data-sigma-rule="1">Approximately <strong style = "color:#e75480">68%</strong> lies within μ ± 1σ.</p>
+                <p class="gaussian-rule fragment" data-sigma-rule="2">Approximately <strong style = "color:#e75480">95%</strong> lies within μ ± 2σ.</p>
+                <p class="gaussian-rule fragment" data-sigma-rule="3">Approximately <strong style = "color:#e75480">99.7%</strong> lies within μ ± 3σ.</p>
+                <div class="gaussian-formula fragment">
+                  <div class="gaussian-equation">
+                    <span>f(x) =</span>
+                    <span class="gaussian-fraction">
+                      <span>1</span>
+                      <span>σ<span class="gaussian-root">√<span class="gaussian-radicand">2π</span></span></span>
+                    </span>
+                    <span>exp</span>
+                    <span>[−</span>
+                    <span class="gaussian-fraction">
+                      <span>(x − μ)²</span>
+                      <span>2σ²</span>
+                    </span>
+                    <span>]</span>
+                  </div>
+                  <span class="gaussian-formula-note"><b>For reference only</b>: you do not need to calculate this by hand.</span>
+                </div>
+              </aside>
+            </div>
+          </div>
+        </section>
+
+        <section class="slide standardise-page">
+          <header class="slide-kicker"></header>
+          <div class="slide-body content-layout">
+            <h2 class="slide-title">Standardise Data</h2>
+            <div class="slide-content standardise-slide">
+              <aside class="standardise-explain">
+                <p>Different gaussian distributions can have different <strong>means</strong> and <strong>standard deviations</strong>.</p>
+                <p>Standardisation puts them onto the same scale:</p>
+                <div class="standardise-equation">
+                  <div class="standardise-formula-row">
+                    <span>Z =</span>
+                    <span class="gaussian-fraction">
+                      <span>X − mean</span>
+                      <span>std</span>
+                    </span>
+                  </div>
+                </div>
+                <p class="standardise-note">After standardisation: Z ~ N(0, 1).</p>
+                <p> This notion means the standardised variable Z follows a <b style="color:#e75480">standard normal distribution</b> with a mean of 0 and a standard deviation of 1.</p>
+              </aside>
+              <div class="standardise-visual">
+                <figure class="standardise-chart">
+                  <svg id="standardiseChart" viewBox="0 0 930 520" role="img" aria-label="Five Gaussian distributions becoming standardised"></svg>
+                </figure>
+                <button class="standardise-button" id="standardiseButton" type="button">Standardise</button>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="slide clt-page">
+          <header class="slide-kicker"></header>
+          <div class="slide-body content-layout">
+            <h2 class="slide-title">Central Limit Theorem (CLT)</h2>
+            <div class="slide-content clt-slide">
+              <div class="clt-intro">
+                <p>
+                  When many <strong>independent contributions</strong> from the same distribution are added or averaged, 
+                  which we call <strong>iid</strong>: (independent and identically distributed),
+                  their distribution tends towards a <strong>Normal distribution</strong>, even when the original data are not Normal.
+                </p>
+                <a class="clt-doc-link" href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.norm.html" target="_blank" rel="noreferrer">scipy.stats.norm.pdf()</a>
+              </div>
+              <div class="clt-callouts">
+                <span>Normal distributions emerge naturally from aggregation!</span>
+              </div>
+              <div class="clt-chart-grid">
+                <figure class="clt-card fragment">
+                  <svg id="cltDailyChart" viewBox="0 0 460 395" role="img" aria-label="Daily precipitation PDF and matching Normal PDF"></svg>
+                </figure>
+                <span class="step-marker fragment" aria-hidden="true"></span>
+                <figure class="clt-card fragment">
+                  <svg id="cltMonthlyChart" viewBox="0 0 460 395" role="img" aria-label="Monthly precipitation total PDF and matching Normal PDF"></svg>
+                </figure>
+                <figure class="clt-card fragment">
+                  <svg id="cltAnnualChart" viewBox="0 0 460 395" role="img" aria-label="Annual precipitation total PDF and matching Normal PDF"></svg>
+                </figure>
+              </div>
+              <div class="clt-legend">
+                <span class="observed">Observed PDF</span>
+                <span class="normal">Normal PDF with the same mean and variance</span>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="slide normality-page">
+          <header class="slide-kicker"></header>
+          <div class="slide-body content-layout">
+            <h2 class="slide-title">Does Annual Rainfall Follow a Normal Distribution?</h2>
+            <div class="slide-content normality-slide">
+              <div class="normality-grid">
+                <figure class="normality-card normality-pdf-card">
+                  <svg id="normalityPdfChart" viewBox="0 0 460 395" role="img" aria-label="Annual rainfall PDF becoming standardised"></svg>
+                </figure>
+                <span class="step-marker fragment" aria-hidden="true"></span>
+                <figure class="normality-card fragment">
+                  <svg id="normalityCdfChart" viewBox="0 0 460 395" role="img" aria-label="Observed and theoretical cumulative distribution functions"></svg>
+                </figure>
+              </div>
+              <span class="step-marker fragment" aria-hidden="true"></span>
+              <p class="normality-note">We can quantify the difference using the maximum distance between the empirical and theoretical CDFs. 
+                </p>
+              <button class="normality-flip" id="normalityFlip" type="button">↻ Show daily precipitation</button>
+            </div>
+          </div>
+        </section>
+
+        <section class="slide sampling-page">
+          <header class="slide-kicker"></header>
+          <div class="slide-body content-layout">
+            <h2 class="slide-title">Where Could That Distance Come From?</h2>
+            <div class="slide-content sampling-slide">
+              <div class="sampling-intro">
+                <p class="sampling-sources"><strong>1. A real mismatch:</strong> the data do not follow a Normal distribution.<br><strong>2. Randomness:</strong> even samples drawn from a Normal distribution do not look exactly identical.</p>
+                <p class="sampling-definition"><strong>Draw samples</strong> means generating random observations from a distribution. Values near high-density regions are more likely to be drawn.</p>
+              </div>
+              <div class="sampling-controls">
+                <label for="samplingSize">Sample size</label>
+                <input id="samplingSize" type="number" min="5" max="99999" step="1" value="50">
+                <button class="sampling-button" id="samplingDraw" type="button">Draw samples</button>
+                <button class="sampling-button" id="samplingDraw100" type="button">Draw 100 samples</button>
+                <button class="sampling-button" id="samplingReset" type="button">Reset</button>
+              </div>
+              <div class="sampling-grid">
+                <figure class="sampling-card sampling-pdf-card">
+                  <svg id="samplingPdfChart" viewBox="0 0 560 400" role="img" aria-label="Histogram of a random Normal sample and theoretical PDF"></svg>
+                  <div class="sampling-pdf-cover">
+                    <svg class="sampling-distance-chart" id="samplingDistanceChart" viewBox="0 0 560 400" role="img" aria-label="Null distribution of maximum CDF distances"></svg>
+                  </div>
+                </figure>
+                <figure class="sampling-card sampling-cdf-card">
+                  <svg id="samplingCdfChart" viewBox="0 0 560 400" role="img" aria-label="Accumulated empirical CDFs and theoretical Normal CDF"></svg>
+                  <div class="sampling-cdf-legend" aria-label="CDF comparison legend">
+                    <span><i style="border-color: #e75480"></i>Standardised daily rainfall</span>
+                    <span><i style="border-color: #f28e2b"></i>Standardised annual rainfall</span>
+                  </div>
+                </figure>
+              </div>
+              <div class="sampling-footer">
+                <a class="sampling-code-link" href="https://numpy.org/doc/stable/reference/random/generated/numpy.random.normal.html" target="_blank" rel="noopener">np.random.normal()</a>
+                <div class="sampling-draw-count" id="samplingDrawCount">No samples drawn yet.</div>
+              </div>
+              <span class="step-marker fragment" aria-hidden="true"></span>
+              <span class="step-marker fragment" aria-hidden="true"></span>
+              <span class="step-marker fragment" aria-hidden="true"></span>
+              <span class="step-marker fragment" aria-hidden="true"></span>
+              <span class="step-marker fragment" aria-hidden="true"></span>
+            </div>
+          </div>
+        </section>
+
+        <section class="slide test-page">
+          <header class="slide-kicker"></header>
+          <div class="slide-body content-layout">
+            <h2 class="slide-title">Hypothesis Testing: Lilliefors Test</h2>
+            <div class="slide-content test-slide">
+              <p class="test-lead">You have just completed a full hypothesis-testing workflow for Normality.</p>
+              <div class="test-workflow">
+                <span>1. Define H₀ and H₁</span>
+                <span>2. Define a distance</span>
+                <span>3. Simulate randomness</span>
+                <span>4. Set a threshold</span>
+                <span>5. Compare OBS data</span>
+              </div>
+              <div class="test-right">
+                <article class="test-card test-hypotheses test-row">
+                  <p><strong>Null hypothesis (H₀):</strong>the data follow a Normal distribution.</p>
+                  <p><strong>Alternative hypothesis (H₁):</strong>the data do not follow a Normal distribution.</p>
+                </article>
+                <p class="test-distance-definition test-row"><strong>D</strong> is the maximum distance between the empirical CDF of standardised data and the theoretical Normal CDF.</p>
+                <article class="test-card test-code-wrap test-row">
+                  <pre class="test-code"><code>from statsmodels.stats.diagnostic import <a href="https://www.statsmodels.org/stable/generated/statsmodels.stats.diagnostic.lilliefors.html" target="_blank" rel="noopener">lilliefors</a>
+D, p_value = lilliefors(data, dist="norm")</code></pre>
+                  <p class="test-pvalue-definition"><strong>p-value:</strong> if H₀ were true, the probability of obtaining a distance this large or more extreme.</p>
+                </article>
+                <p class="test-threshold test-row"><strong>Set significance level (α) = 0.05.</strong> <br>This is an arbitrary convention, not a truth or a golden standard.</p>
+                <div class="test-rule test-row">
+                  <p class="reject"><strong>p-value &lt; 0.05</strong><br>Reject H₀: the difference is statistically significant.</p>
+                  <strong class="test-vs">VS</strong>
+                  <p class="retain"><strong>p-value ≥ 0.05</strong><br>Do not reject H₀: the evidence is not strong enough.</p>
+                </div>
+              </div>
+              <span class="step-marker fragment" aria-hidden="true"></span>
+              <span class="step-marker fragment" aria-hidden="true"></span>
+              <span class="step-marker fragment" aria-hidden="true"></span>
+              <span class="step-marker fragment" aria-hidden="true"></span>
+              <span class="step-marker fragment" aria-hidden="true"></span>
+            </div>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <nav class="deck-controls" aria-label="Slide controls">
+      <button class="nav-button" id="prevSlide" type="button" aria-label="Previous slide">‹</button>
+      <div class="dot-rail" aria-label="Slide map"></div>
+      <button class="nav-button" id="skipSteps" type="button" aria-label="Reveal all steps on this slide">»</button>
+      <button class="nav-button" id="nextSlide" type="button" aria-label="Next slide">›</button>
+    </nav>
+    <div class="deck-status" aria-live="polite"></div>
+
+    <script src="../assets/js/deck.js"></script>
+    <script>
+      window.addEventListener("DOMContentLoaded", async () => {
+        const svg = document.getElementById("dailyTemperatureTimeSeries");
+        if (!svg) return;
+
+        const ns = "http://www.w3.org/2000/svg";
+        const make = (name, attributes = {}, text = "") => {
+          const node = document.createElementNS(ns, name);
+          Object.entries(attributes).forEach(([key, value]) => node.setAttribute(key, value));
+          node.textContent = text;
+          return node;
+        };
+        try {
+          const response = await fetch("../data/BOURNEMOUTH.csv");
+          if (!response.ok) throw new Error(`HTTP ${response.status}`);
+          const parseCsvRow = (line) => {
+            const columns = [];
+            const pattern = /(?:^|,)(?:"([^"]*)"|([^",]*))/g;
+            let match;
+            while ((match = pattern.exec(line)) !== null) columns.push(match[1] ?? match[2]);
+            return columns;
+          };
+          const lines = (await response.text()).trim().split(/\r?\n/);
+          const headers = parseCsvRow(lines.shift());
+          const dateIndex = headers.indexOf("DATE");
+          const temperatureIndex = headers.indexOf("TAVG");
+          const rows = lines.map((line) => {
+            const columns = parseCsvRow(line);
+            return {
+              date: new Date(`${columns[dateIndex]}T00:00:00`),
+              temperatureC: (Number(columns[temperatureIndex]) - 32) * 5 / 9,
+            };
+          });
+
+          const width = 1460;
+          const height = 280;
+          const margin = { top: 46, right: 24, bottom: 46, left: 70 };
+          const plotWidth = width - margin.left - margin.right;
+          const plotHeight = height - margin.top - margin.bottom;
+          const minTime = rows[0].date.getTime();
+          const maxTime = rows[rows.length - 1].date.getTime();
+          const yMin = -10;
+          const yMax = 30;
+          const x = (date) => margin.left + ((date.getTime() - minTime) / (maxTime - minTime)) * plotWidth;
+          const y = (value) => margin.top + (1 - (value - yMin) / (yMax - yMin)) * plotHeight;
+          const dailyValues = new Map();
+          rows.forEach((row) => {
+            const key = row.date.toISOString().slice(5, 10);
+            const values = dailyValues.get(key) ?? [];
+            values.push(row.temperatureC);
+            dailyValues.set(key, values);
+          });
+          const dailyClimatology = new Map(
+            Array.from(dailyValues, ([key, values]) => [
+              key,
+              values.reduce((sum, value) => sum + value, 0) / values.length,
+            ]),
+          );
+          rows.forEach((row) => {
+            row.anomalyC = row.temperatureC - dailyClimatology.get(row.date.toISOString().slice(5, 10));
+          });
+          const anomalyBound = 12.5;
+          const yAnomaly = (value) => margin.top + (1 - (value + anomalyBound) / (2 * anomalyBound)) * plotHeight;
+
+          const yTicks = [-10, -5, 0, 5, 10, 15, 20, 25, 30];
+          yTicks.forEach((tick) => {
+            svg.append(make("line", { x1: margin.left, y1: y(tick), x2: width - margin.right, y2: y(tick), class: "daily-temperature-grid" }));
+            svg.append(make("text", { x: 30, y: y(tick) + 5, class: "daily-temperature-tick" }, String(tick)));
+          });
+
+          [1980, 1990, 2000, 2010, 2020].forEach((year) => {
+            const xPos = x(new Date(`${year}-01-01T00:00:00`));
+            svg.append(make("line", { x1: xPos, y1: margin.top, x2: xPos, y2: height - margin.bottom, class: "daily-temperature-grid" }));
+            svg.append(make("text", { x: xPos - 18, y: height - 24, class: "daily-temperature-tick" }, String(year)));
+          });
+
+          svg.append(
+            make("line", { x1: margin.left, y1: margin.top, x2: margin.left, y2: height - margin.bottom, class: "daily-temperature-axis" }),
+            make("line", { x1: margin.left, y1: height - margin.bottom, x2: width - margin.right, y2: height - margin.bottom, class: "daily-temperature-axis" }),
+          );
+
+          const path = rows.map((row, index) => `${index === 0 ? "M" : "L"}${x(row.date).toFixed(1)} ${y(row.temperatureC).toFixed(1)}`).join(" ");
+          svg.append(make("path", { d: path, class: "daily-temperature-line" }));
+          svg.append(
+            make("text", { x: width / 2, y: 28, class: "daily-temperature-title" }, "Daily temperature near Southampton"),
+            make("text", { x: width / 2 - 18, y: height - 2, class: "daily-temperature-label" }, ""),
+            make("text", { x: 76, y: 244, class: "daily-temperature-label", transform: "rotate(-90 16 244)" }, "T (°C)"),
+          );
+
+          const anomalyLayer = make("g", { class: "daily-temperature-anomaly-layer" });
+          anomalyLayer.append(make("rect", { x: 0, y: 0, width, height, class: "daily-temperature-anomaly-background" }));
+          [-anomalyBound, 0, anomalyBound].forEach((tick) => {
+            anomalyLayer.append(make("line", {
+              x1: margin.left,
+              y1: yAnomaly(tick),
+              x2: width - margin.right,
+              y2: yAnomaly(tick),
+              class: tick === 0 ? "daily-temperature-zero" : "daily-temperature-grid",
+            }));
+            anomalyLayer.append(make("text", { x: 30, y: yAnomaly(tick) + 5, class: "daily-temperature-tick" }, String(tick)));
+          });
+          [1980, 1990, 2000, 2010, 2020].forEach((year) => {
+            const xPos = x(new Date(`${year}-01-01T00:00:00`));
+            anomalyLayer.append(make("line", { x1: xPos, y1: margin.top, x2: xPos, y2: height - margin.bottom, class: "daily-temperature-grid" }));
+            anomalyLayer.append(make("text", { x: xPos - 18, y: height - 24, class: "daily-temperature-tick" }, String(year)));
+          });
+          anomalyLayer.append(
+            make("line", { x1: margin.left, y1: margin.top, x2: margin.left, y2: height - margin.bottom, class: "daily-temperature-axis" }),
+            make("line", { x1: margin.left, y1: height - margin.bottom, x2: width - margin.right, y2: height - margin.bottom, class: "daily-temperature-axis" }),
+          );
+          const anomalyPath = rows.map((row, index) => `${index === 0 ? "M" : "L"}${x(row.date).toFixed(1)} ${yAnomaly(row.anomalyC).toFixed(1)}`).join(" ");
+          anomalyLayer.append(
+            make("path", { d: anomalyPath, class: "daily-temperature-line" }),
+            make("text", { x: width / 2, y: 28, class: "daily-temperature-title" }, "Daily temperature anomalies near Southampton"),
+            make("text", { x: width / 2 - 18, y: height - 2, class: "daily-temperature-label" }, ""),
+            make("text", { x: 76, y: 244, class: "daily-temperature-label", transform: "rotate(-90 16 244)" }, "T' (°C)"),
+          );
+          svg.append(anomalyLayer);
+
+          const histogramSvg = document.getElementById("temperatureAnomalyHistogram");
+          const histogramWidth = 460;
+          const histogramHeight = 250;
+          const histogramMargin = { top: 36, right: 36, bottom: 42, left: 72 };
+          const histogramPlotWidth = histogramWidth - histogramMargin.left - histogramMargin.right;
+          const histogramPlotHeight = histogramHeight - histogramMargin.top - histogramMargin.bottom;
+          // Histogram bin edges: -15:1:15
+          const histogramMin = -10;
+          const histogramMax = 10;
+          const histogramBinWidth = 1;
+          const binCount = (histogramMax - histogramMin) / histogramBinWidth;
+          const finalCounts = Array(binCount).fill(0);
+          const binFor = (value) => {
+            if (value < histogramMin || value > histogramMax) return -1;
+            return Math.min(binCount - 1, Math.floor((value - histogramMin) / histogramBinWidth));
+          };
+          rows.forEach((row) => {
+            const bin = binFor(row.anomalyC);
+            if (bin >= 0) finalCounts[bin] += 1;
+          });
+          const histogramYMax = Math.ceil(Math.max(...finalCounts) / 500) * 500;
+          const histogramX = (index) => histogramMargin.left + index * histogramPlotWidth / binCount;
+          const histogramY = (value) => histogramMargin.top + (1 - value / histogramYMax) * histogramPlotHeight;
+          const histogramBars = [];
+
+          const histogramPlotCenterX = histogramMargin.left + histogramPlotWidth / 2;
+          const histogramPlotCenterY = histogramMargin.top + histogramPlotHeight / 2;
+          histogramSvg.append(make("text", { x: histogramPlotCenterX, y: 20, class: "histogram-title" }, "histogram"));
+          [0, histogramYMax / 2, histogramYMax].forEach((tick) => {
+            histogramSvg.append(
+              make("line", { x1: histogramMargin.left, y1: histogramY(tick), x2: histogramWidth - histogramMargin.right, y2: histogramY(tick), class: "histogram-grid" }),
+              make("text", { x: histogramMargin.left - 8, y: histogramY(tick) + 4, class: "histogram-tick", "text-anchor": "end" }, String(tick)),
+            );
+          });
+          [histogramMin, 0, histogramMax].forEach((tick) => {
+            const xPos = histogramMargin.left + (tick - histogramMin) / (histogramMax - histogramMin) * histogramPlotWidth;
+            histogramSvg.append(make("text", { x: xPos, y: histogramHeight - histogramMargin.bottom + 20, class: "histogram-tick", "text-anchor": "middle" }, String(tick)));
+          });
+          histogramSvg.append(
+            make("line", { x1: histogramMargin.left, y1: histogramMargin.top, x2: histogramMargin.left, y2: histogramHeight - histogramMargin.bottom, class: "histogram-axis" }),
+            make("line", { x1: histogramMargin.left, y1: histogramHeight - histogramMargin.bottom, x2: histogramWidth - histogramMargin.right, y2: histogramHeight - histogramMargin.bottom, class: "histogram-axis" }),
+            make("text", { x: 16, y: histogramPlotCenterY, class: "histogram-label", transform: `rotate(-90 16 ${histogramPlotCenterY})`, "text-anchor": "middle" }, "count"),
+            make("text", { x: histogramPlotCenterX, y: histogramHeight - 2, class: "histogram-label", "text-anchor": "middle" }, "T' (°C)"),
+          );
+          for (let index = 0; index < binCount; index += 1) {
+            const bar = make("rect", {
+              x: histogramX(index) + 1,
+              y: histogramY(0),
+              width: histogramPlotWidth / binCount - 2,
+              height: 0,
+              class: "histogram-bar",
+            });
+            histogramSvg.append(bar);
+            histogramBars.push(bar);
+          }
+          const histogramDrop = make("circle", { r: 3.8, class: "histogram-drop" });
+          histogramSvg.append(histogramDrop);
+
+          const histogramSlide = histogramSvg.closest(".slide");
+          let histogramFrame = null;
+          let histogramPlayed = false;
+          const resetHistogram = () => {
+            if (histogramFrame) cancelAnimationFrame(histogramFrame);
+            histogramFrame = null;
+            histogramPlayed = false;
+            histogramDrop.style.opacity = "0";
+            histogramBars.forEach((bar) => {
+              bar.setAttribute("y", histogramY(0));
+              bar.setAttribute("height", 0);
+            });
+          };
+          const animateHistogram = () => {
+            if (histogramPlayed) return;
+            histogramPlayed = true;
+            const visibleCounts = Array(binCount).fill(0);
+            let processed = 0;
+            const start = performance.now();
+            const duration = 2000;
+            const draw = (now) => {
+              const progress = Math.min(1, (now - start) / duration);
+              const target = Math.min(rows.length, Math.floor(rows.length * progress ** 3));
+              while (processed < target) {
+                const bin = binFor(rows[processed].anomalyC);
+                if (bin >= 0) visibleCounts[bin] += 1;
+                processed += 1;
+              }
+              histogramBars.forEach((bar, index) => {
+                const top = histogramY(visibleCounts[index]);
+                bar.setAttribute("y", top);
+                bar.setAttribute("height", histogramHeight - histogramMargin.bottom - top);
+              });
+              const activeRow = rows[Math.max(0, processed - 1)];
+              const activeBin = binFor(activeRow.anomalyC);
+              if (activeBin >= 0) {
+                const activeTop = histogramY(visibleCounts[activeBin]);
+                const fall = (progress * 26) % 1;
+                histogramDrop.setAttribute("cx", histogramX(activeBin) + histogramPlotWidth / binCount / 2);
+                histogramDrop.setAttribute("cy", histogramMargin.top + fall * Math.max(0, activeTop - histogramMargin.top));
+                histogramDrop.style.opacity = progress < 1 ? "1" : "0";
+              } else {
+                histogramDrop.style.opacity = "0";
+              }
+              if (progress < 1) histogramFrame = requestAnimationFrame(draw);
+            };
+            histogramFrame = requestAnimationFrame(draw);
+          };
+          const syncHistogram = () => {
+            if (Number(histogramSlide.dataset.step) >= 2) animateHistogram();
+            else resetHistogram();
+          };
+          new MutationObserver(syncHistogram).observe(histogramSlide, { attributes: true, attributeFilter: ["data-step"] });
+          syncHistogram();
+
+          const pdfSvg = document.getElementById("temperatureAnomalyPdf");
+          const includedCount = finalCounts.reduce((sum, count) => sum + count, 0);
+          const densities = finalCounts.map((count) => count / (includedCount * histogramBinWidth));
+          // PDF y-axis limit: adjust this value manually as needed.
+          const pdfYMax = 0.15;
+          const pdfFlatY = (value) => histogramY(value);
+          const pdfY = (value) => histogramMargin.top + (1 - value / pdfYMax) * histogramPlotHeight;
+          const pdfStartOffset = -(histogramWidth + 28);
+          const pdfMovingLayer = make("g", { class: "pdf-moving-layer" });
+          const pdfCountAxis = make("g");
+          const pdfDensityAxis = make("g");
+          const pdfDensityTicks = [];
+          const pdfBars = [];
+          const pdfTitle = make("text", { x: histogramPlotCenterX, y: 20, class: "histogram-title" }, "probability density function");
+          pdfTitle.style.opacity = "0";
+
+          [0, histogramYMax / 2, histogramYMax].forEach((tick) => {
+            pdfCountAxis.append(
+              make("line", { x1: histogramMargin.left, y1: histogramY(tick), x2: histogramWidth - histogramMargin.right, y2: histogramY(tick), class: "histogram-grid" }),
+              make("text", { x: histogramMargin.left - 8, y: histogramY(tick) + 4, class: "histogram-tick", "text-anchor": "end" }, String(tick)),
+            );
+          });
+          pdfCountAxis.append(make("text", { x: 16, y: histogramPlotCenterY, class: "histogram-label", transform: `rotate(-90 16 ${histogramPlotCenterY})`, "text-anchor": "middle" }, "count"));
+
+          [0, pdfYMax / 2, pdfYMax].forEach((tick) => {
+            const line = make("line", { x1: histogramMargin.left, y1: pdfFlatY(tick), x2: histogramWidth - histogramMargin.right, y2: pdfFlatY(tick), class: "histogram-grid" });
+            const label = make("text", { x: histogramMargin.left - 8, y: pdfFlatY(tick) + 4, class: "histogram-tick", "text-anchor": "end" }, tick.toFixed(2));
+            pdfDensityAxis.append(
+              line,
+              label,
+            );
+            pdfDensityTicks.push({ tick, line, label });
+          });
+          pdfDensityAxis.append(make("text", { x: 16, y: histogramPlotCenterY, class: "histogram-label", transform: `rotate(-90 16 ${histogramPlotCenterY})`, "text-anchor": "middle" }, "pdf"));
+          pdfDensityAxis.style.opacity = "0";
+
+          [histogramMin, 0, histogramMax].forEach((tick) => {
+            const xPos = histogramMargin.left + (tick - histogramMin) / (histogramMax - histogramMin) * histogramPlotWidth;
+            pdfMovingLayer.append(make("text", { x: xPos, y: histogramHeight - histogramMargin.bottom + 20, class: "histogram-tick", "text-anchor": "middle" }, String(tick)));
+          });
+          pdfMovingLayer.append(
+            pdfCountAxis,
+            pdfDensityAxis,
+            make("line", { x1: histogramMargin.left, y1: histogramMargin.top, x2: histogramMargin.left, y2: histogramHeight - histogramMargin.bottom, class: "histogram-axis" }),
+            make("line", { x1: histogramMargin.left, y1: histogramHeight - histogramMargin.bottom, x2: histogramWidth - histogramMargin.right, y2: histogramHeight - histogramMargin.bottom, class: "histogram-axis" }),
+            make("text", { x: histogramPlotCenterX, y: histogramHeight - 2, class: "histogram-label", "text-anchor": "middle" }, "T' (°C)"),
+          );
+          finalCounts.forEach((count, index) => {
+            const top = histogramY(count);
+            const bar = make("rect", {
+              x: histogramX(index) + 1,
+              y: top,
+              width: histogramPlotWidth / binCount - 2,
+              height: histogramHeight - histogramMargin.bottom - top,
+              class: "histogram-bar",
+            });
+            pdfMovingLayer.append(bar);
+            pdfBars.push(bar);
+          });
+          pdfSvg.append(pdfMovingLayer, pdfTitle);
+
+          let pdfFrame = null;
+          let pdfPlayed = false;
+          const resetPdf = () => {
+            if (pdfFrame) cancelAnimationFrame(pdfFrame);
+            pdfFrame = null;
+            pdfPlayed = false;
+            pdfMovingLayer.setAttribute("transform", `translate(${pdfStartOffset} 0)`);
+            pdfCountAxis.style.opacity = "1";
+            pdfDensityAxis.style.opacity = "0";
+            pdfTitle.style.opacity = "0";
+            pdfDensityTicks.forEach(({ tick, line, label }) => {
+              const flatY = pdfFlatY(tick);
+              line.setAttribute("y1", flatY);
+              line.setAttribute("y2", flatY);
+              label.setAttribute("y", flatY + 4);
+            });
+            pdfBars.forEach((bar, index) => {
+              const top = histogramY(finalCounts[index]);
+              bar.setAttribute("y", top);
+              bar.setAttribute("height", histogramHeight - histogramMargin.bottom - top);
+            });
+          };
+          const animatePdf = () => {
+            if (pdfPlayed) return;
+            pdfPlayed = true;
+            const start = performance.now();
+            const moveDuration = 700;
+            const flattenDuration = 900;
+            const stretchDuration = 1100;
+            const draw = (now) => {
+              const elapsed = now - start;
+              if (elapsed < moveDuration) {
+                const progress = elapsed / moveDuration;
+                const eased = 1 - (1 - progress) ** 3;
+                pdfMovingLayer.setAttribute("transform", `translate(${pdfStartOffset * (1 - eased)} 0)`);
+              } else if (elapsed < moveDuration + flattenDuration) {
+                pdfMovingLayer.setAttribute("transform", "translate(0 0)");
+                const progress = (elapsed - moveDuration) / flattenDuration;
+                const eased = 1 - (1 - progress) ** 3;
+                pdfTitle.style.opacity = String(eased);
+                pdfBars.forEach((bar, index) => {
+                  const startTop = histogramY(finalCounts[index]);
+                  const endTop = pdfFlatY(densities[index]);
+                  const top = startTop + (endTop - startTop) * eased;
+                  bar.setAttribute("y", top);
+                  bar.setAttribute("height", histogramHeight - histogramMargin.bottom - top);
+                });
+              } else {
+                const progress = Math.min(1, (elapsed - moveDuration - flattenDuration) / stretchDuration);
+                const eased = 1 - (1 - progress) ** 3;
+                pdfCountAxis.style.opacity = String(1 - eased);
+                pdfDensityAxis.style.opacity = String(eased);
+                pdfTitle.style.opacity = "1";
+                pdfDensityTicks.forEach(({ tick, line, label }) => {
+                  const startY = pdfFlatY(tick);
+                  const endY = pdfY(tick);
+                  const tickY = startY + (endY - startY) * eased;
+                  line.setAttribute("y1", tickY);
+                  line.setAttribute("y2", tickY);
+                  label.setAttribute("y", tickY + 4);
+                });
+                pdfBars.forEach((bar, index) => {
+                  const startTop = pdfFlatY(densities[index]);
+                  const endTop = pdfY(densities[index]);
+                  const top = startTop + (endTop - startTop) * eased;
+                  bar.setAttribute("y", top);
+                  bar.setAttribute("height", histogramHeight - histogramMargin.bottom - top);
+                });
+              }
+              if (elapsed < moveDuration + flattenDuration + stretchDuration) pdfFrame = requestAnimationFrame(draw);
+            };
+            pdfFrame = requestAnimationFrame(draw);
+          };
+          const syncPdf = () => {
+            if (Number(histogramSlide.dataset.step) >= 3) animatePdf();
+            else resetPdf();
+          };
+          new MutationObserver(syncPdf).observe(histogramSlide, { attributes: true, attributeFilter: ["data-step"] });
+          syncPdf();
+
+          const cdfSvg = document.getElementById("temperatureAnomalyCdf");
+          const cdfValues = [];
+          densities.reduce((sum, density) => {
+            const cumulative = sum + density * histogramBinWidth;
+            cdfValues.push(cumulative);
+            return cumulative;
+          }, 0);
+          const cdfY = (value) => histogramMargin.top + (1 - value) * histogramPlotHeight;
+          const cdfBars = [];
+          const cdfHitAreas = [];
+          let cdfFrame = null;
+          let cdfPlayed = false;
+
+          const highlightPdfThrough = (endIndex) => {
+            pdfBars.forEach((bar, index) => {
+              bar.classList.toggle("pdf-bar-highlight", index <= endIndex);
+            });
+          };
+          const clearPdfHighlight = () => highlightPdfThrough(-1);
+
+          cdfSvg.append(make("text", { x: histogramPlotCenterX, y: 20, class: "histogram-title" }, "cumulative distribution function"));
+          [0, 0.5, 1].forEach((tick) => {
+            cdfSvg.append(
+              make("line", { x1: histogramMargin.left, y1: cdfY(tick), x2: histogramWidth - histogramMargin.right, y2: cdfY(tick), class: "histogram-grid" }),
+              make("text", { x: histogramMargin.left - 8, y: cdfY(tick) + 4, class: "histogram-tick", "text-anchor": "end" }, tick.toFixed(1)),
+            );
+          });
+          [histogramMin, 0, histogramMax].forEach((tick) => {
+            const xPos = histogramMargin.left + (tick - histogramMin) / (histogramMax - histogramMin) * histogramPlotWidth;
+            cdfSvg.append(make("text", { x: xPos, y: histogramHeight - histogramMargin.bottom + 20, class: "histogram-tick", "text-anchor": "middle" }, String(tick)));
+          });
+          cdfSvg.append(
+            make("line", { x1: histogramMargin.left, y1: histogramMargin.top, x2: histogramMargin.left, y2: histogramHeight - histogramMargin.bottom, class: "histogram-axis" }),
+            make("line", { x1: histogramMargin.left, y1: histogramHeight - histogramMargin.bottom, x2: histogramWidth - histogramMargin.right, y2: histogramHeight - histogramMargin.bottom, class: "histogram-axis" }),
+            make("text", { x: 16, y: histogramPlotCenterY, class: "histogram-label", transform: `rotate(-90 16 ${histogramPlotCenterY})`, "text-anchor": "middle" }, "cdf"),
+            make("text", { x: histogramPlotCenterX, y: histogramHeight - 2, class: "histogram-label", "text-anchor": "middle" }, "T' (°C)"),
+          );
+          cdfValues.forEach((value, index) => {
+            const bar = make("rect", {
+              x: histogramX(index) + 1,
+              y: cdfY(0),
+              width: histogramPlotWidth / binCount - 2,
+              height: 0,
+              class: "histogram-bar",
+            });
+            const hitArea = make("rect", {
+              x: histogramX(index),
+              y: histogramMargin.top,
+              width: histogramPlotWidth / binCount,
+              height: histogramPlotHeight,
+              class: "cdf-hit-area",
+            });
+            hitArea.addEventListener("pointerenter", () => {
+              if (cdfPlayed && !cdfFrame) {
+                cdfBars[index].classList.add("cdf-bar-highlight");
+                highlightPdfThrough(index);
+              }
+            });
+            hitArea.addEventListener("pointerleave", () => {
+              if (cdfPlayed && !cdfFrame) {
+                cdfBars[index].classList.remove("cdf-bar-highlight");
+                clearPdfHighlight();
+              }
+            });
+            cdfSvg.append(bar);
+            cdfBars.push(bar);
+            cdfHitAreas.push(hitArea);
+          });
+          cdfSvg.append(...cdfHitAreas);
+
+          const resetCdf = () => {
+            if (cdfFrame) cancelAnimationFrame(cdfFrame);
+            cdfFrame = null;
+            cdfPlayed = false;
+            clearPdfHighlight();
+            cdfBars.forEach((bar) => {
+              bar.setAttribute("y", cdfY(0));
+              bar.setAttribute("height", 0);
+            });
+          };
+          const animateCdf = () => {
+            if (cdfPlayed) return;
+            cdfPlayed = true;
+            let index = 0;
+            const duration = 1250;
+            const start = performance.now();
+            const draw = (now) => {
+              const progress = Math.min(1, (now - start) / duration);
+              const target = Math.min(binCount, Math.ceil(progress * binCount));
+              while (index < target) {
+                const top = cdfY(cdfValues[index]);
+                cdfBars[index].setAttribute("y", top);
+                cdfBars[index].setAttribute("height", histogramHeight - histogramMargin.bottom - top);
+                index += 1;
+              }
+              highlightPdfThrough(Math.max(0, target - 1));
+              if (progress < 1) {
+                cdfFrame = requestAnimationFrame(draw);
+              } else {
+                cdfFrame = null;
+              }
+            };
+            cdfFrame = requestAnimationFrame(draw);
+          };
+          const syncCdf = () => {
+            if (Number(histogramSlide.dataset.step) >= 4) animateCdf();
+            else resetCdf();
+          };
+          new MutationObserver(syncCdf).observe(histogramSlide, { attributes: true, attributeFilter: ["data-step"] });
+          syncCdf();
+
+          const marker = make("circle", { r: 5, class: "daily-temperature-hover-dot", visibility: "hidden" });
+          const tooltip = make("g", { class: "daily-temperature-tooltip", visibility: "hidden" });
+          const tooltipBox = make("rect", { width: 136, height: 48, rx: 6, ry: 6 });
+          const dateText = make("text", { x: 10, y: 20 });
+          const temperatureText = make("text", { x: 10, y: 39 });
+          tooltip.append(tooltipBox, dateText, temperatureText);
+
+          const hitArea = make("rect", {
+            x: margin.left,
+            y: margin.top,
+            width: plotWidth,
+            height: plotHeight,
+            class: "daily-temperature-hit-area",
+          });
+          hitArea.addEventListener("pointermove", (event) => {
+            const point = svg.createSVGPoint();
+            point.x = event.clientX;
+            point.y = event.clientY;
+            const cursor = point.matrixTransform(svg.getScreenCTM().inverse());
+            const ratio = Math.max(0, Math.min(1, (cursor.x - margin.left) / plotWidth));
+            const index = Math.round(ratio * (rows.length - 1));
+            const row = rows[index];
+            const showAnomaly = Number(svg.closest(".slide").dataset.step) >= 1;
+            const value = showAnomaly ? row.anomalyC : row.temperatureC;
+            const pointX = x(row.date);
+            const pointY = showAnomaly ? yAnomaly(value) : y(value);
+            marker.setAttribute("cx", pointX);
+            marker.setAttribute("cy", pointY);
+            marker.setAttribute("visibility", "visible");
+            dateText.textContent = row.date.toISOString().slice(0, 10);
+            temperatureText.textContent = `${value.toFixed(1)} °C`;
+            tooltip.setAttribute("transform", `translate(${Math.min(pointX + 10, width - 150)}, ${Math.max(pointY - 58, 8)})`);
+            tooltip.setAttribute("visibility", "visible");
+          });
+          hitArea.addEventListener("pointerleave", () => {
+            marker.setAttribute("visibility", "hidden");
+            tooltip.setAttribute("visibility", "hidden");
+          });
+          svg.append(marker, tooltip, hitArea);
+        } catch (error) {
+          svg.append(make("text", { x: 30, y: 80, class: "daily-temperature-error" }, `Unable to load temperature data: ${error.message}`));
+        }
+      });
+    </script>
+    <script>
+      window.addEventListener("DOMContentLoaded", () => {
+        const ns = "http://www.w3.org/2000/svg";
+        const make = (name, attributes = {}, text = "") => {
+          const node = document.createElementNS(ns, name);
+          Object.entries(attributes).forEach(([key, value]) => node.setAttribute(key, value));
+          node.textContent = text;
+          return node;
+        };
+        const normal = (x, mean = 0, sigma = 1) => Math.exp(-0.5 * ((x - mean) / sigma) ** 2) / sigma;
+        const erf = (x) => {
+          const sign = Math.sign(x);
+          const value = Math.abs(x);
+          const t = 1 / (1 + 0.3275911 * value);
+          const polynomial = (((((1.061405429 * t - 1.453152027) * t) + 1.421413741) * t - 0.284496736) * t + 0.254829592) * t;
+          return sign * (1 - polynomial * Math.exp(-value * value));
+        };
+        const normalCdf = (x) => 0.5 * (1 + erf(x / Math.sqrt(2)));
+        const skewNormal = (x, shape) => 2 * normal(x, 0, 1) * normalCdf(shape * x);
+        const skewNormalMode = (shape) => {
+          let mode = 0;
+          let peak = -Infinity;
+          for (let index = 0; index <= 240; index += 1) {
+            const x = -3 + index * 0.025;
+            const density = skewNormal(x, shape);
+            if (density > peak) {
+              peak = density;
+              mode = x;
+            }
+          }
+          return mode;
+        };
+        const skewNormalProfile = (shape) => {
+          const mode = skewNormalMode(shape);
+          const normalPeak = normal(0, 0, 1);
+          const peak = skewNormal(mode, shape);
+          return {
+            mode,
+            scale: peak / normalPeak,
+          };
+        };
+        const logGamma = (value) => {
+          const coefficients = [
+            676.5203681218851, -1259.1392167224028, 771.3234287776531,
+            -176.6150291621406, 12.507343278686905, -0.13857109526572012,
+            9.984369578019572e-6, 1.5056327351493116e-7,
+          ];
+          if (value < 0.5) return Math.log(Math.PI) - Math.log(Math.sin(Math.PI * value)) - logGamma(1 - value);
+          let x = 0.9999999999998099;
+          const shifted = value - 1;
+          coefficients.forEach((coefficient, index) => {
+            x += coefficient / (shifted + index + 1);
+          });
+          const t = shifted + coefficients.length - 0.5;
+          return 0.5 * Math.log(2 * Math.PI) + (shifted + 0.5) * Math.log(t) - t + Math.log(x);
+        };
+        const gamma = (value) => Math.exp(logGamma(value));
+        const pearsonKurtosis = (beta) => gamma(5 / beta) * gamma(1 / beta) / gamma(3 / beta) ** 2;
+        const betaForKurtosis = (target) => {
+          let low = 0.8;
+          let high = 5;
+          for (let iteration = 0; iteration < 28; iteration += 1) {
+            const midpoint = (low + high) / 2;
+            if (pearsonKurtosis(midpoint) > target) low = midpoint;
+            else high = midpoint;
+          }
+          return (low + high) / 2;
+        };
+        const cards = document.querySelectorAll(".summary-card");
+
+        cards.forEach((card) => {
+          const stat = card.dataset.stat;
+          const slider = card.querySelector("input");
+          const output = card.querySelector("output");
+          const svg = card.querySelector("svg");
+          const width = 250;
+          const height = 180;
+          const margin = { top: 16, right: 8, bottom: 28, left: 14 };
+          const plotWidth = width - margin.left - margin.right;
+          const plotHeight = height - margin.top - margin.bottom;
+          const xScale = (x) => margin.left + (x + 6) / 12 * plotWidth;
+          const yScale = (y) => height - margin.bottom - y / 1.35 * plotHeight;
+          const curve = make("path", { class: "summary-curve" });
+          const reference = make("line", { class: "summary-reference" });
+
+          svg.append(
+            make("line", { x1: margin.left, y1: height - margin.bottom, x2: width - margin.right, y2: height - margin.bottom, class: "summary-axis" }),
+            reference,
+            curve,
+            make("text", { x: width - 24, y: height - 8, class: "summary-chart-label" }, "x"),
+          );
+
+          const density = (x, value, skewProfile = { mode: 0, scale: 1 }, kurtosisBeta = 2) => {
+            if (stat === "mean") return normal(x, value, 1);
+            if (stat === "variance") return normal(x, 0, Math.sqrt(value));
+            if (stat === "skewness") {
+              return skewNormal(x / skewProfile.scale + skewProfile.mode, value) / skewProfile.scale;
+            }
+            const beta = kurtosisBeta;
+            const alpha = Math.sqrt(gamma(1 / beta) / gamma(3 / beta));
+            return beta / (2 * alpha * gamma(1 / beta)) * Math.exp(-(Math.abs(x / alpha) ** beta));
+          };
+
+          const update = () => {
+            const value = Number(slider.value);
+            const skewProfile = stat === "skewness" ? skewNormalProfile(value) : { mode: 0, scale: 1 };
+            const kurtosisBeta = stat === "kurtosis" ? betaForKurtosis(value + 3) : 2;
+            const points = Array.from({ length: 121 }, (_, index) => {
+              const x = -6 + index / 10;
+              return [xScale(x), yScale(density(x, value, skewProfile, kurtosisBeta))];
+            });
+            const path = [
+              `M${xScale(-6)} ${height - margin.bottom}`,
+              ...points.map(([x, y]) => `L${x.toFixed(2)} ${y.toFixed(2)}`),
+              `L${xScale(6)} ${height - margin.bottom}`,
+              "Z",
+            ].join(" ");
+            curve.setAttribute("d", path);
+
+            const referenceValue = stat === "mean" ? value : 0;
+            const referenceX = xScale(referenceValue);
+            reference.setAttribute("x1", referenceX);
+            reference.setAttribute("x2", referenceX);
+            reference.setAttribute("y1", margin.top);
+            reference.setAttribute("y2", height - margin.bottom);
+
+            if (stat === "mean") output.textContent = `mean = ${value.toFixed(1)}`;
+            if (stat === "variance") {
+              output.textContent = `variance = ${value.toFixed(1)}`;
+            }
+            if (stat === "skewness") {
+              const delta = value / Math.sqrt(1 + value * value);
+              const skewness = ((4 - Math.PI) / 2) * (delta * Math.sqrt(2 / Math.PI)) ** 3
+                / (1 - 2 * delta * delta / Math.PI) ** 1.5;
+              output.textContent = `skewness = ${skewness.toFixed(2)}`;
+            }
+            if (stat === "kurtosis") {
+              const kurtosis = pearsonKurtosis(kurtosisBeta) - 3;
+              output.textContent = `kurtosis = ${kurtosis.toFixed(2)}`;
+            }
+          };
+
+          slider.addEventListener("input", update);
+          update();
+        });
+
+        document.querySelector(".variance-flip")?.addEventListener("click", (event) => {
+          const card = event.currentTarget.closest(".variance-card");
+          const front = card.querySelector(".variance-front");
+          const back = card.querySelector(".variance-back");
+          const showStd = back.hidden;
+          front.hidden = showStd;
+          back.hidden = !showStd;
+          event.currentTarget.textContent = showStd ? "↻ Variance" : "↻ Standard Deviation";
+        });
+      });
+    </script>
+    <script>
+      window.addEventListener("DOMContentLoaded", () => {
+        const svg = document.getElementById("gaussianChart");
+        if (!svg) return;
+
+        const ns = "http://www.w3.org/2000/svg";
+        const make = (name, attributes = {}, text = "") => {
+          const node = document.createElementNS(ns, name);
+          Object.entries(attributes).forEach(([key, value]) => node.setAttribute(key, value));
+          node.textContent = text;
+          return node;
+        };
+        const width = 980;
+        const height = 430;
+        const margin = { top: 36, right: 24, bottom: 56, left: 58 };
+        const plotWidth = width - margin.left - margin.right;
+        const plotHeight = height - margin.top - margin.bottom;
+        const xMin = -6;
+        const xMax = 6;
+        const yMax = 0.72;
+        const xScale = (value) => margin.left + (value - xMin) / (xMax - xMin) * plotWidth;
+        const yScale = (value) => height - margin.bottom - value / yMax * plotHeight;
+        const normal = (x, mean, sigma) => Math.exp(-0.5 * ((x - mean) / sigma) ** 2) / (sigma * Math.sqrt(2 * Math.PI));
+        const meanSlider = document.getElementById("gaussianMean");
+        const stdSlider = document.getElementById("gaussianStd");
+        const meanOutput = document.getElementById("gaussianMeanValue");
+        const stdOutput = document.getElementById("gaussianStdValue");
+        const page = svg.closest(".slide");
+        const area3 = make("path", { class: "gaussian-area-3" });
+        const area2 = make("path", { class: "gaussian-area-2" });
+        const area1 = make("path", { class: "gaussian-area-1" });
+        const curve = make("path", { class: "gaussian-curve" });
+        const meanLine = make("line", { class: "gaussian-mean" });
+        const boundLayer = make("g");
+
+        [-6, -4, -2, 0, 2, 4, 6].forEach((tick) => {
+          const x = xScale(tick);
+          svg.append(make("text", { x, y: height - 24, class: "gaussian-tick" }, String(tick)));
+        });
+        svg.append(
+          make("line", { x1: margin.left, y1: height - margin.bottom, x2: width - margin.right, y2: height - margin.bottom, class: "gaussian-axis" }),
+          area3,
+          area2,
+          area1,
+          curve,
+          meanLine,
+          boundLayer,
+          make("text", { x: margin.left + plotWidth / 2, y: height - 2, class: "gaussian-label", "text-anchor": "middle" }, "x"),
+          make("text", { x: 14, y: 230, class: "gaussian-label", transform: "rotate(-90 14 230)", "text-anchor": "middle" }, "pdf"),
+        );
+
+        const visibleRule = () => Math.min(3, Number(page.dataset.step) || 0);
+        const update = () => {
+          const mean = Number(meanSlider.value);
+          const sigma = Number(stdSlider.value);
+          const rule = visibleRule();
+          const points = Array.from({ length: 1201 }, (_, index) => {
+            const x = xMin + index * 0.01;
+            return [x, normal(x, mean, sigma)];
+          });
+          curve.setAttribute("d", points.map(([x, y], index) => `${index ? "L" : "M"}${xScale(x).toFixed(2)} ${yScale(y).toFixed(2)}`).join(" "));
+
+          const updateArea = (area, sigmaCount) => {
+            if (rule < sigmaCount) {
+              area.setAttribute("d", "");
+              return;
+            }
+            const low = mean - sigmaCount * sigma;
+            const high = mean + sigmaCount * sigma;
+            const selected = points.filter(([x]) => x >= low && x <= high);
+            const lowPoint = [low, normal(low, mean, sigma)];
+            const highPoint = [high, normal(high, mean, sigma)];
+            const areaPath = [
+              `M${xScale(low)} ${height - margin.bottom}`,
+              `L${xScale(lowPoint[0]).toFixed(2)} ${yScale(lowPoint[1]).toFixed(2)}`,
+              ...selected.map(([x, y]) => `L${xScale(x).toFixed(2)} ${yScale(y).toFixed(2)}`),
+              `L${xScale(highPoint[0]).toFixed(2)} ${yScale(highPoint[1]).toFixed(2)}`,
+              `L${xScale(high)} ${height - margin.bottom}`,
+              "Z",
+            ].join(" ");
+            area.setAttribute("d", areaPath);
+          };
+          updateArea(area3, 3);
+          updateArea(area2, 2);
+          updateArea(area1, 1);
+
+          const meanX = xScale(mean);
+          meanLine.setAttribute("x1", meanX);
+          meanLine.setAttribute("x2", meanX);
+          meanLine.setAttribute("y1", margin.top);
+          meanLine.setAttribute("y2", height - margin.bottom);
+          boundLayer.replaceChildren();
+
+          for (let sigmaCount = 1; sigmaCount <= rule; sigmaCount += 1) {
+            const lowX = xScale(mean - sigmaCount * sigma);
+            const highX = xScale(mean + sigmaCount * sigma);
+            boundLayer.append(
+              make("line", { x1: lowX, y1: margin.top + 40, x2: lowX, y2: height - margin.bottom, class: "gaussian-bound" }),
+              make("line", { x1: highX, y1: margin.top + 40, x2: highX, y2: height - margin.bottom, class: "gaussian-bound" }),
+              make("text", { x: (lowX + highX) / 2, y: margin.top + 28 - (sigmaCount - 1) * 25, class: "gaussian-rule-label" }, percentage),
+            );
+          }
+
+          meanOutput.textContent = `μ = ${mean.toFixed(1)}`;
+          stdOutput.textContent = `σ = ${sigma.toFixed(1)}`;
+        };
+
+        meanSlider.addEventListener("input", update);
+        stdSlider.addEventListener("input", update);
+        new MutationObserver(update).observe(page, { attributes: true, attributeFilter: ["data-step"] });
+        update();
+      });
+    </script>
+    <script>
+      window.addEventListener("DOMContentLoaded", () => {
+        const svg = document.getElementById("standardiseChart");
+        const button = document.getElementById("standardiseButton");
+        if (!svg || !button) return;
+
+        const ns = "http://www.w3.org/2000/svg";
+        const make = (name, attributes = {}, text = "") => {
+          const node = document.createElementNS(ns, name);
+          Object.entries(attributes).forEach(([key, value]) => node.setAttribute(key, value));
+          node.textContent = text;
+          return node;
+        };
+
+        // Standardisation animation settings: edit these values as needed.
+        const xMin = -8;
+        const xMax = 8;
+        const moveDuration = 1100;
+        const scaleDuration = 1300;
+        const distributions = [
+          { mean: -3.9, variance: 1, offset: 52,  color: "#cfe8f9" },
+          { mean: 1.6,  variance: 0.55, offset: 94,  color: "#b7dcf5" },
+          { mean: -0.8, variance: 5.65, offset: 136, color: "#9ecfec" },
+          { mean: 4.3,  variance: 0.85, offset: 178, color: "#7fbce5" },
+          { mean: -4.7, variance: 0.15, offset: 220, color: "#5aa9e6" },
+          { mean: 0.4,  variance: 3.75, offset: 262, color: "#3f95d8" },
+          { mean: 3.1,  variance: 0.25, offset: 304, color: "#2c82c9" },
+          { mean: -2.2, variance: 1.95, offset: 346, color: "#1f6fb8" },
+          { mean: 2.5,  variance: 1.25, offset: 388, color: "#0f5aa0" },
+          { mean: -1.4, variance: 0.075, offset: 430, color: "#193e87" },
+        ];
+
+        const width = 930;
+        const height = 520;
+        const margin = { top: 22, right: 20, bottom: 54, left: 44 };
+        const plotWidth = width - margin.left - margin.right;
+        const baselineBottom = height - margin.bottom;
+        const pdfHeightScale = 160;
+        const xScale = (value) => margin.left + (value - xMin) / (xMax - xMin) * plotWidth;
+        const normalPdf = (x, mean, sigma) =>
+          Math.exp(-0.5 * ((x - mean) / sigma) ** 2) / (sigma * Math.sqrt(2 * Math.PI));
+        const curveNodes = [];
+        let frame = null;
+        let standardised = false;
+
+        const drawCurve = (node, distribution, mean, sigma) => {
+          const baseline = distribution.offset;
+          const points = Array.from({ length: 321 }, (_, index) => {
+            const x = xMin + index * (xMax - xMin) / 320;
+            const y = baseline - normalPdf(x, mean, sigma) * pdfHeightScale;
+            return `${index ? "L" : "M"}${xScale(x).toFixed(2)} ${y.toFixed(2)}`;
+          });
+          node.setAttribute("d", points.join(" "));
+        };
+
+        [-8, -4, 0, 4, 8].forEach((tick) => {
+          const x = xScale(tick);
+          svg.append(
+            make("line", { x1: x, y1: margin.top, x2: x, y2: baselineBottom, class: tick === 0 ? "standardise-zero" : "standardise-guide" }),
+            make("text", { x, y: height - 22, class: "standardise-tick" }, String(tick)),
+          );
+        });
+        distributions.forEach((distribution) => {
+          svg.append(make("line", { x1: margin.left, y1: distribution.offset, x2: width - margin.right, y2: distribution.offset, class: "standardise-guide" }));
+          const curve = make("path", { class: "standardise-curve", stroke: distribution.color });
+          drawCurve(curve, distribution, distribution.mean, Math.sqrt(distribution.variance));
+          svg.append(curve);
+          curveNodes.push(curve);
+        });
+        svg.append(
+          make("line", { x1: margin.left, y1: baselineBottom, x2: width - margin.right, y2: baselineBottom, class: "standardise-axis" }),
+          make("text", { x: margin.left + plotWidth / 2, y: height - 2, class: "standardise-label", "text-anchor": "middle" }, ""),
+        );
+
+        const render = (moveProgress, scaleProgress) => {
+          distributions.forEach((distribution, index) => {
+            const mean = distribution.mean * (1 - moveProgress);
+            const sigmaStart = Math.sqrt(distribution.variance);
+            const sigma = sigmaStart + (1 - sigmaStart) * scaleProgress;
+            drawCurve(curveNodes[index], distribution, mean, sigma);
+          });
+        };
+
+        const animate = (towardsStandard) => {
+          if (frame) cancelAnimationFrame(frame);
+          const start = performance.now();
+          const draw = (now) => {
+            const elapsed = now - start;
+            const moveProgress = Math.min(1, elapsed / moveDuration);
+            const scaleProgress = Math.min(1, Math.max(0, elapsed - moveDuration) / scaleDuration);
+            const easedMove = 1 - (1 - moveProgress) ** 3;
+            const easedScale = 1 - (1 - scaleProgress) ** 3;
+            if (towardsStandard) {
+              render(easedMove, easedScale);
+            } else {
+              render(1 - easedMove, 1 - easedScale);
+            }
+            if (elapsed < moveDuration + scaleDuration) {
+              frame = requestAnimationFrame(draw);
+            } else {
+              frame = null;
+            }
+          };
+          frame = requestAnimationFrame(draw);
+        };
+
+        button.addEventListener("click", () => {
+          standardised = !standardised;
+          animate(standardised);
+          button.textContent = standardised ? "Reset" : "Standardise";
+        });
+      });
+    </script>
+    <script>
+      window.addEventListener("DOMContentLoaded", async () => {
+        const dailySvg = document.getElementById("cltDailyChart");
+        const monthlySvg = document.getElementById("cltMonthlyChart");
+        const annualSvg = document.getElementById("cltAnnualChart");
+        if (!dailySvg || !monthlySvg || !annualSvg) return;
+
+        const ns = "http://www.w3.org/2000/svg";
+        const make = (name, attributes = {}, text = "") => {
+          const node = document.createElementNS(ns, name);
+          Object.entries(attributes).forEach(([key, value]) => node.setAttribute(key, value));
+          node.textContent = text;
+          return node;
+        };
+        const parseCsvRow = (line) => {
+          const columns = [];
+          const pattern = /(?:^|,)(?:"([^"]*)"|([^",]*))/g;
+          let match;
+          while ((match = pattern.exec(line)) !== null) columns.push(match[1] ?? match[2]);
+          return columns;
+        };
+        const mean = (values) => values.reduce((sum, value) => sum + value, 0) / values.length;
+        const standardDeviation = (values, average) => Math.sqrt(values.reduce((sum, value) => sum + (value - average) ** 2, 0) / values.length);
+        const normalPdf = (x, average, sigma) => Math.exp(-0.5 * ((x - average) / sigma) ** 2) / (sigma * Math.sqrt(2 * Math.PI));
+
+        // CLT chart settings: edit x limits and bin widths here.
+        const chartConfigs = [
+          { svg: dailySvg, title: "Daily rainfall", countLabel: "15,000+ days", xLabel: "Daily precipitation (inches)", caption: "Daily precipitation is positively-skewed.", delayedCaption: true, xMin: 0, xMax: 4.2, binWidth: 0.08 },
+          { svg: monthlySvg, title: "Monthly rainfall", countLabel: "610 months", xLabel: "Monthly precipitation (inches)", caption: "Monthly totals combine daily values.", xMin: 0, xMax: 9.5, binWidth: 0.3 },
+          { svg: annualSvg, title: "Annual rainfall", countLabel: "50 complete years", xLabel: "Annual precipitation (inches)", caption: "Annual totals seem closer to Normal.", xMin: 7.559, xMax: 49.559, binWidth: 1.5 },
+        ];
+
+        const drawPdfComparison = (config, values) => {
+          const { svg, title, countLabel, xLabel, caption, delayedCaption = false, xMin, xMax, binWidth } = config;
+          const width = 460;
+          const height = 395;
+          const margin = { top: 48, right: 12, bottom: 104, left: 56 };
+          const plotWidth = width - margin.left - margin.right;
+          const plotHeight = height - margin.top - margin.bottom;
+          const binCount = Math.ceil((xMax - xMin) / binWidth);
+          const counts = Array(binCount).fill(0);
+          values.forEach((value) => {
+            if (value < xMin || value > xMax) return;
+            const index = Math.min(binCount - 1, Math.floor((value - xMin) / binWidth));
+            counts[index] += 1;
+          });
+          const average = mean(values);
+          const sigma = standardDeviation(values, average);
+          const densities = counts.map((count) => count / (values.length * binWidth));
+          const normalPoints = Array.from({ length: 241 }, (_, index) => {
+            const x = xMin + index / 240 * (xMax - xMin);
+            return [x, normalPdf(x, average, sigma)];
+          });
+          const yMax = Math.max(...densities, ...normalPoints.map(([, value]) => value)) * 1.08;
+          const xScale = (value) => margin.left + (value - xMin) / (xMax - xMin) * plotWidth;
+          const yScale = (value) => height - margin.bottom - value / yMax * plotHeight;
+          const tickValues = [xMin, (xMin + xMax) / 2, xMax];
+
+          svg.replaceChildren();
+          [0, yMax / 2, yMax].forEach((tick) => {
+            svg.append(make("line", { x1: margin.left, y1: yScale(tick), x2: width - margin.right, y2: yScale(tick), class: "clt-gridline" }));
+          });
+          tickValues.forEach((tick) => {
+            svg.append(make("text", { x: xScale(tick), y: height - margin.bottom + 22, class: "clt-tick" }, tick.toFixed(0)));
+          });
+          svg.append(
+            make("line", { x1: margin.left, y1: margin.top, x2: margin.left, y2: height - margin.bottom, class: "clt-axis" }),
+            make("line", { x1: margin.left, y1: height - margin.bottom, x2: width - margin.right, y2: height - margin.bottom, class: "clt-axis" }),
+            make("text", { x: margin.left + plotWidth / 2, y: 23, class: "clt-title" }, title),
+            make("text", { x: width - 16, y: 70, class: "clt-count" }, countLabel),
+            make("text", { x: margin.left + plotWidth / 2, y: height - 50, class: "clt-label", "text-anchor": "middle" }, xLabel),
+            make("text", { x: margin.left + plotWidth / 2, y: height - 15, class: delayedCaption ? "clt-caption clt-caption-delayed" : "clt-caption" }, caption),
+            make("text", { x: 15, y: 176, class: "clt-label", transform: "rotate(-90 15 176)", "text-anchor": "middle" }, "pdf"),
+          );
+          densities.forEach((density, index) => {
+            const x = margin.left + index / binCount * plotWidth;
+            const top = yScale(density);
+            svg.append(make("rect", {
+              x: x + 0.7,
+              y: top,
+              width: plotWidth / binCount - 1.4,
+              height: height - margin.bottom - top,
+              class: "clt-bar",
+            }));
+          });
+          const normalPath = normalPoints.map(([x, value], index) => `${index ? "L" : "M"}${xScale(x).toFixed(2)} ${yScale(value).toFixed(2)}`).join(" ");
+          svg.append(make("path", { d: normalPath, class: "clt-normal" }));
+        };
+
+        try {
+          const response = await fetch("../data/BOURNEMOUTH.csv");
+          if (!response.ok) throw new Error(`HTTP ${response.status}`);
+          const lines = (await response.text()).trim().split(/\r?\n/);
+          const headers = parseCsvRow(lines.shift());
+          const dateIndex = headers.indexOf("DATE");
+          const precipitationIndex = headers.indexOf("PRCP");
+          const daily = [];
+          const monthly = new Map();
+          const annual = new Map();
+          lines.forEach((line) => {
+            const columns = parseCsvRow(line);
+            const raw = columns[precipitationIndex];
+            if (raw === "") return;
+            const value = Number(raw);
+            if (!Number.isFinite(value) || value < 0) return;
+            const date = columns[dateIndex];
+            const month = date.slice(0, 7);
+            const year = date.slice(0, 4);
+            daily.push(value);
+            monthly.set(month, (monthly.get(month) ?? 0) + value);
+            annual.set(year, (annual.get(year) ?? 0) + value);
+          });
+
+          drawPdfComparison(chartConfigs[0], daily);
+          drawPdfComparison(chartConfigs[1], Array.from(monthly.values()));
+          drawPdfComparison(chartConfigs[2], Array.from(annual.entries()).filter(([year]) => year !== "2023").map(([, value]) => value));
+        } catch (error) {
+          [dailySvg, monthlySvg, annualSvg].forEach((svg) => {
+            svg.append(make("text", { x: 22, y: 72, class: "daily-temperature-error" }, `Unable to load rainfall data: ${error.message}`));
+          });
+        }
+      });
+    </script>
+    <script>
+      window.addEventListener("DOMContentLoaded", async () => {
+        const page = document.querySelector(".normality-page");
+        const pdfSvg = document.getElementById("normalityPdfChart");
+        const cdfSvg = document.getElementById("normalityCdfChart");
+        const flipButton = document.getElementById("normalityFlip");
+        if (!page || !pdfSvg || !cdfSvg || !flipButton) return;
+
+        const ns = "http://www.w3.org/2000/svg";
+        const make = (name, attributes = {}, text = "") => {
+          const node = document.createElementNS(ns, name);
+          Object.entries(attributes).forEach(([key, value]) => node.setAttribute(key, value));
+          node.textContent = text;
+          return node;
+        };
+        const parseCsvRow = (line) => {
+          const columns = [];
+          const pattern = /(?:^|,)(?:"([^"]*)"|([^",]*))/g;
+          let match;
+          while ((match = pattern.exec(line)) !== null) columns.push(match[1] ?? match[2]);
+          return columns;
+        };
+        const mean = (values) => values.reduce((sum, value) => sum + value, 0) / values.length;
+        const standardDeviation = (values, average) => Math.sqrt(values.reduce((sum, value) => sum + (value - average) ** 2, 0) / values.length);
+        const normalPdf = (x) => Math.exp(-0.5 * x ** 2) / Math.sqrt(2 * Math.PI);
+        const erf = (x) => {
+          const sign = Math.sign(x);
+          const value = Math.abs(x);
+          const t = 1 / (1 + 0.3275911 * value);
+          const polynomial = (((((1.061405429 * t - 1.453152027) * t) + 1.421413741) * t - 0.284496736) * t + 0.254829592) * t;
+          return sign * (1 - polynomial * Math.exp(-value * value));
+        };
+        const normalCdf = (x) => 0.5 * (1 + erf(x / Math.sqrt(2)));
+
+        // Normality-testing chart settings: edit the raw x limits and bin width here.
+        const rawBinMin = 7.559;
+        const rawBinMax = 49.559;
+        const rawBinWidth = 1.5;
+        const binCount = Math.ceil((rawBinMax - rawBinMin) / rawBinWidth);
+        const standardZMin = -3.5;
+        const standardZMax = 3.5;
+        const standardBinCount = 28;
+        const width = 460;
+        const height = 395;
+        const margin = { top: 48, right: 12, bottom: 104, left: 56 };
+        const plotWidth = width - margin.left - margin.right;
+        const plotHeight = height - margin.top - margin.bottom;
+        let annualValues = [];
+        let dailyValues = [];
+        let annualMean = 0;
+        let annualSigma = 1;
+        let fixedCounts = [];
+        let fixedDensities = [];
+        let fixedYMax = 1;
+        let originalTickGroup = null;
+        let shiftedTickGroup = null;
+        let standardTickGroup = null;
+        let shiftedTickNodes = [];
+        let standardTickNodes = [];
+        let distributionGroup = null;
+        let pdfTitleNode = null;
+        let pdfXAxisLabelNode = null;
+        let axisShiftFrame = null;
+        let compressFrame = null;
+        let standardiseTimeout = null;
+        let cdfFrame = null;
+        let previousStep = 0;
+        let showingDaily = false;
+        let showingStaticComparison = false;
+
+        const yScale = (value, max) => height - margin.bottom - value / max * plotHeight;
+        const axisShiftDuration = 1200;
+        const compressDuration = 1100;
+        const stretchAxisDuration = 1300;
+        const compressStretchOverlap = 180;
+        const cdfBuildDuration = 1800;
+
+        const buildRawHistogram = (values) => {
+          const counts = Array(binCount).fill(0);
+          values.forEach((value) => {
+            if (value < rawBinMin || value > rawBinMax) return;
+            const index = Math.min(binCount - 1, Math.floor((value - rawBinMin) / rawBinWidth));
+            counts[index] += 1;
+          });
+          return {
+            counts,
+            densities: counts.map((count) => count / (values.length * rawBinWidth)),
+          };
+        };
+
+        const drawInitialPdf = () => {
+          const xScaleRaw = (value) => margin.left + (value - rawBinMin) / (rawBinMax - rawBinMin) * plotWidth;
+          pdfSvg.replaceChildren();
+          [0, fixedYMax / 2, fixedYMax].forEach((tick) => {
+            pdfSvg.append(make("line", { x1: margin.left, y1: yScale(tick, fixedYMax), x2: width - margin.right, y2: yScale(tick, fixedYMax), class: "clt-gridline" }));
+          });
+          const defs = make("defs");
+          const clipPath = make("clipPath", { id: "normalityXAxisClip" });
+          clipPath.append(make("rect", { x: margin.left - 10, y: height - margin.bottom + 5, width: plotWidth + 20, height: 28 }));
+          defs.append(clipPath);
+          originalTickGroup = make("g", { "clip-path": "url(#normalityXAxisClip)" });
+          shiftedTickGroup = make("g", { "clip-path": "url(#normalityXAxisClip)", opacity: 0 });
+          standardTickGroup = make("g", { "clip-path": "url(#normalityXAxisClip)", opacity: 0 });
+          shiftedTickNodes = [];
+          standardTickNodes = [];
+          [rawBinMin, (rawBinMin + rawBinMax) / 2, rawBinMax].forEach((tick) => {
+            originalTickGroup.append(make("text", { x: xScaleRaw(tick), y: height - margin.bottom + 22, class: "clt-tick" }, tick.toFixed(0)));
+          });
+          const halfWidth = (rawBinMax - rawBinMin) / 2;
+          [-halfWidth, 0, halfWidth].forEach((tick) => {
+            const node = make("text", { x: xScaleRaw(tick + annualMean), y: height - margin.bottom + 22, class: "clt-tick" }, tick.toFixed(0));
+            node.dataset.tickValue = String(tick);
+            shiftedTickGroup.append(node);
+            shiftedTickNodes.push(node);
+            const standardNode = make("text", { x: xScaleRaw(annualMean), y: height - margin.bottom + 22, class: "clt-tick" }, (tick / annualSigma).toFixed(tick === 0 ? 0 : 1));
+            standardNode.dataset.tickValue = String(tick);
+            standardTickGroup.append(standardNode);
+            standardTickNodes.push(standardNode);
+          });
+          pdfSvg.append(defs, originalTickGroup, shiftedTickGroup, standardTickGroup);
+          pdfTitleNode = make("text", { x: margin.left + plotWidth / 2, y: 23, class: "clt-title" }, "Annual rainfall");
+          pdfXAxisLabelNode = make("text", { x: margin.left + plotWidth / 2, y: height - 50, class: "clt-label", "text-anchor": "middle" }, "Annual precipitation (inches)");
+          pdfSvg.append(
+            make("line", { x1: margin.left, y1: margin.top, x2: margin.left, y2: height - margin.bottom, class: "clt-axis" }),
+            make("line", { x1: margin.left, y1: height - margin.bottom, x2: width - margin.right, y2: height - margin.bottom, class: "clt-axis" }),
+            pdfTitleNode,
+            pdfXAxisLabelNode,
+            make("text", { x: 15, y: 176, class: "clt-label", transform: "rotate(-90 15 176)", "text-anchor": "middle" }, "pdf"),
+          );
+          distributionGroup = make("g");
+          fixedDensities.forEach((density, index) => {
+            const x = margin.left + index / binCount * plotWidth;
+            const top = yScale(density, fixedYMax);
+            distributionGroup.append(make("rect", {
+              x: x + 0.7,
+              y: top,
+              width: plotWidth / binCount - 1.4,
+              height: height - margin.bottom - top,
+              class: "clt-bar",
+              "data-normality-bin": index,
+            }));
+          });
+          const curve = Array.from({ length: 241 }, (_, index) => {
+            const rawX = rawBinMin + index / 240 * (rawBinMax - rawBinMin);
+            const density = normalPdf((rawX - annualMean) / annualSigma) / annualSigma;
+            return `${index ? "L" : "M"}${xScaleRaw(rawX).toFixed(2)} ${yScale(density, fixedYMax).toFixed(2)}`;
+          }).join(" ");
+          distributionGroup.append(make("path", { d: curve, class: "clt-normal" }));
+          pdfSvg.append(distributionGroup);
+        };
+
+        const setAxisShift = (progress) => {
+          if (!originalTickGroup || !shiftedTickGroup) return;
+          const maxShift = annualMean / (rawBinMax - rawBinMin) * plotWidth;
+          const appearProgress = Math.min(1, progress / 0.22);
+          const moveProgress = Math.min(1, Math.max(0, progress - 0.22) / 0.56);
+          const disappearProgress = Math.min(1, Math.max(0, progress - 0.78) / 0.22);
+          const shift = maxShift * moveProgress;
+          originalTickGroup.setAttribute("transform", `translate(${shift.toFixed(2)} 0)`);
+          originalTickGroup.setAttribute("opacity", String(1 - disappearProgress));
+          shiftedTickGroup.setAttribute("transform", `translate(${(-maxShift + shift).toFixed(2)} 0)`);
+          shiftedTickGroup.setAttribute("opacity", String(appearProgress));
+        };
+
+        const animateAxisShift = (towardsZero) => {
+          if (axisShiftFrame) cancelAnimationFrame(axisShiftFrame);
+          const start = performance.now();
+          const draw = (now) => {
+            const elapsed = Math.min(1, (now - start) / axisShiftDuration);
+            const eased = 1 - (1 - elapsed) ** 3;
+            setAxisShift(towardsZero ? eased : 1 - eased);
+            if (elapsed < 1) axisShiftFrame = requestAnimationFrame(draw);
+            else axisShiftFrame = null;
+          };
+          axisShiftFrame = requestAnimationFrame(draw);
+        };
+
+        const animateStandardisation = (towardsStandard) => {
+          if (standardiseTimeout) window.clearTimeout(standardiseTimeout);
+          if (towardsStandard) {
+            animateAxisShift(true);
+            standardiseTimeout = window.setTimeout(() => animateCompression(true), axisShiftDuration);
+          } else {
+            animateCompression(false);
+            standardiseTimeout = window.setTimeout(() => animateAxisShift(false), compressDuration + stretchAxisDuration - compressStretchOverlap);
+          }
+        };
+
+        const setStandardisationWidth = (compressProgress, stretchProgress) => {
+          if (!distributionGroup || !shiftedTickGroup || !standardTickGroup) return;
+          const compressedScale = 1 + (1 / annualSigma - 1) * compressProgress;
+          const scale = compressedScale + (1 - compressedScale) * stretchProgress;
+          const centerX = margin.left + plotWidth / 2;
+          distributionGroup.setAttribute("transform", `translate(${centerX.toFixed(2)} 0) scale(${scale.toFixed(5)} 1) translate(${-centerX.toFixed(2)} 0)`);
+          shiftedTickNodes.forEach((node) => {
+            const tick = Number(node.dataset.tickValue);
+            const originalX = centerX + tick / (rawBinMax - rawBinMin) * plotWidth;
+            const x = centerX + (originalX - centerX) * (1 + (annualSigma - 1) * stretchProgress);
+            node.setAttribute("x", x.toFixed(2));
+          });
+          shiftedTickGroup.setAttribute("opacity", String(1 - stretchProgress));
+          standardTickNodes.forEach((node) => {
+            const tick = Number(node.dataset.tickValue);
+            const finalX = centerX + tick / (rawBinMax - rawBinMin) * plotWidth;
+            const x = centerX + (finalX - centerX) * stretchProgress;
+            node.setAttribute("x", x.toFixed(2));
+          });
+          standardTickGroup.setAttribute("opacity", String(stretchProgress));
+        };
+
+        const animateCompression = (towardsStandardWidth) => {
+          if (compressFrame) cancelAnimationFrame(compressFrame);
+          if (!towardsStandardWidth) {
+            pdfTitleNode.textContent = "Annual rainfall";
+            pdfXAxisLabelNode.textContent = "Annual precipitation (inches)";
+          }
+          const start = performance.now();
+          const stretchStart = compressDuration - compressStretchOverlap;
+          const totalDuration = stretchStart + stretchAxisDuration;
+          const draw = (now) => {
+            const elapsed = now - start;
+            const animationElapsed = towardsStandardWidth ? elapsed : totalDuration - elapsed;
+            const compressProgress = Math.min(1, Math.max(0, animationElapsed) / compressDuration);
+            const stretchProgress = Math.min(1, Math.max(0, animationElapsed - stretchStart) / stretchAxisDuration);
+            const easedCompress = 1 - (1 - compressProgress) ** 3;
+            const easedStretch = 1 - (1 - stretchProgress) ** 3;
+            setStandardisationWidth(easedCompress, easedStretch);
+            if (elapsed < totalDuration) compressFrame = requestAnimationFrame(draw);
+            else {
+              compressFrame = null;
+              if (towardsStandardWidth) {
+                pdfTitleNode.textContent = "Standardised annual rainfall";
+                pdfXAxisLabelNode.textContent = "z";
+              }
+            }
+          };
+          compressFrame = requestAnimationFrame(draw);
+        };
+
+        const drawCdf = (progress = 0) => {
+          const centerX = margin.left + plotWidth / 2;
+          const zMin = -(rawBinMax - rawBinMin) / 2 / annualSigma;
+          const zMax = -zMin;
+          const xScaleZ = (value) => margin.left + (value - zMin) / (zMax - zMin) * plotWidth;
+          const yScaleCdf = (value) => height - margin.bottom - value * plotHeight;
+          const visibleBins = Math.ceil(progress * binCount);
+          const cumulative = [];
+          fixedCounts.reduce((total, count, index) => {
+            cumulative[index] = total + count;
+            return cumulative[index];
+          }, 0);
+          cdfSvg.replaceChildren();
+          [0, 0.5, 1].forEach((tick) => {
+            cdfSvg.append(make("line", { x1: margin.left, y1: yScaleCdf(tick), x2: width - margin.right, y2: yScaleCdf(tick), class: "normality-gridline" }));
+          });
+          [zMin, 0, zMax].forEach((tick) => {
+            cdfSvg.append(make("text", { x: xScaleZ(tick), y: height - margin.bottom + 22, class: "normality-tick" }, tick.toFixed(tick === 0 ? 0 : 1)));
+          });
+          cdfSvg.append(
+            make("line", { x1: margin.left, y1: margin.top, x2: margin.left, y2: height - margin.bottom, class: "normality-axis" }),
+            make("line", { x1: margin.left, y1: height - margin.bottom, x2: width - margin.right, y2: height - margin.bottom, class: "normality-axis" }),
+            make("text", { x: centerX, y: 23, class: "normality-title" }, "Cumulative distribution function"),
+            make("text", { x: centerX, y: height - 50, class: "normality-label", "text-anchor": "middle" }, "z"),
+            make("text", { x: 15, y: 176, class: "normality-label", transform: "rotate(-90 15 176)", "text-anchor": "middle" }, "cdf"),
+          );
+          fixedCounts.forEach((_, index) => {
+            if (index >= visibleBins) return;
+            const left = margin.left + index / binCount * plotWidth;
+            const top = yScaleCdf(cumulative[index] / annualValues.length);
+            cdfSvg.append(make("rect", {
+              x: left + 0.7,
+              y: top,
+              width: plotWidth / binCount - 1.4,
+              height: height - margin.bottom - top,
+              class: index === visibleBins - 1 ? "normality-bar normality-bar-highlight" : "normality-bar",
+            }));
+          });
+          const curve = Array.from({ length: 241 }, (_, index) => {
+            const z = zMin + index / 240 * (zMax - zMin);
+            return `${index ? "L" : "M"}${xScaleZ(z).toFixed(2)} ${yScaleCdf(normalCdf(z)).toFixed(2)}`;
+          }).join(" ");
+          const curvePath = make("path", { d: curve, class: "normality-normal" });
+          cdfSvg.append(curvePath);
+          const curveLength = curvePath.getTotalLength();
+          curvePath.setAttribute("stroke-dasharray", String(curveLength));
+          curvePath.setAttribute("stroke-dashoffset", String(curveLength * (1 - progress)));
+          distributionGroup?.querySelectorAll("[data-normality-bin]").forEach((bar, index) => {
+            bar.classList.toggle("normality-bar-highlight", index < visibleBins);
+          });
+        };
+
+        const animateCdf = (towardsComplete) => {
+          if (cdfFrame) cancelAnimationFrame(cdfFrame);
+          const start = performance.now();
+          const draw = (now) => {
+            const elapsed = Math.min(1, (now - start) / cdfBuildDuration);
+            const eased = 1 - (1 - elapsed) ** 3;
+            drawCdf(towardsComplete ? eased : 1 - eased);
+            if (elapsed < 1) cdfFrame = requestAnimationFrame(draw);
+            else cdfFrame = null;
+          };
+          cdfFrame = requestAnimationFrame(draw);
+        };
+
+        const drawStaticStandardisedView = (values, label) => {
+          const average = mean(values);
+          const sigma = standardDeviation(values, average);
+          const zValues = values.map((value) => (value - average) / sigma);
+          const binWidth = (standardZMax - standardZMin) / standardBinCount;
+          const counts = Array(standardBinCount).fill(0);
+          zValues.forEach((value) => {
+            if (value < standardZMin || value > standardZMax) return;
+            const index = Math.min(standardBinCount - 1, Math.floor((value - standardZMin) / binWidth));
+            counts[index] += 1;
+          });
+          const densities = counts.map((count) => count / (values.length * binWidth));
+          const cumulative = [];
+          counts.reduce((total, count, index) => {
+            cumulative[index] = total + count;
+            return cumulative[index];
+          }, 0);
+          const xScaleZ = (value) => margin.left + (value - standardZMin) / (standardZMax - standardZMin) * plotWidth;
+          const yMax = Math.max(...densities, normalPdf(0)) * 1.08;
+          const yScalePdf = (value) => height - margin.bottom - value / yMax * plotHeight;
+          const yScaleCdf = (value) => height - margin.bottom - value * plotHeight;
+          const drawAxes = (svg, title, yLabel, yScaleAxis, yTicks) => {
+            svg.replaceChildren();
+            yTicks.forEach((tick) => {
+              svg.append(make("line", { x1: margin.left, y1: yScaleAxis(tick), x2: width - margin.right, y2: yScaleAxis(tick), class: "normality-gridline" }));
+            });
+            [standardZMin, 0, standardZMax].forEach((tick) => {
+              svg.append(make("text", { x: xScaleZ(tick), y: height - margin.bottom + 22, class: "normality-tick" }, tick.toFixed(tick === 0 ? 0 : 1)));
+            });
+            svg.append(
+              make("line", { x1: margin.left, y1: margin.top, x2: margin.left, y2: height - margin.bottom, class: "normality-axis" }),
+              make("line", { x1: margin.left, y1: height - margin.bottom, x2: width - margin.right, y2: height - margin.bottom, class: "normality-axis" }),
+              make("text", { x: margin.left + plotWidth / 2, y: 23, class: "normality-title" }, title),
+              make("text", { x: margin.left + plotWidth / 2, y: height - 50, class: "normality-label", "text-anchor": "middle" }, "z"),
+              make("text", { x: 15, y: 176, class: "normality-label", transform: "rotate(-90 15 176)", "text-anchor": "middle" }, yLabel),
+            );
+          };
+          drawAxes(pdfSvg, `Standardised ${label}`, "pdf", yScalePdf, [0, yMax / 2, yMax]);
+          counts.forEach((_, index) => {
+            const left = margin.left + index / standardBinCount * plotWidth;
+            const top = yScalePdf(densities[index]);
+            pdfSvg.append(make("rect", {
+              x: left + 0.7,
+              y: top,
+              width: plotWidth / standardBinCount - 1.4,
+              height: height - margin.bottom - top,
+              class: "normality-bar",
+            }));
+          });
+          const pdfCurve = Array.from({ length: 241 }, (_, index) => {
+            const z = standardZMin + index / 240 * (standardZMax - standardZMin);
+            return `${index ? "L" : "M"}${xScaleZ(z).toFixed(2)} ${yScalePdf(normalPdf(z)).toFixed(2)}`;
+          }).join(" ");
+          pdfSvg.append(make("path", { d: pdfCurve, class: "normality-normal" }));
+          drawAxes(cdfSvg, "Cumulative distribution function", "cdf", yScaleCdf, [0, 0.5, 1]);
+          counts.forEach((_, index) => {
+            const left = margin.left + index / standardBinCount * plotWidth;
+            const top = yScaleCdf(cumulative[index] / values.length);
+            cdfSvg.append(make("rect", {
+              x: left + 0.7,
+              y: top,
+              width: plotWidth / standardBinCount - 1.4,
+              height: height - margin.bottom - top,
+              class: "normality-bar",
+            }));
+          });
+          const cdfCurve = Array.from({ length: 241 }, (_, index) => {
+            const z = standardZMin + index / 240 * (standardZMax - standardZMin);
+            return `${index ? "L" : "M"}${xScaleZ(z).toFixed(2)} ${yScaleCdf(normalCdf(z)).toFixed(2)}`;
+          }).join(" ");
+          cdfSvg.append(make("path", { d: cdfCurve, class: "normality-normal" }));
+        };
+
+        try {
+          const response = await fetch("../data/BOURNEMOUTH.csv");
+          if (!response.ok) throw new Error(`HTTP ${response.status}`);
+          const lines = (await response.text()).trim().split(/\r?\n/);
+          const headers = parseCsvRow(lines.shift());
+          const dateIndex = headers.indexOf("DATE");
+          const precipitationIndex = headers.indexOf("PRCP");
+          const annual = new Map();
+          lines.forEach((line) => {
+            const columns = parseCsvRow(line);
+            const value = Number(columns[precipitationIndex]);
+            if (!Number.isFinite(value) || value < 0 || columns[precipitationIndex] === "") return;
+            const year = columns[dateIndex].slice(0, 4);
+            dailyValues.push(value);
+            annual.set(year, (annual.get(year) ?? 0) + value);
+          });
+          annualValues = Array.from(annual.entries()).filter(([year]) => year !== "2023").map(([, value]) => value);
+          annualMean = mean(annualValues);
+          annualSigma = standardDeviation(annualValues, annualMean);
+          const rawHistogram = buildRawHistogram(annualValues);
+          fixedCounts = rawHistogram.counts;
+          fixedDensities = rawHistogram.densities;
+          fixedYMax = Math.max(...fixedDensities, 1 / (annualSigma * Math.sqrt(2 * Math.PI))) * 1.08;
+          drawInitialPdf();
+          drawCdf(0);
+          const syncAxisShift = () => {
+            const step = Number(page.dataset.step ?? 0);
+            if (step < 2 && showingStaticComparison) {
+              showingDaily = false;
+              showingStaticComparison = false;
+              flipButton.textContent = "↻ Show daily precipitation";
+              drawInitialPdf();
+              if (step >= 1) {
+                setAxisShift(1);
+                setStandardisationWidth(1, 1);
+                pdfTitleNode.textContent = "Standardised annual rainfall";
+                pdfXAxisLabelNode.textContent = "z";
+              }
+            }
+            if (step >= 1 && previousStep < 1) animateStandardisation(true);
+            if (step < 1 && previousStep >= 1) animateStandardisation(false);
+            if (step >= 2 && previousStep < 2) animateCdf(true);
+            if (step < 2 && previousStep >= 2) animateCdf(false);
+            previousStep = step;
+          };
+          new MutationObserver(syncAxisShift).observe(page, { attributes: true, attributeFilter: ["data-step"] });
+          syncAxisShift();
+          flipButton.addEventListener("click", () => {
+            if (cdfFrame) cancelAnimationFrame(cdfFrame);
+            if (compressFrame) cancelAnimationFrame(compressFrame);
+            if (axisShiftFrame) cancelAnimationFrame(axisShiftFrame);
+            if (standardiseTimeout) window.clearTimeout(standardiseTimeout);
+            showingDaily = !showingDaily;
+            showingStaticComparison = true;
+            if (showingDaily) {
+              drawStaticStandardisedView(dailyValues, "daily precipitation");
+              flipButton.textContent = "↻ Show annual rainfall";
+            } else {
+              drawStaticStandardisedView(annualValues, "annual rainfall");
+              flipButton.textContent = "↻ Show daily precipitation";
+            }
+          });
+        } catch (error) {
+          [pdfSvg, cdfSvg].forEach((svg) => {
+            svg.append(make("text", { x: 24, y: 80, class: "daily-temperature-error" }, `Unable to load rainfall data: ${error.message}`));
+          });
+        }
+      });
+    </script>
+    <script>
+      window.addEventListener("DOMContentLoaded", () => {
+        const pdfSvg = document.getElementById("samplingPdfChart");
+        const cdfSvg = document.getElementById("samplingCdfChart");
+        const distanceSvg = document.getElementById("samplingDistanceChart");
+        const page = document.querySelector(".sampling-page");
+        const sizeInput = document.getElementById("samplingSize");
+        const drawButton = document.getElementById("samplingDraw");
+        const draw100Button = document.getElementById("samplingDraw100");
+        const resetButton = document.getElementById("samplingReset");
+        const drawCount = document.getElementById("samplingDrawCount");
+        if (!pdfSvg || !cdfSvg || !distanceSvg || !page || !sizeInput || !drawButton || !draw100Button || !resetButton || !drawCount) return;
+
+        const ns = "http://www.w3.org/2000/svg";
+        const make = (name, attributes = {}, text = "") => {
+          const node = document.createElementNS(ns, name);
+          Object.entries(attributes).forEach(([key, value]) => node.setAttribute(key, value));
+          node.textContent = text;
+          return node;
+        };
+        const parseCsvRow = (line) => {
+          const columns = [];
+          const pattern = /(?:^|,)(?:"([^"]*)"|([^",]*))/g;
+          let match;
+          while ((match = pattern.exec(line)) !== null) columns.push(match[1] ?? match[2]);
+          return columns;
+        };
+        const mean = (values) => values.reduce((sum, value) => sum + value, 0) / values.length;
+        const standardDeviation = (values, average) => Math.sqrt(values.reduce((sum, value) => sum + (value - average) ** 2, 0) / values.length);
+        const standardise = (values) => {
+          const average = mean(values);
+          const sigma = standardDeviation(values, average);
+          return sigma ? values.map((value) => (value - average) / sigma) : values.map(() => 0);
+        };
+        const normalPdf = (x) => Math.exp(-0.5 * x ** 2) / Math.sqrt(2 * Math.PI);
+        const erf = (x) => {
+          const sign = Math.sign(x);
+          const value = Math.abs(x);
+          const t = 1 / (1 + 0.3275911 * value);
+          const polynomial = (((((1.061405429 * t - 1.453152027) * t) + 1.421413741) * t - 0.284496736) * t + 0.254829592) * t;
+          return sign * (1 - polynomial * Math.exp(-value * value));
+        };
+        const normalCdf = (x) => 0.5 * (1 + erf(x / Math.sqrt(2)));
+        const maximumCdfDistance = (sample) => {
+          const sorted = [...sample].sort((a, b) => a - b);
+          return sorted.reduce((maximum, value, index) => {
+            const theoretical = normalCdf(value);
+            return Math.max(maximum, Math.abs(index / sorted.length - theoretical), Math.abs((index + 1) / sorted.length - theoretical));
+          }, 0);
+        };
+        const sampleNormal = () => {
+          const u1 = Math.max(Number.EPSILON, Math.random());
+          const u2 = Math.random();
+          return Math.sqrt(-2 * Math.log(u1)) * Math.cos(2 * Math.PI * u2);
+        };
+
+        // Sampling experiment settings.
+        const xMin = -3.5;
+        const xMax = 3.5;
+        const binCount = 22;
+        const width = 560;
+        const height = 400;
+        const margin = { top: 58, right: 14, bottom: 66, left: 60 };
+        const minimumSampleSize = 5;
+        const draw100SizeLimit = 1000;
+        const plotWidth = width - margin.left - margin.right;
+        const plotHeight = height - margin.top - margin.bottom;
+        const empiricalColors = ["#5aa9e6", "#0a6ecb", "#5474b8", "#395695", "#e75480"];
+        const xScale = (value) => margin.left + (value - xMin) / (xMax - xMin) * plotWidth;
+        const pdfYMaxForSize = (n) => Math.max(0.6, Math.min(3.5, 0.55 + 3 / Math.sqrt(Math.max(1, n))));
+        const yScaleCdf = (value) => height - margin.bottom - value * plotHeight;
+        let empiricalCdfs = [];
+        let currentSize = Number(sizeInput.value);
+        let bulkMode = false;
+        let showRainfallComparison = false;
+        let rainfallComparison = null;
+        let rainfallComparisonPromise = null;
+        let nullDistances = [];
+
+        const curvePath = (fn, yScale) => Array.from({ length: 241 }, (_, index) => {
+          const x = xMin + index / 240 * (xMax - xMin);
+          return `${index ? "L" : "M"}${xScale(x).toFixed(2)} ${yScale(fn(x)).toFixed(2)}`;
+        }).join(" ");
+
+        const drawAxes = (svg, title, yLabel, yScale, yTicks) => {
+          svg.replaceChildren();
+          yTicks.forEach((tick) => {
+            svg.append(make("line", { x1: margin.left, y1: yScale(tick), x2: width - margin.right, y2: yScale(tick), class: "normality-gridline" }));
+          });
+          [xMin, 0, xMax].forEach((tick) => {
+            svg.append(make("text", { x: xScale(tick), y: height - margin.bottom + 22, class: "normality-tick" }, tick.toFixed(tick === 0 ? 0 : 1)));
+          });
+          svg.append(
+            make("line", { x1: margin.left, y1: margin.top, x2: margin.left, y2: height - margin.bottom, class: "normality-axis" }),
+            make("line", { x1: margin.left, y1: height - margin.bottom, x2: width - margin.right, y2: height - margin.bottom, class: "normality-axis" }),
+            make("text", { x: margin.left + plotWidth / 2, y: 23, class: "normality-title" }, title),
+            make("text", { x: margin.left + plotWidth / 2, y: height - 16, class: "normality-label", "text-anchor": "middle" }, "z"),
+            make("text", { x: 16, y: margin.top + plotHeight / 2, class: "normality-label", transform: `rotate(-90 16 ${margin.top + plotHeight / 2})`, "text-anchor": "middle" }, yLabel),
+          );
+        };
+
+        const drawPdf = (sample = []) => {
+          const pdfYMax = pdfYMaxForSize(sample.length || currentSize);
+          const yScalePdf = (value) => height - margin.bottom - value / pdfYMax * plotHeight;
+          drawAxes(pdfSvg, "Latest standardised random sample", "pdf", yScalePdf, [0, pdfYMax / 2, pdfYMax]);
+          const counts = Array(binCount).fill(0);
+          const binWidth = (xMax - xMin) / binCount;
+          sample.forEach((value) => {
+            if (value < xMin || value > xMax) return;
+            const index = Math.min(binCount - 1, Math.floor((value - xMin) / binWidth));
+            counts[index] += 1;
+          });
+          counts.forEach((count, index) => {
+            const density = sample.length ? count / (sample.length * binWidth) : 0;
+            const left = margin.left + index / binCount * plotWidth;
+            const top = yScalePdf(density);
+            pdfSvg.append(make("rect", {
+              x: left + 0.7,
+              y: top,
+              width: plotWidth / binCount - 1.4,
+              height: height - margin.bottom - top,
+              class: "normality-bar",
+            }));
+          });
+          pdfSvg.append(make("path", { d: curvePath(normalPdf, yScalePdf), class: "sampling-theoretical-line" }));
+        };
+
+        const drawCdf = () => {
+          drawAxes(cdfSvg, "Empirical CDFs from standardised samples", "cdf", yScaleCdf, [0, 0.5, 1]);
+          const bulkPaths = [];
+          const empiricalCdfPath = (sample) => {
+            const sorted = [...sample].sort((a, b) => a - b);
+            const points = [`M${xScale(xMin)} ${yScaleCdf(0)}`];
+            sorted.forEach((value, index) => {
+              const clipped = Math.max(xMin, Math.min(xMax, value));
+              points.push(`L${xScale(clipped).toFixed(2)} ${yScaleCdf(index / sorted.length).toFixed(2)}`);
+              points.push(`L${xScale(clipped).toFixed(2)} ${yScaleCdf((index + 1) / sorted.length).toFixed(2)}`);
+            });
+            points.push(`L${xScale(xMax)} ${yScaleCdf(1)}`);
+            return points.join(" ");
+          };
+          empiricalCdfs.forEach((sample, drawIndex) => {
+            const path = empiricalCdfPath(sample);
+            if (bulkMode) {
+              bulkPaths.push(path);
+              return;
+            }
+            const age = empiricalCdfs.length - 1 - drawIndex;
+            cdfSvg.append(make("path", {
+              d: path,
+              class: "sampling-empirical-line",
+              stroke: empiricalColors[drawIndex % empiricalColors.length],
+              opacity: Math.max(0.16, 0.92 - age * 0.16),
+            }));
+          });
+          if (bulkMode) {
+            cdfSvg.append(make("path", {
+              d: bulkPaths.join(" "),
+              class: "sampling-empirical-line",
+              stroke: "#0088dd",
+              opacity: 0.25,
+            }));
+          }
+          cdfSvg.append(make("path", { d: curvePath(normalCdf, yScaleCdf), class: "sampling-theoretical-line" }));
+          if (showRainfallComparison && rainfallComparison) {
+            [
+              { values: rainfallComparison.daily, color: "#e75480" },
+              { values: rainfallComparison.annual, color: "#f28e2b" },
+            ].forEach(({ values, color }) => {
+              cdfSvg.append(make("path", {
+                d: empiricalCdfPath(values),
+                class: "sampling-rainfall-line",
+                stroke: color,
+              }));
+            });
+          }
+        };
+
+        const loadRainfallComparison = () => {
+          if (rainfallComparisonPromise) return rainfallComparisonPromise;
+          rainfallComparisonPromise = fetch("../data/BOURNEMOUTH.csv")
+            .then((response) => {
+              if (!response.ok) throw new Error(`HTTP ${response.status}`);
+              return response.text();
+            })
+            .then((text) => {
+              const lines = text.trim().split(/\r?\n/);
+              const headers = parseCsvRow(lines.shift());
+              const dateIndex = headers.indexOf("DATE");
+              const precipitationIndex = headers.indexOf("PRCP");
+              const daily = [];
+              const annual = new Map();
+              lines.forEach((line) => {
+                const columns = parseCsvRow(line);
+                const value = Number(columns[precipitationIndex]);
+                if (!Number.isFinite(value) || value < 0 || columns[precipitationIndex] === "") return;
+                daily.push(value);
+                const year = columns[dateIndex].slice(0, 4);
+                annual.set(year, (annual.get(year) ?? 0) + value);
+              });
+              rainfallComparison = {
+                daily: standardise(daily),
+                annual: standardise(Array.from(annual.entries()).filter(([year]) => year !== "2023").map(([, value]) => value)),
+              };
+              return rainfallComparison;
+            });
+          return rainfallComparisonPromise;
+        };
+
+        const drawDistanceHistogram = (step) => {
+          distanceSvg.replaceChildren();
+          if (step < 3 || !nullDistances.length) return;
+          const chartMargin = { top: 58, right: 18, bottom: 66, left: 60 };
+          // Position and size of the two explanation boxes inside the histogram.
+          const commonRangeBox = { x: 66, y: 92, width: 220, height: 80 };
+          const extremeRangeBox = { x: 328, y: 92, width: 220, height: 80 };
+          const chartWidth = width - chartMargin.left - chartMargin.right;
+          const chartHeight = height - chartMargin.top - chartMargin.bottom;
+          const distanceMax = 0.36;
+          const distanceBinCount = 48;
+          const distanceBinWidth = distanceMax / distanceBinCount;
+          const counts = Array(distanceBinCount).fill(0);
+          nullDistances.forEach((distance) => {
+            const index = Math.min(distanceBinCount - 1, Math.floor(distance / distanceBinWidth));
+            counts[index] += 1;
+          });
+          const sortedDistances = [...nullDistances].sort((a, b) => a - b);
+          const cutoff = sortedDistances[Math.ceil(sortedDistances.length * 0.95) - 1];
+          const yMax = Math.max(...counts) * 1.08;
+          const xScaleDistance = (value) => chartMargin.left + value / distanceMax * chartWidth;
+          const yScaleDistance = (value) => height - chartMargin.bottom - value / yMax * chartHeight;
+          [0, yMax / 2, yMax].forEach((tick) => {
+            distanceSvg.append(make("line", { x1: chartMargin.left, y1: yScaleDistance(tick), x2: width - chartMargin.right, y2: yScaleDistance(tick), class: "normality-gridline" }));
+          });
+          [0, 0.1, 0.2, 0.3].forEach((tick) => {
+            distanceSvg.append(make("text", { x: xScaleDistance(tick), y: height - chartMargin.bottom + 22, class: "normality-tick" }, tick.toFixed(1)));
+          });
+          distanceSvg.append(
+            make("line", { x1: chartMargin.left, y1: chartMargin.top, x2: chartMargin.left, y2: height - chartMargin.bottom, class: "normality-axis" }),
+            make("line", { x1: chartMargin.left, y1: height - chartMargin.bottom, x2: width - chartMargin.right, y2: height - chartMargin.bottom, class: "normality-axis" }),
+            make("text", { x: chartMargin.left + chartWidth / 2, y: 23, class: "normality-title" }, "Null distribution of maximum distances"),
+            make("text", { x: chartMargin.left + chartWidth / 2, y: height - 16, class: "sampling-distance-label", "text-anchor": "middle" }, "maximum CDF distance"),
+            make("text", { x: 16, y: chartMargin.top + chartHeight / 2, class: "sampling-distance-label", transform: `rotate(-90 16 ${chartMargin.top + chartHeight / 2})`, "text-anchor": "middle" }, "count"),
+          );
+          counts.forEach((count, index) => {
+            const binStart = index * distanceBinWidth;
+            const binEnd = binStart + distanceBinWidth;
+            const left = xScaleDistance(binStart);
+            const top = yScaleDistance(count);
+            const barWidth = chartWidth / distanceBinCount;
+            if (step >= 4 && binStart < cutoff && cutoff < binEnd) {
+              const splitWidth = xScaleDistance(cutoff) - left;
+              distanceSvg.append(
+                make("rect", {
+                  x: left + 0.7,
+                  y: top,
+                  width: Math.max(0, splitWidth - 0.7),
+                  height: height - chartMargin.bottom - top,
+                  fill: "#8fc5eb",
+                }),
+                make("rect", {
+                  x: left + splitWidth,
+                  y: top,
+                  width: Math.max(0, barWidth - splitWidth - 0.7),
+                  height: height - chartMargin.bottom - top,
+                  fill: "#193e87",
+                }),
+              );
+              return;
+            }
+            distanceSvg.append(make("rect", {
+              x: left + 0.7,
+              y: top,
+              width: barWidth - 1.4,
+              height: height - chartMargin.bottom - top,
+              fill: step >= 4 && binStart >= cutoff ? "#193e87" : "#8fc5eb",
+            }));
+          });
+          if (step >= 4) {
+            const cutoffX = xScaleDistance(cutoff);
+            const makeExplanationBox = (box, text, color) => {
+              const object = make("foreignObject", box);
+              const explanation = document.createElementNS("http://www.w3.org/1999/xhtml", "div");
+              explanation.className = "sampling-distance-explanation";
+              explanation.style.color = color;
+              explanation.textContent = text;
+              object.append(explanation);
+              return object;
+            };
+            distanceSvg.append(
+              make("line", { x1: cutoffX, y1: chartMargin.top, x2: cutoffX, y2: height - chartMargin.bottom, stroke: "#cb0a2a", "stroke-width": 2.6, "stroke-dasharray": "6 5" }),
+              make("text", { x: cutoffX + 6, y: chartMargin.top + 17, class: "sampling-distance-note", fill: "#cb0a2a" }, "95% cutoff"),
+            );
+            if (step === 4) {
+              distanceSvg.append(
+                makeExplanationBox(commonRangeBox, "95% of normal randomness produces distances in this range.", "#5474b8"),
+                makeExplanationBox(extremeRangeBox, "Only 5% of randomness produces deviations this extreme or larger.", "#193e87"),
+              );
+            }
+          }
+          if (step >= 5 && rainfallComparison) {
+            [
+              { label: "annual", distance: maximumCdfDistance(rainfallComparison.annual), color: "#f28e2b", y: chartMargin.top + 44, textSide: "left" },
+              { label: "daily", distance: maximumCdfDistance(rainfallComparison.daily), color: "#e75480", y: chartMargin.top + 70, textSide: "right" },
+            ].forEach(({ label, distance, color, y, textSide }) => {
+              const x = xScaleDistance(distance);
+              const placeTextLeft = textSide === "left";
+              distanceSvg.append(
+                make("line", { x1: x, y1: chartMargin.top, x2: x, y2: height - chartMargin.bottom, stroke: color, "stroke-width": 3.5 }),
+                make("text", { x: x + (placeTextLeft ? -6 : 6), y, class: "sampling-distance-note", fill: color, "text-anchor": placeTextLeft ? "end" : "start" }, label),
+              );
+            });
+          }
+        };
+
+        const reset = () => {
+          bulkMode = false;
+          empiricalCdfs = [];
+          nullDistances = [];
+          distanceSvg.replaceChildren();
+          drawPdf();
+          drawCdf();
+          drawCount.textContent = "No samples drawn yet.";
+        };
+
+        const updateDraw100Availability = () => {
+          const requestedSize = Math.max(minimumSampleSize, Number(sizeInput.value) || minimumSampleSize);
+          draw100Button.disabled = requestedSize > draw100SizeLimit;
+          draw100Button.title = draw100Button.disabled ? `Available when sample size is ${draw100SizeLimit} or smaller.` : "";
+        };
+
+        const drawSamples = (drawTotal) => {
+          const nextSize = Math.max(minimumSampleSize, Math.min(99999, Number(sizeInput.value) || minimumSampleSize));
+          sizeInput.value = String(nextSize);
+          if (nextSize !== currentSize) {
+            currentSize = nextSize;
+            reset();
+          }
+          let latestSample = [];
+          for (let drawIndex = 0; drawIndex < drawTotal; drawIndex += 1) {
+            latestSample = standardise(Array.from({ length: currentSize }, sampleNormal));
+            empiricalCdfs.push(latestSample);
+          }
+          drawPdf(latestSample);
+          drawCdf();
+          drawCount.textContent = `${empiricalCdfs.length} random sample${empiricalCdfs.length === 1 ? "" : "s"} drawn (n = ${currentSize}).`;
+          updateDraw100Availability();
+        };
+
+        const syncBulkStep = () => {
+          const step = Number(page.dataset.step || 0);
+          if (step < 1) {
+            showRainfallComparison = false;
+            sizeInput.disabled = false;
+            drawButton.disabled = false;
+            resetButton.disabled = false;
+            updateDraw100Availability();
+            if (bulkMode) reset();
+            return;
+          }
+          if (!bulkMode) {
+            bulkMode = true;
+            currentSize = 50;
+            sizeInput.value = "50";
+            sizeInput.disabled = true;
+            drawButton.disabled = true;
+            draw100Button.disabled = true;
+            resetButton.disabled = true;
+            empiricalCdfs = Array.from({ length: 5000 }, () => standardise(Array.from({ length: currentSize }, sampleNormal)));
+            nullDistances = empiricalCdfs.map(maximumCdfDistance);
+            drawCdf();
+            drawCount.textContent = "5,000 random samples drawn (n = 50).";
+          }
+          const nextShowRainfallComparison = step >= 2;
+          if (showRainfallComparison !== nextShowRainfallComparison) {
+            showRainfallComparison = nextShowRainfallComparison;
+            drawCdf();
+          }
+          drawDistanceHistogram(step);
+          if (showRainfallComparison) {
+            loadRainfallComparison().then(() => {
+              const currentStep = Number(page.dataset.step || 0);
+              if (currentStep >= 2) {
+                drawCdf();
+                drawDistanceHistogram(currentStep);
+              }
+            });
+          }
+        };
+
+        drawButton.addEventListener("click", () => {
+          drawSamples(1);
+        });
+        draw100Button.addEventListener("click", () => {
+          if (draw100Button.disabled) return;
+          drawSamples(100);
+        });
+        resetButton.addEventListener("click", reset);
+        sizeInput.addEventListener("input", updateDraw100Availability);
+        sizeInput.addEventListener("change", () => {
+          const nextSize = Math.max(minimumSampleSize, Math.min(99999, Number(sizeInput.value) || minimumSampleSize));
+          sizeInput.value = String(nextSize);
+          if (nextSize !== currentSize) {
+            currentSize = nextSize;
+            reset();
+          }
+          updateDraw100Availability();
+        });
+
+        updateDraw100Availability();
+        reset();
+        syncBulkStep();
+        new MutationObserver(syncBulkStep).observe(page, { attributes: true, attributeFilter: ["data-step"] });
+      });
+    </script>
+  </body>
+</html>

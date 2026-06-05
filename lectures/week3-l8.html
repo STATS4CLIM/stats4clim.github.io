@@ -1,0 +1,3763 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>L8 Regression</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;520;650;720;820&display=swap" rel="stylesheet">
+    <link href="https://fonts.cdnfonts.com/css/intel-one-mono" rel="stylesheet">
+    <link rel="stylesheet" href="../assets/css/course.css">
+    <style>
+      .title-lockup {
+        width: 1400px;
+      }
+
+      .title-lockup h2 {
+        font-size: 46px;
+        white-space: nowrap;
+      }
+
+      .gmst-slide {
+        display: grid;
+        gap: 12px;
+        align-self: start;
+      }
+
+      .gmst-chart {
+        display: block;
+        width: 700px;
+        height: 570px;
+        margin: 0 auto;
+        overflow: visible;
+      }
+
+      .gmst-chart-wrap {
+        position: relative;
+        width: 700px;
+        margin: 0 auto;
+      }
+
+      .gmst-source {
+        position: absolute;
+        right: -92px;
+        bottom: 52px;
+        color: var(--muted);
+        font-size: 12px;
+        font-weight: 650;
+      }
+
+      .gmst-source a {
+        color: inherit;
+        text-underline-offset: 3px;
+      }
+
+      .gmst-axis {
+        stroke: rgba(25, 62, 135, 0.74);
+        stroke-width: 1.5;
+      }
+
+      .gmst-gridline {
+        stroke: rgba(25, 62, 135, 0.15);
+        stroke-width: 1;
+      }
+
+      .gmst-line {
+        fill: none;
+        stroke: #0a6ecb;
+        stroke-width: 2.7;
+      }
+
+      .gmst-label,
+      .gmst-tick,
+      .gmst-chart-title {
+        fill: var(--site-blue-dark);
+        font-family: var(--font-body);
+        text-anchor: middle;
+      }
+
+      .gmst-tick err-training {
+        color: #2f82e8;
+      }
+      
+      .gmst-tick err-testing {
+        color: #e75480;
+      }
+      .gmst-chart-title {
+        font-size: 23px;
+        font-weight: 820;
+      }
+
+      .gmst-label {
+        font-size: 17px;
+        font-weight: 760;
+      }
+
+      .gmst-tick {
+        font-size: 20px;
+        font-weight: 650;
+      }
+
+      .gmst-hit-area {
+        fill: transparent;
+        cursor: crosshair;
+      }
+
+      .gmst-hover-line {
+        stroke: #cb0a2a;
+        stroke-width: 1.5;
+        stroke-dasharray: 5 5;
+        pointer-events: none;
+      }
+
+      .gmst-hover-dot {
+        fill: #cb0a2a;
+        stroke: #ffffff;
+        stroke-width: 2.4;
+        pointer-events: none;
+      }
+
+      .gmst-tooltip {
+        pointer-events: none;
+      }
+
+      .gmst-tooltip rect {
+        fill: rgba(255, 255, 255, 0.97);
+        stroke: rgba(25, 62, 135, 0.28);
+        stroke-width: 1.2;
+        filter: drop-shadow(0 8px 14px rgba(25, 62, 135, 0.16));
+      }
+
+      .gmst-tooltip text {
+        fill: var(--site-blue-dark);
+        font-family: var(--font-body);
+        font-size: 15px;
+        font-weight: 760;
+      }
+
+      .gmst-question {
+        margin: 0 0;
+        color: #cb0a2a;
+        font-size: 22px;
+        font-weight: 760;
+        text-align: center;
+        transform: translate(20px, -30px);
+      }
+
+      .regression-intro {
+        display: grid;
+        gap: 54px;
+        align-self: start;
+        padding-top: 54px;
+      }
+
+      .regression-definition {
+        margin: 0;
+        color: var(--body);
+        font-size: 27px;
+        line-height: 1.4;
+        text-align: center;
+      }
+
+      .regression-definition .function {
+        color: #ef2b16;
+        font-weight: 820;
+      }
+
+      .regression-definition .predicted {
+        color: #3596ef;
+        font-weight: 820;
+      }
+
+      .regression-definition .best {
+        color: #14a600;
+        font-weight: 820;
+      }
+
+      .regression-equation {
+        margin: 0;
+        color: #111111;
+        font-size: 40px;
+        font-weight: 820;
+        text-align: center;
+      }
+
+      .regression-equation .predicted {
+        color: #3596ef;
+      }
+
+      .regression-equation .function {
+        color: #ef2b16;
+      }
+
+      .regression-equation .error {
+        color: #14a600;
+      }
+
+      .regression-steps {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 20px;
+        margin-top: 2px;
+        transform: translateY(80px);
+      }
+
+      .regression-step {
+        position: relative;
+        display: grid;
+        width: 300px;
+        min-height: 112px;
+        place-items: center;
+        padding: 18px 20px;
+        color: #ffffff;
+        text-align: center;
+      }
+
+      .regression-step-number {
+        position: absolute;
+        left: 0;
+        top: -58px;
+        font-size: 62px;
+        font-weight: 820;
+        line-height: 1;
+      }
+
+      .regression-step-text {
+        font-size: 30px;
+        font-weight: 820;
+        line-height: 1.18;
+      }
+
+      .regression-step-one {
+        background: #ef2b16;
+      }
+
+      .regression-step-one .regression-step-number {
+        color: #ef2b16;
+      }
+
+      .regression-step-two {
+        background: #3596ef;
+      }
+
+      .regression-step-two .regression-step-number {
+        color: #3596ef;
+      }
+
+      .regression-step-three {
+        background: #14a600;
+      }
+
+      .regression-step-three .regression-step-number {
+        color: #14a600;
+      }
+
+      .regression-step-arrow {
+        width: 82px;
+        height: 46px;
+        color: #d6d6d6;
+      }
+
+      .regression-step-group {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+      }
+
+      .regression-step-arrow path {
+        fill: currentColor;
+      }
+
+      .linear-form-slide {
+        --linear-form-left-x: 0px;
+        --linear-form-left-y: 0px;
+        display: grid;
+        grid-template-columns: 760px minmax(0, 1fr);
+        gap: 10px;
+        align-self: start;
+      }
+
+      .linear-form-left {
+        display: grid;
+        grid-template-rows: 82px 460px auto;
+        justify-items: center;
+        gap: 10px;
+        transform: translate(var(--linear-form-left-x), var(--linear-form-left-y));
+      }
+
+      .linear-form-heading {
+        display: grid;
+        width: 100%;
+        height: 82px;
+        align-content: start;
+        justify-items: center;
+        gap: 10px;
+        overflow: hidden;
+      }
+
+      .linear-form-intro {
+        margin: 0;
+        color: var(--site-blue-dark);
+        font-size: 26px;
+        font-weight: 760;
+      }
+
+      .linear-loss-left-intro {
+        display: none;
+        margin: 0;
+        color: var(--site-blue-dark);
+        font-size: 26px;
+        font-weight: 760;
+      }
+
+      .linear-form-page:not([data-step="0"]) .linear-form-intro,
+      .linear-form-page:not([data-step="0"]) .linear-form-equation {
+        display: none;
+      }
+
+      .linear-form-page:not([data-step="0"]) .linear-loss-left-intro {
+        display: block;
+      }
+
+      .linear-form-equation {
+        margin: 0;
+        color: #111111;
+        font-size: 32px;
+        font-weight: 820;
+      }
+
+      .linear-form-equation .alpha {
+        color: #c61953;
+      }
+
+      .linear-form-equation .mu {
+        color: #3596ef;
+      }
+
+      .linear-form-chart {
+        display: block;
+        width: 700px;
+        height: 460px;
+        overflow: visible;
+        transform: translate(-30px, -30px);
+      }
+
+      .linear-form-fit {
+        fill: none;
+        stroke: #c61953;
+        stroke-width: 6;
+      }
+
+      .linear-form-residual {
+        stroke: #c61953;
+        stroke-linecap: round;
+        pointer-events: none;
+      }
+
+      .linear-form-controls {
+        display: grid;
+        grid-template-columns: repeat(2, 260px);
+        gap: 34px;
+        margin-top: -8px;
+        transform: translate(-10px, -30px);
+      }
+
+      .linear-form-control {
+        display: grid;
+        gap: 7px;
+      }
+
+      .linear-form-control label {
+        color: var(--site-blue-dark);
+        font-size: 17px;
+        font-weight: 760;
+        text-align: center;
+      }
+
+      .linear-form-control input {
+        width: 100%;
+        accent-color: #0a6ecb;
+        cursor: grab;
+      }
+
+      .linear-form-control output {
+        color: #1631a9;
+        font-family: var(--font-code);
+        font-size: 16px;
+        font-weight: 720;
+        text-align: center;
+      }
+
+      .linear-form-note {
+        margin: 0;
+        color: var(--muted);
+        font-size: 13px;
+        font-weight: 650;
+      }
+
+      .linear-form-title-loss,
+      .linear-form-title-optimization {
+        display: none;
+      }
+
+      .linear-form-page:not([data-step="0"]) .linear-form-title-choice {
+        display: none;
+      }
+
+      .linear-form-page[data-step="1"] .linear-form-title-loss {
+        display: inline;
+      }
+
+      .linear-form-page[data-step="2"] .linear-form-title-optimization,
+      .linear-form-page[data-step="3"] .linear-form-title-optimization {
+        display: inline;
+      }
+
+      .linear-form-title-detail {
+        font-size: 30px;
+        font-weight: 650;
+      }
+
+      .linear-loss-panel {
+        align-self: start;
+        margin-top:-0px;
+        opacity: 0;
+        transform: translateY(-12px);
+        transition: opacity 260ms ease, transform 260ms ease;
+      }
+
+      .linear-loss-panel.visible {
+        opacity: 1;
+        transform: translateY(0);
+      }
+
+      .linear-loss-box {
+        padding: 12px 36px;
+        border: 3px solid #1b48a2;
+        width: max-content;
+      }
+
+      .linear-loss-formula {
+        display: flex;
+        align-items: center;
+        gap: 18px;
+        margin: 0;
+        color: #111111;
+        font-family: Georgia, serif;
+        font-size: 31px;
+        font-weight: 650;
+      }
+
+      .linear-loss-formula strong {
+        color: #1321a5;
+        font-family: var(--font-body);
+        font-size: 31px;
+        font-weight: 820;
+      }
+
+      .linear-loss-sum {
+        position: relative;
+        display: inline-block;
+        width: 54px;
+        height: 76px;
+        flex: 0 0 54px;
+        font-size: 53px;
+        line-height: 1;
+        vertical-align: middle;
+      }
+
+      .linear-loss-sum span {
+        position: absolute;
+        left: 50%;
+        transform: translateX(-50%);
+        font-size: 15px;
+        line-height: 1;
+        white-space: nowrap;
+      }
+
+      .linear-loss-sum .upper {
+        top: -3px;
+      }
+
+      .linear-loss-sum .symbol {
+        top: 8px;
+        font-size: 53px;
+        line-height: 1;
+      }
+
+      .linear-loss-sum .lower {
+        bottom: -4px;
+      }
+
+      .linear-loss-fraction {
+        display: inline-grid;
+        grid-template-rows: auto auto;
+        align-items: center;
+        justify-items: center;
+        min-width: 28px;
+        line-height: 1;
+      }
+
+      .linear-loss-fraction span:first-child {
+        width: 100%;
+        padding: 0 5px 4px;
+        border-bottom: 1.6px solid currentColor;
+        text-align: center;
+      }
+
+      .linear-loss-fraction span:last-child {
+        padding-top: 4px;
+      }
+
+      .linear-loss-note {
+        margin: 24px 0 0;
+        color: #1925a3;
+        font-size: 21px;
+        font-weight: 100;
+        line-height: 1.4;
+      }
+
+      .linear-loss-reading {
+        --linear-loss-reading-x:-20px;
+        --linear-loss-reading-y: 0px;
+        margin: 18px 0 0;
+        color: var(--site-blue-dark);
+        font-size: 15px;
+        font-weight: 100;
+        line-height: 1.35;
+        text-align: right;
+        transform: translate(var(--linear-loss-reading-x), var(--linear-loss-reading-y));
+      }
+
+      .linear-loss-reading a {
+        color: #e75480;
+        font-weight: 120;
+        text-decoration: underline;
+        text-underline-offset: 5px;
+      }
+
+      .linear-form-right {
+        display: grid;
+        align-content: start;
+        gap: 18px;
+      }
+
+      .linear-optimization-panel {
+        /* Position handles: positive X moves right; positive Y moves down. */
+        --linear-optimization-panel-x: -180px;
+        --linear-optimization-panel-y: -10px;
+        --linear-loss-landscape-x: -25px;
+        --linear-loss-landscape-y: 0px;
+        --linear-extension-links-x: 560px;
+        --linear-extension-links-y: 192px;
+        position: relative;
+        display: grid;
+        justify-items: center;
+        gap: 7px;
+        margin-top: -4px;
+        transform: translate(var(--linear-optimization-panel-x), var(--linear-optimization-panel-y));
+      }
+
+      .linear-optimization-panel.fragment,
+      .linear-optimization-panel.fragment.visible {
+        transform: translate(var(--linear-optimization-panel-x), var(--linear-optimization-panel-y));
+      }
+
+      .linear-extension-links {
+        position: absolute;
+        z-index: 20;
+        top: 0;
+        left: 0;
+        width: 280px;
+        transform: translate(var(--linear-extension-links-x), var(--linear-extension-links-y));
+        color: var(--site-blue-dark);
+        font-size: 15px;
+        font-weight: 100;
+        line-height: 1.35;
+        text-align: right;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 240ms ease;
+      }
+
+      .linear-extension-links p {
+        margin: 0 0 12px;
+      }
+
+      .linear-extension-links a {
+        color: #e75480;
+        font-weight: 120;
+        text-decoration: underline;
+        text-underline-offset: 5px;
+        pointer-events: auto;
+      }
+
+      .linear-extension-links a + a {
+        margin-left: 10px;
+      }
+
+      .linear-form-page[data-step="3"] .linear-extension-links {
+        opacity: 1;
+        pointer-events: auto;
+      }
+
+      .linear-optimization-title {
+        margin: 0;
+        color: var(--site-blue-dark);
+        font-size: 18px;
+        font-weight: 820;
+      }
+
+      .linear-loss-landscape {
+        display: block;
+        width: 430px;
+        height: 330px;
+        transform: translate(var(--linear-loss-landscape-x), var(--linear-loss-landscape-y));
+      }
+
+      .linear-landscape-axis {
+        stroke: rgba(25, 62, 135, 0.82);
+        stroke-width: 1.3;
+      }
+
+      .linear-landscape-grid {
+        stroke: rgba(25, 62, 135, 0.18);
+        stroke-width: 0.8;
+      }
+
+      .linear-landscape-label,
+      .linear-landscape-tick {
+        fill: var(--site-blue-dark);
+        font-family: var(--font-body);
+        text-anchor: middle;
+      }
+
+      .linear-landscape-label {
+        font-size: 15px;
+        font-weight: 760;
+      }
+
+      .linear-landscape-tick {
+        font-size: 12px;
+        font-weight: 650;
+      }
+
+      .linear-landscape-path {
+        fill: none;
+        stroke-width: 3.2;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+      }
+
+      .linear-form-page[data-step="3"] .linear-landscape-path {
+        opacity: 0;
+      }
+
+      .linear-landscape-point {
+        stroke: #ffffff;
+        stroke-width: 2;
+      }
+
+      .linear-landscape-heatmap {
+        opacity: 0;
+        transition: opacity 260ms ease;
+      }
+
+      .linear-landscape-heatmap.visible {
+        opacity: 1;
+      }
+
+      .linear-landscape-star {
+        fill: #9f0c0c;
+        stroke: #ff00a2;
+        stroke-width: 1.2;
+        font-family: Georgia, serif;
+        font-size: 27px;
+        font-weight: 820;
+        text-anchor: middle;
+        dominant-baseline: central;
+        opacity: 0;
+        transition: opacity 260ms ease;
+      }
+
+      .linear-landscape-star.visible {
+        opacity: 1;
+      }
+
+      .linear-landscape-board {
+        fill: #ffffff;
+        stroke: rgba(25, 62, 135, 0.34);
+        stroke-width: 1;
+      }
+
+      .linear-landscape-legend-label {
+        fill: var(--site-blue-dark);
+        font-family: var(--font-body);
+        font-size: 15px;
+        font-weight: 650;
+      }
+
+      .linear-landscape-reset {
+        padding: 7px 14px;
+        border: 1px solid var(--line-strong);
+        border-radius: 999px;
+        background: #ffffff;
+        color: var(--site-blue-dark);
+        font-family: var(--font-body);
+        font-size: 14px;
+        font-weight: 720;
+        cursor: pointer;
+      }
+
+      .linear-landscape-reset:hover {
+        background: var(--site-blue-pale);
+      }
+
+      .python-implementation {
+        display: grid;
+        grid-template-columns: 760px 600px;
+        gap: 70px;
+        align-items: center;
+        padding-top: 18px;
+        transform: translateY(-30px);
+      }
+
+      .python-implementation-page .content-layout {
+        position: relative;
+      }
+
+      .linear-regression-math-link {
+        --linear-regression-math-link-x: 50px;
+        --linear-regression-math-link-y: -70px;
+        position: absolute;
+        z-index: 20;
+        pointer-events: auto;
+        top: 104px;
+        right: 92px;
+        width: 460px;
+        transform: translate(var(--linear-regression-math-link-x), var(--linear-regression-math-link-y));
+        color: var(--site-blue-dark);
+        font-size: 18px;
+        font-weight: 100;
+        line-height: 1.3;
+        text-align: right;
+      }
+
+      .linear-regression-math-link a {
+        color: #e75480;
+        font-weight: 120;
+        text-decoration: underline;
+        text-underline-offset: 5px;
+        pointer-events: auto;
+      }
+
+      .python-design {
+        display: grid;
+        justify-items: center;
+        gap: 24px;
+        order: 2;
+      }
+
+      .python-design-equation {
+        margin: 0;
+        color: #111111;
+        font-size: 32px;
+        font-weight: 820;
+      }
+
+      .python-matrix-expression {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 20px;
+        width: 590px;
+        min-height: 280px;
+        padding: 24px 20px;
+        background: #eef7ff;
+      }
+
+      .python-matrix {
+        display: grid;
+        gap: 3px;
+      }
+
+      .python-matrix-two {
+        grid-template-columns: repeat(2, 46px);
+      }
+
+      .python-matrix-one {
+        grid-template-columns: 46px;
+      }
+
+      .python-matrix-cell {
+        display: grid;
+        width: 46px;
+        height: 43px;
+        place-items: center;
+        background: #93a9cd;
+        color: #ffffff;
+        font-size: 18px;
+        font-weight: 760;
+      }
+
+      .python-matrix-cell.constant {
+        background: #5474b8;
+      }
+
+      .python-matrix-cell.parameter {
+        background: #395695;
+      }
+
+      .python-matrix-symbol {
+        color: #111111;
+        font-size: 31px;
+        font-weight: 820;
+      }
+
+      .python-matrix-block {
+        display: grid;
+        justify-items: center;
+        gap: 8px;
+      }
+
+      .python-matrix-shape {
+        color: var(--muted);
+        font-family: var(--font-code);
+        font-size: 14px;
+        font-weight: 720;
+      }
+
+      .python-code-side {
+        display: grid;
+        gap: 16px;
+        order: 1;
+      }
+
+      .python-workflow {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 9px;
+      }
+
+      .python-workflow-step {
+        position: relative;
+        display: grid;
+        width: 174px;
+        min-height: 58px;
+        place-items: center;
+        padding: 8px 10px;
+        color: #ffffff;
+        font-size: 15px;
+        font-weight: 820;
+        line-height: 1.08;
+        text-align: center;
+      }
+
+      .python-workflow-step strong {
+        position: absolute;
+        left: 0;
+        top: -55px;
+        font-size: 62px;
+        line-height: 1;
+      }
+
+      .python-workflow-one {
+        background: #ef2b16;
+      }
+
+      .python-workflow-one strong {
+        color: #ef2b16;
+      }
+
+      .python-workflow-two {
+        background: #3596ef;
+      }
+
+      .python-workflow-two strong {
+        color: #3596ef;
+      }
+
+      .python-workflow-three {
+        background: #14a600;
+      }
+
+      .python-workflow-three strong {
+        color: #14a600;
+      }
+
+      .python-workflow-arrow {
+        width: 54px;
+        height: 32px;
+        fill: #d6d6d6;
+      }
+
+      .python-code-panel {
+        display: grid;
+        gap: 14px;
+        padding: 20px 22px;
+        border: 2px solid var(--site-blue-dark);
+        background: var(--paper);
+      }
+
+      .python-code-row {
+        margin: 0;
+        color: var(--site-blue-dark);
+        font-family: var(--font-code);
+        font-size: 19px;
+        font-weight: 650;
+        line-height: 1.45;
+        white-space: nowrap;
+      }
+
+      .python-code-row a {
+        color: #e75480;
+        text-underline-offset: 3px;
+      }
+
+      .python-code-row.step-one code,
+      .python-code-row.step-two code,
+      .python-code-row.step-three code {
+        display: inline-block;
+        padding-bottom: 3px;
+      }
+
+      .python-code-row.step-one code {
+        border-bottom: 5px solid #ef2b16;
+      }
+
+      .python-code-row.step-two code {
+        border-bottom: 5px solid #3596ef;
+      }
+
+      .python-code-row.step-three code {
+        border-bottom: 5px solid #14a600;
+      }
+
+      .python-code-comment {
+        color: var(--muted);
+        font-size: 15px;
+        font-weight: 520;
+      }
+
+      .python-matrix-review {
+        color: #e75480;
+        font-size: 17px;
+        font-weight: 760;
+        text-underline-offset: 4px;
+      }
+
+      .ols-summary-slide {
+        display: grid;
+        gap: 18px;
+        align-self: start;
+        transform: translateY(-10px);
+      }
+
+      .ols-summary-top {
+        display: grid;
+        gap: 30px;
+        align-items: center;
+        transform: translateY(30px);
+      }
+
+      .ols-summary-call {
+        display: inline-block;
+        justify-self: start;
+        padding: 12px 18px 12px 16px;
+        border: 2px solid var(--site-blue-dark);
+        color: var(--site-blue-dark);
+        font-family: var(--font-code);
+        font-size: 20px;
+        font-weight: 720;
+        color: #b22a90;
+      }
+
+      .ols-summary-focus {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 18px;
+      }
+
+      .ols-summary-focus article {
+        min-height: 86px;
+        padding: 12px 14px;
+        border: 1px solid var(--line-strong);
+        background: var(--paper-soft);
+      }
+
+      .ols-summary-focus h3 {
+        margin: 0 0 5px;
+        color: #e75480;
+        font-family: var(--font-code);
+        font-size: 20px;
+      }
+
+      .ols-summary-focus p {
+        margin: 0;
+        color: var(--body);
+        font-size: 20px;
+        font-weight: 650;
+        line-height: 1.35;
+      }
+
+      .variance-decomposition {
+        display: grid;
+        grid-template-columns: 1fr 38px 1fr 38px 1fr;
+        gap: 8px;
+        align-items: center;
+        transform: translateY(70px);
+      }
+
+      .variance-chart {
+        display: block;
+        width: 410px;
+        height: 235px;
+      }
+
+      .variance-symbol {
+        color: #111111;
+        font-size: 34px;
+        font-weight: 820;
+        text-align: center;
+      }
+
+      .variance-chart-title,
+      .variance-chart-label,
+      .variance-chart-tick {
+        fill: var(--site-blue-dark);
+        font-family: var(--font-body);
+        text-anchor: middle;
+      }
+
+      .variance-chart-title {
+        font-size: 20px;
+        font-weight: 820;
+        transform: translateX(20px);
+      }
+
+      .variance-chart-label {
+        font-size: 13px;
+        font-weight: 760;
+      }
+
+      .variance-chart-tick {
+        font-size: 11px;
+        font-weight: 650;
+      }
+
+      .variance-chart-axis {
+        stroke: rgba(25, 62, 135, 0.72);
+        stroke-width: 1.1;
+      }
+
+      .variance-chart-grid {
+        stroke: rgba(25, 62, 135, 0.15);
+        stroke-width: 0.8;
+      }
+
+      .variance-chart-line {
+        fill: none;
+        stroke: #111111;
+        stroke-width: 1.8;
+      }
+
+      .variance-decomposition-labels {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 62px;
+        margin: -5px 5px 0;
+        transform: translateY(80px);
+      }
+
+      .variance-decomposition-labels strong {
+        color: var(--site-blue);
+        font-size: 20px;
+        text-align: center;
+      }
+
+      .ols-summary-bottom {
+        display: grid;
+        grid-template-columns: 500px 400px minmax(0, 1fr);
+        gap: 100px;
+        align-items: center;
+        transform: translateY(100px);
+      }
+
+      .ols-fraction-formula {
+        display: flex;
+        align-items: center;
+        gap: 13px;
+        color: #253995;
+        font-size: 20px;
+        font-weight: 820;
+        white-space: nowrap;
+      }
+
+      .ols-fraction {
+        display: inline-grid;
+        grid-template-rows: auto auto;
+        text-align: center;
+      }
+
+      .ols-fraction span:first-child {
+        padding: 0 10px 4px;
+        border-bottom: 1.5px solid currentColor;
+      }
+
+      .ols-fraction span:last-child {
+        padding: 4px 10px 0;
+      }
+
+      .ols-hypothesis {
+        margin: 0;
+        color: #cb0a61;
+        font-size: 20px;
+        font-weight: 720;
+        line-height: 1.4;
+      }
+
+      .ols-summary-reading {
+        margin: 0;
+        color: var(--muted);
+        font-size: 14px;
+        font-weight: 650;
+        text-align: right;
+      }
+
+      .ols-summary-reading a {
+        color: #e75480;
+        text-underline-offset: 3px;
+      }
+
+      .summary-output-slide {
+        display: grid;
+        grid-template-columns: 865px minmax(0, 1fr);
+        gap: 36px;
+        align-items: start;
+        transform: translateY(-8px);
+      }
+
+      .summary-output-wrap {
+        position: relative;
+        width: 865px;
+        padding: 12px 14px;
+        background: #ffffff;
+      }
+
+      .summary-output {
+        margin: 0;
+        color: #111111;
+        font-family: var(--font-code);
+        font-size: 18px;
+        font-weight: 520;
+        line-height: 1.18;
+        white-space: pre;
+      }
+
+      .summary-highlight {
+        position: absolute;
+        left: 8px;
+        right: 8px;
+        border: 3px solid;
+        border-radius: 5px;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 240ms ease;
+      }
+
+      .summary-output-page:not([data-step="0"]) .summary-highlight-overall {
+        opacity: 1;
+      }
+
+      .summary-output-page:not([data-step="0"]):not([data-step="1"]) .summary-highlight-coefficients {
+        opacity: 1;
+      }
+
+      .summary-highlight-overall {
+        top: 58px;
+        left: 20px;
+        width: 890px;
+        height: 220px;
+        border-color: #3596ef;
+      }
+
+      .summary-highlight-coefficients {
+        top: 282px;
+        left: 20px;
+        width: 890px;
+        height: 100px;
+        border-color: #14a600;;
+      }
+
+      .summary-output-notes {
+        position: relative;
+        min-height: 480px;
+      }
+
+      .summary-output-card {
+        position: absolute;
+        left: 0;
+        right: 0;
+        padding: 13px 15px;
+        border-left: 5px solid;
+        background: var(--paper-soft);
+        opacity: 0;
+        transform: translateY(8px);
+        transition: opacity 240ms ease, transform 240ms ease;
+      }
+
+      .summary-output-card.visible {
+        opacity: 1;
+        transform: translateY(0);
+      }
+
+      .summary-output-card h3 {
+        margin: 0 0 6px;
+        color: var(--site-blue-dark);
+        font-size: 19px;
+      }
+
+      .summary-output-card p {
+        margin: 0;
+        color: var(--body);
+        font-size: 15px;
+        font-weight: 650;
+        line-height: 1.42;
+      }
+
+      .summary-output-card code {
+        color: #e75480;
+        font-family: var(--font-code);
+        font-weight: 720;
+      }
+
+      .summary-output-card a {
+        color: #e75480;
+        text-underline-offset: 3px;
+      }
+
+      .summary-output-overall {
+        top: 101px;
+        left: 20px;
+        border-color: #3596ef;
+      }
+
+      .summary-output-coefficients {
+        top: 284px;
+        left: 20px;
+        border-color: #14a600;
+      }
+
+      .summary-output-reading {
+        margin: 4px 0 0;
+        color: var(--muted);
+        font-size: 14px;
+        font-weight: 650;
+        line-height: 1.45;
+      }
+
+      .summary-output-reading a {
+        color: #e75480;
+        text-underline-offset: 3px;
+      }
+
+      .diagnostics-slide {
+        display: grid;
+        grid-template-columns: 865px minmax(0, 1fr);
+        gap: 34px;
+        align-items: start;
+        transform: translateY(-8px);
+      }
+
+      .diagnostics-output-wrap {
+        position: relative;
+        width: 865px;
+        padding: 12px 14px;
+        background: #ffffff;
+      }
+
+      .diagnostics-output {
+        margin: 0;
+        color: #111111;
+        font-family: var(--font-code);
+        font-size: 18px;
+        font-weight: 520;
+        line-height: 1.18;
+        white-space: pre;
+      }
+
+      .diagnostics-highlight {
+        position: absolute;
+        top: 390px;
+        left: 20px;
+        width: 890px;
+        height: 96px;
+        border: 3px solid #d32410;
+        border-radius: 5px;
+        pointer-events: none;
+      }
+
+      .diagnostics-assumption {
+        margin: 0 0 12px;
+        padding: 12px 15px;
+        color: var(--body);
+        background: #fff2f5;
+        border-left: 5px solid #ef2b16;
+        font-size: 25px;
+        font-weight: 680;
+        line-height: 1.38;
+      }
+
+      .diagnostics-assumption strong {
+        color: #cb0a61;
+      }
+
+      .diagnostics-reading-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+      }
+
+      .diagnostics-reading-card {
+        padding: 10px 12px;
+        background: var(--paper-soft);
+        border-left: 4px solid #1637ef;
+      }
+
+      .diagnostics-reading-card h3 {
+        margin: 0 0 4px;
+        color: var(--site-blue-dark);
+        font-family: var(--font-code);
+        font-size: 16px;
+      }
+
+      .diagnostics-reading-card p {
+        margin: 0;
+        color: var(--body);
+        font-size: 14px;
+        font-weight: 620;
+        line-height: 1.36;
+      }
+
+      .diagnostics-reading-card strong {
+        color: #cb0a61;
+      }
+
+      .polynomial-slide {
+        --polynomial-left-x: 0px;
+        --polynomial-left-y: 0px;
+        display: grid;
+        grid-template-columns: 760px minmax(0, 1fr);
+        gap: 10px;
+        align-self: start;
+      }
+
+      .polynomial-left {
+        display: grid;
+        grid-template-rows: 82px 460px auto;
+        justify-items: center;
+        gap: 10px;
+        transform: translate(var(--polynomial-left-x), var(--polynomial-left-y));
+      }
+
+      .polynomial-heading {
+        display: grid;
+        width: 100%;
+        height: 82px;
+        align-content: start;
+        justify-items: center;
+        gap: 10px;
+        overflow: hidden;
+      }
+
+      .polynomial-equation {
+        margin: 0;
+        color: #111111;
+        font-size: 30px;
+        font-weight: 820;
+        text-align: center;
+      }
+
+      .polynomial-equation .polynomial-order {
+        color: #cb0a61;
+      }
+
+      .polynomial-explanation {
+        margin: 0;
+        color: var(--site-blue-dark);
+        font-size: 19px;
+        font-weight: 680;
+        text-align: center;
+      }
+
+      .polynomial-chart {
+        display: block;
+        width: 700px;
+        height: 460px;
+        overflow: visible;
+        transform: translate(-30px, -30px);
+      }
+
+      .polynomial-observed {
+        fill: none;
+        stroke: #72afe0;
+        stroke-width: 2.4;
+      }
+
+      .polynomial-fit {
+        fill: none;
+        stroke: #cb0a61;
+        stroke-width: 5;
+      }
+
+      .polynomial-controls {
+        display: grid;
+        width: 554px;
+        grid-template-columns: 1fr;
+        justify-items: stretch;
+        gap: 5px;
+        margin-top: -8px;
+        transform: translate(-10px, -30px);
+      }
+
+      .polynomial-controls label {
+        color: var(--site-blue-dark);
+        font-size: 19px;
+        font-weight: 760;
+        text-align: center;
+      }
+
+      .polynomial-controls input {
+        width: 100%;
+        accent-color: #cb0a61;
+      }
+
+      .polynomial-control-values {
+        display: flex;
+        justify-content: space-between;
+        color: #cb0a61;
+        font-family: var(--font-code);
+        font-size: 16px;
+        font-weight: 720;
+      }
+
+      .polynomial-right {
+        display: grid;
+        align-content: start;
+        justify-items: center;
+        gap: 16px;
+        transform: translate(20px, 6px);
+      }
+
+      .polynomial-matrix-expression {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 16px;
+        width: 700px;
+        min-height: 320px;
+        padding: 20px 16px;
+        background: #eef7ff;
+      }
+
+      .polynomial-matrix {
+        display: grid;
+        gap: 3px;
+      }
+
+      .polynomial-matrix-one {
+        grid-template-columns: 46px;
+      }
+
+      .polynomial-matrix-design {
+        grid-template-columns: repeat(5, 46px);
+      }
+
+      .polynomial-matrix-cell {
+        display: grid;
+        width: 46px;
+        height: 43px;
+        place-items: center;
+        background: #93a9cd;
+        color: #ffffff;
+        font-size: 18px;
+        font-weight: 760;
+      }
+
+      .polynomial-matrix-cell.constant {
+        background: #5474b8;
+      }
+
+      .polynomial-matrix-cell.parameter {
+        background: #395695;
+      }
+
+      .polynomial-matrix-symbol {
+        color: #111111;
+        font-size: 31px;
+        font-weight: 820;
+      }
+
+      .polynomial-matrix-block {
+        display: grid;
+        justify-items: center;
+        gap: 7px;
+      }
+
+      .polynomial-matrix-shape {
+        color: var(--muted);
+        font-family: var(--font-code);
+        font-size: 14px;
+        font-weight: 720;
+      }
+
+      .polynomial-code-panel {
+        display: grid;
+        width: 700px;
+        gap: 8px;
+        padding: 20px 22px;
+        border: 2px solid var(--site-blue-dark);
+        background: var(--paper);
+      }
+
+      .polynomial-code-row {
+        margin: 0;
+        color: var(--site-blue-dark);
+        font-family: var(--font-code);
+        font-size: 19px;
+        font-weight: 650;
+        line-height: 1.45;
+        white-space: nowrap;
+      }
+
+      .polynomial-code-row a {
+        color: inherit;
+        text-underline-offset: 3px;
+      }
+
+      .residual-order-slide {
+        display: grid;
+        grid-template-columns: 780px minmax(0, 1fr);
+        gap: 72px;
+        align-items: center;
+        padding-top: 38px;
+      }
+
+      .residual-order-chart {
+        display: block;
+        width: 780px;
+        height: 560px;
+        overflow: visible;
+      }
+
+      .residual-order-line {
+        fill: none;
+        stroke: #0a6ecb;
+        stroke-width: 4;
+      }
+
+      .residual-order-point {
+        fill: #0a6ecb;
+        stroke: #ffffff;
+        stroke-width: 1.8;
+      }
+
+      .residual-order-hit {
+        fill: transparent;
+        cursor: crosshair;
+      }
+
+      .residual-order-hover-line {
+        stroke: #cb0a2a;
+        stroke-width: 1.5;
+        stroke-dasharray: 5 5;
+        pointer-events: none;
+      }
+
+      .residual-order-hover-dot {
+        fill: #cb0a2a;
+        stroke: #ffffff;
+        stroke-width: 2.4;
+        pointer-events: none;
+      }
+
+      .residual-order-tooltip {
+        pointer-events: none;
+      }
+
+      .residual-order-tooltip rect {
+        fill: rgba(255, 255, 255, 0.98);
+        stroke: rgba(25, 62, 135, 0.3);
+        stroke-width: 1.2;
+        filter: drop-shadow(0 8px 14px rgba(25, 62, 135, 0.16));
+      }
+
+      .residual-order-tooltip text {
+        fill: var(--site-blue-dark);
+        font-family: var(--font-body);
+        font-size: 15px;
+        font-weight: 760;
+      }
+
+      .residual-order-question {
+        margin: 0;
+        color: var(--body);
+        font-size: 29px;
+        font-weight: 520;
+        line-height: 1.35;
+        text-align: center;
+      }
+
+      .residual-order-question .lower {
+        color: #3596ef;
+        font-weight: 820;
+      }
+
+      .residual-order-question .better {
+        display: block;
+        margin-top: 8px;
+        color: #b32b1c;
+        font-size: 53px;
+        font-weight: 820;
+        line-height: 1;
+      }
+
+      .prediction-purpose {
+        display: grid;
+        min-height: 610px;
+        place-items: center;
+        padding-bottom: 54px;
+      }
+
+      .prediction-purpose p {
+        margin: 0;
+        color: #ca2d1c;
+        font-size: 57px;
+        font-weight: 820;
+        line-height: 1.34;
+        text-align: center;
+      }
+
+      .prediction-error-slide {
+        --prediction-left-x: 0px;
+        --prediction-left-y: 0px;
+        display: grid;
+        grid-template-columns: 760px minmax(0, 1fr);
+        gap: 10px;
+        align-self: start;
+      }
+
+      .prediction-error-left {
+        display: grid;
+        grid-template-rows: 82px 460px auto;
+        justify-items: center;
+        gap: 10px;
+        transform: translate(var(--prediction-left-x), var(--prediction-left-y));
+      }
+
+      .prediction-error-heading {
+        display: grid;
+        width: 100%;
+        height: 82px;
+        align-content: start;
+        justify-items: center;
+        gap: 5px;
+        overflow: hidden;
+      }
+
+      .prediction-error-heading p {
+        margin: 0;
+        color: var(--site-blue-dark);
+        font-size: 21px;
+        font-weight: 720;
+        line-height: 1.35;
+        text-align: center;
+      }
+
+      .prediction-error-chart {
+        display: block;
+        width: 700px;
+        height: 460px;
+        overflow: visible;
+        transform: translate(-30px, -30px);
+      }
+
+      .prediction-error-test-area {
+        fill: rgba(84, 116, 184, 0.14);
+        cursor: grab;
+      }
+
+      .prediction-error-test-area.dragging {
+        cursor: grabbing;
+      }
+
+      .prediction-error-drag-area {
+        fill: transparent;
+        cursor: grab;
+      }
+
+      .prediction-error-drag-area.dragging {
+        cursor: grabbing;
+      }
+
+      .prediction-error-split-handle {
+        stroke: #5474b8;
+        stroke-width: 3;
+        stroke-dasharray: 7 5;
+        pointer-events: none;
+      }
+
+      .prediction-error-split-label {
+        fill: var(--site-blue-dark);
+        font-family: var(--font-body);
+        font-size: 15px;
+        font-weight: 760;
+        pointer-events: none;
+      }
+
+      .prediction-error-observed {
+        fill: none;
+        stroke: #72afe0;
+        stroke-width: 2.4;
+      }
+
+      .prediction-error-training-fit {
+        fill: none;
+        stroke: #0a6ecb;
+        stroke-width: 5;
+      }
+
+      .prediction-error-testing-fit {
+        fill: none;
+        stroke: #ef2b16;
+        stroke-width: 5;
+      }
+
+      .prediction-error-controls {
+        display: grid;
+        width: 554px;
+        gap: 5px;
+        margin-top: -8px;
+        transform: translate(-10px, -30px);
+      }
+
+      .prediction-error-controls label {
+        color: var(--site-blue-dark);
+        font-size: 19px;
+        font-weight: 760;
+        text-align: center;
+      }
+
+      .prediction-error-controls input {
+        width: 100%;
+        accent-color: #cb0a61;
+      }
+
+      .prediction-error-control-values {
+        display: flex;
+        justify-content: space-between;
+        color: #cb0a61;
+        font-family: var(--font-code);
+        font-size: 16px;
+        font-weight: 720;
+      }
+
+      .prediction-error-right {
+        display: grid;
+        align-content: start;
+        justify-items: center;
+        gap: 8px;
+        transform: translate(-16px, 24px);
+      }
+
+      .prediction-error-summary-chart {
+        --training-error-color: #0a6ecb;
+        --prediction-error-color: #ef2b16;
+        --training-error-label-size: 24px;
+        --prediction-error-label-size: 24px;
+        display: block;
+        width: 700px;
+        height: 430px;
+        overflow: visible;
+      }
+
+      .prediction-error-summary-training {
+        fill: none;
+        stroke: var(--training-error-color);
+        stroke-width: 4;
+      }
+
+      .prediction-error-summary-testing {
+        fill: none;
+        stroke: var(--prediction-error-color);
+        stroke-width: 4;
+      }
+
+      .prediction-error-summary-point-training {
+        fill: var(--training-error-color);
+        stroke: #ffffff;
+        stroke-width: 1.6;
+      }
+
+      .prediction-error-summary-point-testing {
+        fill: var(--prediction-error-color);
+        stroke: #ffffff;
+        stroke-width: 1.6;
+      }
+
+      .prediction-error-summary-chart .err-training {
+        fill: var(--training-error-color);
+        font-size: var(--training-error-label-size);
+      }
+
+      .prediction-error-summary-chart .err-testing {
+        fill: var(--prediction-error-color);
+        font-size: var(--prediction-error-label-size);
+      }
+
+      .prediction-error-summary-minor-grid {
+        stroke: rgba(25, 62, 135, 0.09);
+        stroke-width: 0.8;
+      }
+
+      .prediction-error-summary-note {
+        margin: -0px 0 0;
+        color: var(--site-blue-dark);
+        font-size: 19px;
+        font-weight: 650;
+        line-height: 1.45;
+        text-align: center;
+        width: 600px;
+        transform: translate(20px, 20px);
+      }
+
+      .prediction-error-summary-note strong {
+        color: #ef2b16;
+        font-size: 23px;
+      }
+
+      .prediction-error-summary-note .danger {
+        color: #1848b0;
+        font-weight: 820;
+        font-size: 23px;
+      }
+
+      .bic-slide {
+        display: grid;
+        grid-template-columns: 865px minmax(0, 1fr);
+        gap: 34px;
+        align-self: start;
+        transform: translateY(-8px);
+      }
+
+      .bic-summary-highlight {
+        position: absolute;
+        top: 200px;
+        left: 455px;
+        width: 452px;
+        height: 35px;
+        border: 5px solid #e75480;
+        border-radius: 5px;
+        pointer-events: none;
+      }
+
+      .bic-right {
+        display: grid;
+        align-content: start;
+        gap: 20px;
+        transform: translate(-8px, 20px);
+      }
+
+      .bic-explanation {
+        margin: 0;
+        color: var(--body);
+        font-size: 21px;
+        font-weight: 620;
+        line-height: 1.48;
+        transform: translate(40px, 0);
+        width: 550px;
+      }
+
+      .bic-explanation strong {
+        color: #cb0a61;
+      }
+
+      .bic-chart {
+        --bic-tick-size: 20px;
+        --bic-axis-label-size: 20px;
+        --bic-penalty-tick-size: 20px;
+        --bic-penalty-label-size: 20px;
+        --bic-legend-size: 20px;
+        display: block;
+        width: 500px;
+        height: 390px;
+        overflow: visible;
+        transform: translate(70px, -110px);
+      }
+
+      .bic-loss-line {
+        fill: none;
+        stroke: #2356e8;
+        stroke-width: 4;
+      }
+
+      .bic-penalty-line {
+        fill: none;
+        stroke: #ef2b16;
+        stroke-width: 4;
+      }
+
+      .bic-total-line {
+        fill: none;
+        stroke: #193e87;
+        stroke-width: 4;
+      }
+
+      .bic-total-point {
+        fill: #193e87;
+        stroke: #ffffff;
+        stroke-width: 2;
+      }
+
+      .bic-loss-point {
+        fill: #2356e8;
+      }
+
+      .bic-penalty-point {
+        fill: #ef2b16;
+      }
+
+      .bic-penalty-axis {
+        stroke: #ef2b16;
+        stroke-width: 1.5;
+      }
+
+      .bic-penalty-tick,
+      .bic-penalty-label {
+        fill: #ef2b16;
+        font-family: var(--font-body);
+        font-weight: 720;
+        text-anchor: middle;
+      }
+
+      .bic-penalty-tick {
+        font-size: var(--bic-penalty-tick-size);
+      }
+
+      .bic-penalty-label {
+        font-size: var(--bic-penalty-label-size);
+      }
+
+      .bic-legend {
+        fill: var(--site-blue-dark);
+        font-family: var(--font-body);
+        font-size: var(--bic-legend-size);
+        font-weight: 720;
+      }
+
+      .bic-chart .gmst-tick {
+        font-size: var(--bic-tick-size);
+      }
+
+      .bic-chart .gmst-label {
+        font-size: var(--bic-axis-label-size);
+      }
+
+    </style>
+  </head>
+  <body class="deck-page">
+    <template id="deckHeaderTemplate">
+      <span class="slide-section">
+        <a class="deck-home" href="../index.html" aria-label="Back to course home">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M3 11.5L12 4l9 7.5"></path>
+            <path d="M6.5 10.5V20h11v-9.5"></path>
+            <path d="M10 20v-5h4v5"></path>
+          </svg>
+        </a>
+        <span>SOES3042/6025 · Statistics</span>
+      </span>
+      <span class="slide-lecture-nav">
+        <span>Week 4 · Lecture 8</span>
+        <span class="lecture-jump" aria-label="Lecture navigation">
+          <a class="lecture-jump-link lecture-jump-prev" href="week3-l7.html" aria-label="Previous lecture" title="Previous lecture"></a>
+          <a class="lecture-jump-link lecture-jump-next" href="week3-l9.html" aria-label="Next lecture" title="Next lecture"></a>
+          <a class="lecture-jump-link lecture-jump-home" href="week3-l8.html?slide=1" aria-label="Restart this lecture" title="Restart this lecture"></a>
+        </span>
+      </span>
+    </template>
+
+    <div class="deck-viewport">
+      <main class="deck-stage" aria-live="polite">
+        <section class="slide active">
+          <header class="slide-kicker"></header>
+          <div class="slide-body title-layout">
+            <div class="title-lockup">
+              <h1>Lecture 8</h1>
+              <h2>Linear Regression &amp; Model Selection</h2>
+            </div>
+            <aside class="title-meta">
+              <p>1. <b>Linear Regression I</b>: Fit a line</p>
+              <p>2. <b>Uncertainty Estimate of Linear Regression</b></p>
+              <p>3. <b>Linear Regression II</b>: Fit quadratic and polynomial relationships</p>
+              <p>4. <b>Model Selection</b>: Bayesian Information Criterion</p>
+            </aside>
+          </div>
+        </section>
+
+        <section class="slide">
+          <header class="slide-kicker"></header>
+          <div class="slide-body content-layout">
+            <h2 class="slide-title">Earth's Surface Temperature Has Been Increasing</h2>
+            <div class="slide-content gmst-slide">
+              <div class="gmst-chart-wrap">
+                <svg class="gmst-chart" id="gmstTrendChart" viewBox="0 0 700 460" role="img" aria-label="Annual global mean surface temperature anomaly from 1850 to 2025"></svg>
+                <small class="gmst-source">Data: <a href="http://dcent-i.github.io" target="_blank" rel="noopener">DCENT-I</a></small>
+              </div>
+              <p class="gmst-question">How fast is the Global Mean Surface Temperature (GMST) changing with time?</p>
+            </div>
+          </div>
+        </section>
+
+        <section class="slide">
+          <header class="slide-kicker"></header>
+          <div class="slide-body content-layout">
+            <h2 class="slide-title">Regression to Find the Trend</h2>
+            <div class="slide-content regression-intro">
+              <p class="regression-definition">Find the <span class="function">function of predictors</span> that fits the <span class="predicted">predicted variable</span> the <span class="best">most</span>.</p>
+              <p class="regression-equation"><span class="predicted">y</span> = <span class="function">F(x)</span> + <span class="error">ε</span></p>
+              <div class="regression-steps">
+                <div class="regression-step regression-step-one fragment">
+                  <span class="regression-step-number">1</span>
+                  <span class="regression-step-text">Choose a<br>functional form</span>
+                </div>
+                <div class="regression-step-group fragment">
+                  <svg class="regression-step-arrow" viewBox="0 0 82 46" aria-hidden="true">
+                    <path d="M0 11h54V0l28 23-28 23V35H0z"></path>
+                  </svg>
+                  <div class="regression-step regression-step-two">
+                    <span class="regression-step-number">2</span>
+                    <span class="regression-step-text">Define what<br>"fit" means</span>
+                  </div>
+                </div>
+                <div class="regression-step-group fragment">
+                  <svg class="regression-step-arrow" viewBox="0 0 82 46" aria-hidden="true">
+                    <path d="M0 11h54V0l28 23-28 23V35H0z"></path>
+                  </svg>
+                  <div class="regression-step regression-step-three">
+                    <span class="regression-step-number">3</span>
+                    <span class="regression-step-text">Find the<br>"most"</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="slide linear-form-page">
+          <header class="slide-kicker"></header>
+          <div class="slide-body content-layout">
+            <h2 class="slide-title">
+              <span class="linear-form-title-choice">1. Choose a Functional Form</span>
+              <span class="linear-form-title-loss">2. Defining Loss</span>
+              <span class="linear-form-title-optimization">3. Optimization by Minimising the Loss</span>
+            </h2>
+            <div class="slide-content linear-form-slide">
+              <div class="linear-form-left">
+                <div class="linear-form-heading">
+                  <p class="linear-form-intro">The simplest choice is a linear relationship.</p>
+                  <p class="linear-form-equation">T = <span class="alpha">α</span>t + <span class="mu">μ</span></p>
+                  <p class="linear-loss-left-intro">Measure the misalignment between data and the line.</p>
+                </div>
+                <svg class="linear-form-chart" id="linearFormChart" viewBox="0 0 700 460" role="img" aria-label="Annual global mean surface temperature anomaly with an adjustable fitted line"></svg>
+                <div class="linear-form-controls">
+                  <div class="linear-form-control">
+                    <label for="linearAlpha">Slope α</label>
+                    <input id="linearAlpha" type="range" min="-1" max="2" step="0.01" value="0.9">
+                    <output id="linearAlphaValue">α = 0.90 °C / century</output>
+                  </div>
+                  <div class="linear-form-control">
+                    <label for="linearMu">Intercept μ</label>
+                    <input id="linearMu" type="range" min="-1.5" max="0.5" step="0.01" value="-0.9">
+                    <output id="linearMuValue">μ = -0.90 °C</output>
+                  </div>
+                </div>
+              </div>
+              <div class="linear-form-right">
+                <aside class="linear-loss-panel fragment">
+                  <div class="linear-loss-box">
+                    <p class="linear-loss-formula">
+                      <strong>MSE:</strong>
+                      <span>L(α, μ) =</span>
+                      <span class="linear-loss-fraction"><span>1</span><span>n</span></span>
+                      <span class="linear-loss-sum"><span class="upper">n</span><span class="symbol">∑</span><span class="lower">i = 1</span></span>
+                      <span>(T<sub>i</sub> − T̂<sub>i</sub>)²</span>
+                    </p>
+                  </div>
+                  <p class="linear-loss-note">Mean Squared Error <strong>(MSE)</strong> measures the average squared <br> distance between the data and the regression line.</p>
+                  <p class="linear-loss-reading">Want to know <a href="https://docs.h2o.ai/h2o/latest-stable/h2o-docs/data-science/algo-params/distribution.html" target="_blank" rel="noopener">other loss functions</a>?</p>
+                </aside>
+                <section class="linear-optimization-panel fragment">
+                  <svg class="linear-loss-landscape" id="linearLossLandscape" viewBox="0 0 330 330" role="img" aria-label="Mean squared error landscape for slope and intercept"></svg>
+                  <button class="linear-landscape-reset" id="linearLandscapeReset" type="button">Reset trajectory</button>
+                  <div class="linear-extension-links">
+                    <p>Want to know more about <a href="https://www.youtube.com/watch?v=IHZwWFHWa-w" target="_blank" rel="noopener">optimization</a>?</p>
+                    <p>Want to add uncertainty estimates?<br>
+                      <a href="https://www.youtube.com/watch?v=HZGCoVF3YvM" target="_blank" rel="noopener">Bayes Rule</a>
+                      <a href="https://www.youtube.com/watch?v=nndtTssgtZE" target="_blank" rel="noopener">MCMC</a>
+                    </p>
+                  </div>
+                </section>
+                <span class="fragment" aria-hidden="true"></span>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="slide python-implementation-page">
+          <header class="slide-kicker"></header>
+          <div class="slide-body content-layout">
+            <h2 class="slide-title">Python Implementation</h2>
+            <p class="linear-regression-math-link">
+              Interested in the <a href="https://eli.thegreenplace.net/2014/derivation-of-the-normal-equation-for-linear-regression?utm_source=chatgpt.com" target="_blank" rel="noopener">Math behind OLS</a>？<br>
+            </p>
+            <div class="slide-content python-implementation">
+              <div class="python-design">
+                <p class="python-design-equation">T = αt + μ</p>
+                <div class="python-matrix-expression" aria-label="Linear regression design matrix">
+                  <div class="python-matrix-block">
+                    <div class="python-matrix python-matrix-one">
+                      <span class="python-matrix-cell">T₁</span>
+                      <span class="python-matrix-cell">T₂</span>
+                      <span class="python-matrix-cell">T₃</span>
+                      <span class="python-matrix-cell">⋮</span>
+                      <span class="python-matrix-cell">Tₙ</span>
+                    </div>
+                    <span class="python-matrix-shape">(n × 1)</span>
+                  </div>
+                  <span class="python-matrix-symbol">=</span>
+                  <div class="python-matrix-block">
+                    <div class="python-matrix python-matrix-two">
+                      <span class="python-matrix-cell">t₁</span><span class="python-matrix-cell constant">1</span>
+                      <span class="python-matrix-cell">t₂</span><span class="python-matrix-cell constant">1</span>
+                      <span class="python-matrix-cell">t₃</span><span class="python-matrix-cell constant">1</span>
+                      <span class="python-matrix-cell">⋮</span><span class="python-matrix-cell constant">⋮</span>
+                      <span class="python-matrix-cell">tₙ</span><span class="python-matrix-cell constant">1</span>
+                    </div>
+                    <span class="python-matrix-shape">(n × 2)</span>
+                  </div>
+                  <span class="python-matrix-symbol">×</span>
+                  <div class="python-matrix-block">
+                    <div class="python-matrix python-matrix-one">
+                      <span class="python-matrix-cell parameter">α</span>
+                      <span class="python-matrix-cell parameter">μ</span>
+                    </div>
+                    <span class="python-matrix-shape">(2 × 1)</span>
+                  </div>
+                </div>
+                <a class="python-matrix-review" href="week3-l5.html?slide=11&amp;step=1" target="_blank" rel="noopener">Review matrix multiplication</a>
+              </div>
+              <div class="python-code-side">
+                <div class="python-workflow" aria-label="Three steps of regression">
+                  <div class="python-workflow-step python-workflow-one"><strong>1</strong><span>Choose a<br>functional form</span></div>
+                  <svg class="python-workflow-arrow" viewBox="0 0 54 32" aria-hidden="true"><path d="M0 8h34V0l20 16-20 16v-8H0z"></path></svg>
+                  <div class="python-workflow-step python-workflow-two"><strong>2</strong><span>Define what it<br>means by fit</span></div>
+                  <svg class="python-workflow-arrow" viewBox="0 0 54 32" aria-hidden="true"><path d="M0 8h34V0l20 16-20 16v-8H0z"></path></svg>
+                  <div class="python-workflow-step python-workflow-three"><strong>3</strong><span>Find that<br>"most"</span></div>
+                </div>
+                <div class="python-code-panel">
+                  <p class="python-code-row"><code>import <a href="https://www.statsmodels.org/stable/api.html" target="_blank" rel="noopener">statsmodels.api</a> as sm</code></p>
+                  <p class="python-code-row"><code>t = (years - 1850) / 100</code> <code style="color:#8b8b8b"> # Century since 1850</code></p>
+                  <p class="python-code-row step-one"><code>X = np.column_stack((t, np.ones(len(t))))</code></p>
+                  <p class="python-code-row step-two"><code>model = <a href="https://www.statsmodels.org/stable/generated/statsmodels.regression.linear_model.OLS.html" target="_blank" rel="noopener">sm.OLS</a>(GMST, X)</code>
+                  <b style="color:#8b8b8b">  # Ordinary Least Squares (OLS)</b>
+                  </p>
+                  <p class="python-code-row step-three"><code>results = model.fit()</code></p>
+                  <p class="python-code-row"><code>GMST_hat = results.get_prediction(X)</code></p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="slide ols-decomposition-page">
+          <header class="slide-kicker"></header>
+          <div class="slide-body content-layout">
+            <h2 class="slide-title ols-summary-title">Understanding the Summary of the OLS Estimate</h2>
+            <div class="slide-content ols-summary-slide">
+              <div class="ols-summary-top">
+                
+                <div class="ols-summary-focus">
+                  <article>
+                    <h3>R-squared</h3>
+                    <p>How much of the total variance is explained by the regression?</p>
+                  </article>
+                  <article>
+                    <h3>F-statistic</h3>
+                    <p>Does the model explain substantially more variance than the residual error?</p>
+                  </article>
+                  <article>
+                    <h3>Prob (F-statistic)</h3>
+                    <p>The p-value for testing whether the overall fitting is significant.</p>
+                  </article>
+                </div>
+              </div>
+              <div class="variance-decomposition">
+                <svg class="variance-chart" id="varianceTotalChart" viewBox="0 0 410 235" role="img" aria-label="Total variance of centred GMST data"></svg>
+                <span class="variance-symbol">=</span>
+                <svg class="variance-chart" id="varianceExplainedChart" viewBox="0 0 410 235" role="img" aria-label="Variance explained by the regression line"></svg>
+                <span class="variance-symbol">+</span>
+                <svg class="variance-chart" id="varianceResidualChart" viewBox="0 0 410 235" role="img" aria-label="Residual variance after fitting the regression line"></svg>
+              </div>
+              <div class="variance-decomposition-labels">
+                <strong>Total Variance</strong>
+                <strong>Explained Variance</strong>
+                <strong>Residual Variance</strong>
+              </div>
+              <div class="ols-summary-bottom">
+                <div class="ols-fraction-formula">
+                  <span>R-squared =</span>
+                  <span class="ols-fraction"><span>Explained variance</span><span>Total variance</span></span>
+                </div>
+                <div class="ols-fraction-formula">
+                  <span>F-statistic =</span>
+                  <span class="ols-fraction"><span>Explained variance / 1 </span><span>Residual variance / n-2 </span>
+                </div>
+                <p class="ols-hypothesis">For a degree of freedom, is the explained variance significantly larger than the residual variance?.</p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="slide summary-output-page">
+          <header class="slide-kicker"></header>
+          <div class="slide-body content-layout">
+            <h2 class="slide-title summary-output-title">Understanding the Summary of the OLS Estimate</h2>
+            <code class="ols-summary-call">print(results.summary())</code>
+            <div class="slide-content summary-output-slide">
+              <div class="summary-output-wrap">
+                <pre class="summary-output">                            OLS Regression Results                            
+==============================================================================
+Dep. Variable:                   GMST   R-squared:                       0.779
+Model:                            OLS   Adj. R-squared:                  0.778
+Method:                 Least Squares   F-statistic:                     613.1
+Date:                Wed, 03 Jun 2026   Prob (F-statistic):           6.39e-59
+Time:                        08:27:08   Log-Likelihood:                 42.051
+No. Observations:                 176   AIC:                            -80.10
+Df Residuals:                     174   BIC:                            -73.76
+Df Model:                           1                                         
+Covariance Type:            nonrobust                                         
+==============================================================================
+                 coef    std err          t      P&gt;|t|      [0.025      0.975]
+------------------------------------------------------------------------------
+const         -1.0638      0.029    -36.979      0.000      -1.121      -1.007
+x1             0.7040      0.028     24.762      0.000       0.648       0.760
+==============================================================================
+Omnibus:                       13.258   Durbin-Watson:                   0.379
+Prob(Omnibus):                  0.001   Jarque-Bera (JB):               14.522
+Skew:                           0.590   Prob(JB):                      7.02e-4
+Kurtosis:                       3.767   Cond. No.                         3.71
+==============================================================================</pre>
+                <span class="summary-highlight summary-highlight-overall" aria-hidden="true"></span>
+                <span class="summary-highlight summary-highlight-coefficients" aria-hidden="true"></span>
+              </div>
+              <div class="summary-output-notes">
+          <article class="summary-output-card summary-output-overall fragment">
+            <h3>1. Overall fitting</h3>
+            <p><code>R-squared</code> measures explained variance. 
+              <br><code>F-statistic</code> and its p-value test the overall significance.
+              <br><code>AIC</code> and <code>BIC</code> for model selection (we will discuss this later).
+            </p>
+          </article>
+          <article class="summary-output-card summary-output-coefficients fragment">
+            <h3>2. Individual coefficients</h3>
+            <p><code>P&gt;|t|</code> is the p-value for testing if each coefficient differs from zero. 
+              <br><code>[0.025, 0.975]</code> gives the 95% confidence interval.</p>
+          </article>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="slide diagnostics-page">
+          <header class="slide-kicker"></header>
+          <div class="slide-body content-layout">
+            <h2 class="slide-title summary-output-title">How to Read Residual Diagnostics</h2>
+            <code class="ols-summary-call">print(results.summary())</code>
+            <div class="slide-content diagnostics-slide">
+              <div class="diagnostics-output-wrap">
+                <pre class="diagnostics-output">                            OLS Regression Results                            
+==============================================================================
+Dep. Variable:                   GMST   R-squared:                       0.779
+Model:                            OLS   Adj. R-squared:                  0.778
+Method:                 Least Squares   F-statistic:                     613.1
+Date:                Wed, 03 Jun 2026   Prob (F-statistic):           6.39e-59
+Time:                        08:27:08   Log-Likelihood:                 42.051
+No. Observations:                 176   AIC:                            -80.10
+Df Residuals:                     174   BIC:                            -73.76
+Df Model:                           1                                         
+Covariance Type:            nonrobust                                         
+==============================================================================
+                 coef    std err          t      P&gt;|t|      [0.025      0.975]
+------------------------------------------------------------------------------
+const         -1.0638      0.029    -36.979      0.000      -1.121      -1.007
+x1             0.7040      0.028     24.762      0.000       0.648       0.760
+==============================================================================
+Omnibus:                       13.258   Durbin-Watson:                   0.379
+Prob(Omnibus):                  0.001   Jarque-Bera (JB):               14.522
+Skew:                           0.590   Prob(JB):                      7.02e-4
+Kurtosis:                       3.767   Cond. No.                         3.71
+==============================================================================</pre>
+                <span class="diagnostics-highlight" aria-hidden="true"></span>
+              </div>
+              <div style="transform: translate(20px, 20px);">
+                <p class="diagnostics-assumption"><strong>Assumptions:</strong> <br>
+                  <b style="color: #ea5976; font-weight: 100; font-size: 22px;">Residual errors (<b>not Data</b>) are Normally distributed and independent from one another.</b></p>
+                <div class="diagnostics-reading-grid">
+                  <article class="diagnostics-reading-card">
+                    <h3>Prob(Omnibus)</h3>
+                    <p>H₀: residuals are Normal. <strong>p &lt; 0.05</strong> is a warning that they may not be Normal.</p>
+                  </article>
+                  <article class="diagnostics-reading-card">
+                    <h3>Durbin-Watson</h3>
+                    <p><strong>Close to 2</strong> suggests no residual autocorrelation. Values near 0 or 4 are warnings.</p>
+                  </article>
+                  <article class="diagnostics-reading-card">
+                    <h3>Skew</h3>
+                    <p><strong>Close to 0</strong> is more symmetric. Positive values indicate a longer right tail.</p>
+                  </article>
+                  <article class="diagnostics-reading-card">
+                    <h3>Prob(JB)</h3>
+                    <p>Another residual Normality test based on skewness and kurtosis. Interpret its p-value in the same way.</p>
+                  </article>
+                  <article class="diagnostics-reading-card">
+                    <h3>Kurtosis</h3>
+                    <p>A Normal distribution is approximately <strong>3</strong>. What we learned in L6 is this value minus 3.</p>
+                  </article>
+                  <article class="diagnostics-reading-card">
+                    <h3>Cond. No.</h3>
+                    <p>No universal cutoff. A value <strong>much larger than 30</strong> is a cue to inspect scaling or collinearity.</p>
+                  </article>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="slide polynomial-page">
+          <header class="slide-kicker"></header>
+          <div class="slide-body content-layout">
+            <h2 class="slide-title">Polynomial Fitting</h2>
+            <div class="slide-content polynomial-slide">
+              <div class="polynomial-left">
+                <div class="polynomial-heading">
+                  <p class="polynomial-equation">T = a₀ + a₁t + a₂t² + ... + a<span class="polynomial-order">ₖ</span>t<span class="polynomial-order">ᵏ</span></p>
+                  <p class="polynomial-explanation"><span class="polynomial-order">k</span> is the order of the polynomial.</p>
+                </div>
+                <svg class="polynomial-chart" style="transform: translate(-30px, -45px);" id="polynomialChart" viewBox="0 0 700 460" role="img" aria-label="Global mean surface temperature and fitted polynomial curve"></svg>
+                <div class="polynomial-controls" style="transform: translate(-10px, -30px);">
+                  <label for="polynomialOrder">Polynomial order: <strong id="polynomialOrderValue">1</strong></label>
+                  <input id="polynomialOrder" type="range" min="1" max="10" step="1" value="1">
+                  <div class="polynomial-control-values"><span>1</span><span>10</span></div>
+                </div>
+              </div>
+              <div class="polynomial-right fragment" style = "transform: translate(-20px, -70px);">
+                <div class="polynomial-matrix-expression" aria-label="Polynomial regression design matrix">
+                  <div class="polynomial-matrix-block">
+                    <div class="polynomial-matrix polynomial-matrix-one">
+                      <span class="polynomial-matrix-cell">T₁</span>
+                      <span class="polynomial-matrix-cell">T₂</span>
+                      <span class="polynomial-matrix-cell">T₃</span>
+                      <span class="polynomial-matrix-cell">⋮</span>
+                      <span class="polynomial-matrix-cell">Tₙ</span>
+                    </div>
+                    <span class="polynomial-matrix-shape">(n × 1)</span>
+                  </div>
+                  <span class="polynomial-matrix-symbol">=</span>
+                  <div class="polynomial-matrix-block">
+                    <div class="polynomial-matrix polynomial-matrix-design">
+                      <span class="polynomial-matrix-cell constant">1</span><span class="polynomial-matrix-cell">t₁</span><span class="polynomial-matrix-cell">t₁²</span><span class="polynomial-matrix-cell">…</span><span class="polynomial-matrix-cell">t₁ᵏ</span>
+                      <span class="polynomial-matrix-cell constant">1</span><span class="polynomial-matrix-cell">t₂</span><span class="polynomial-matrix-cell">t₂²</span><span class="polynomial-matrix-cell">…</span><span class="polynomial-matrix-cell">t₂ᵏ</span>
+                      <span class="polynomial-matrix-cell constant">1</span><span class="polynomial-matrix-cell">t₃</span><span class="polynomial-matrix-cell">t₃²</span><span class="polynomial-matrix-cell">…</span><span class="polynomial-matrix-cell">t₃ᵏ</span>
+                      <span class="polynomial-matrix-cell constant">⋮</span><span class="polynomial-matrix-cell">⋮</span><span class="polynomial-matrix-cell">⋮</span><span class="polynomial-matrix-cell">⋱</span><span class="polynomial-matrix-cell">⋮</span>
+                      <span class="polynomial-matrix-cell constant">1</span><span class="polynomial-matrix-cell">tₙ</span><span class="polynomial-matrix-cell">tₙ²</span><span class="polynomial-matrix-cell">…</span><span class="polynomial-matrix-cell">tₙᵏ</span>
+                    </div>
+                    <span class="polynomial-matrix-shape">(n × (k + 1))</span>
+                  </div>
+                  <span class="polynomial-matrix-symbol">×</span>
+                  <div class="polynomial-matrix-block">
+                    <div class="polynomial-matrix polynomial-matrix-one">
+                      <span class="polynomial-matrix-cell parameter">a₀</span>
+                      <span class="polynomial-matrix-cell parameter">a₁</span>
+                      <span class="polynomial-matrix-cell parameter">a₂</span>
+                      <span class="polynomial-matrix-cell parameter">⋮</span>
+                      <span class="polynomial-matrix-cell parameter">aₖ</span>
+                    </div>
+                    <span class="polynomial-matrix-shape">((k + 1) × 1)</span>
+                  </div>
+                </div>
+                <div class="polynomial-code-panel" style = "transform: translate(0px, 20px);">
+                  <p class="polynomial-code-row"><code>import statsmodels.api as sm</code></p>
+                  <p class="polynomial-code-row" style = "color: #959595;"><code># Remove mean because ~2000k is too large to handle</code></p>
+                  <p class="polynomial-code-row" style = "color: #ff6a00;"><code>t = years - np.mean(years)</code></p>
+                  <p class="polynomial-code-row" style = "color: #ff6a00;"><code>X = <a href="https://numpy.org/doc/stable/reference/generated/numpy.column_stack.html" target="_blank" rel="noopener">np.column_stack</a>((t**k, ..., t**2, t, np.ones(len(t))))</code></p>
+                  <p class="polynomial-code-row"><code>model = sm.OLS(GMST, X)</code></p>
+                  <p class="polynomial-code-row"><code>results = model.fit()</code></p>
+                  <p class="polynomial-code-row"><code>GMST_hat = results.get_prediction(X)</code></p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="slide residual-order-page">
+          <header class="slide-kicker"></header>
+          <div class="slide-body content-layout">
+            <h2 class="slide-title">Residual Error Decreases with k</h2>
+            <div class="slide-content residual-order-slide">
+              <svg class="residual-order-chart" id="residualOrderChart" viewBox="0 0 780 560" role="img" aria-label="Residual error for polynomial models of increasing order"></svg>
+              <p class="residual-order-question" style="transform: translate(-60px, -30px);">But does a lower error suggest a<span class="better">better model?</span></p>
+            </div>
+          </div>
+        </section>
+
+        <section class="slide">
+          <header class="slide-kicker"></header>
+          <div class="slide-body content-layout">
+            <h2 class="slide-title">The Purpose of Building Models: Make Predictions</h2>
+            <div class="slide-content prediction-purpose">
+              <p>A good model is one that can<br>better predict unseen data!</p>
+            </div>
+          </div>
+        </section>
+
+        <section class="slide prediction-error-page">
+          <header class="slide-kicker"></header>
+          <div class="slide-body content-layout">
+            <h2 class="slide-title">Training Error vs. Prediction Error</h2>
+            <div class="slide-content prediction-error-slide">
+              <div class="prediction-error-left">
+                <div class="prediction-error-heading">
+                  <p style="text-align: left; font-weight: 100;"> <b>To evaluate prediction error: </b>
+                    <br> &nbsp &nbsp &nbsp  (1) leave out <span id="predictionHoldoutCopy">2001–2025</span> and fit the model on the remaining data.  
+                    <br> &nbsp &nbsp &nbsp  (2) use the fitted model to make predictions for years held-out.</p>
+                </div>
+                <svg class="prediction-error-chart" id="predictionErrorChart" viewBox="0 0 700 460" role="img" aria-label="Polynomial fitting using training data up to 2000 and predictions after 2000"></svg>
+                <div class="prediction-error-controls">
+                  <label for="predictionPolynomialOrder">Polynomial order: <strong id="predictionPolynomialOrderValue">1</strong></label>
+                  <input id="predictionPolynomialOrder" type="range" min="1" max="10" step="1" value="1">
+                  <div class="prediction-error-control-values"><span>1</span><span>10</span></div>
+                </div>
+              </div>
+              <div class="prediction-error-right fragment">
+                <svg class="prediction-error-summary-chart" id="predictionErrorSummaryChart" viewBox="0 0 700 430" role="img" aria-label="Training and prediction error for polynomial models of increasing order"></svg>
+                <p class="prediction-error-summary-note">
+                  <strong>Overfitting:</strong><strong style="font-weight: 100;"> The regression learns noise
+                  <br> rather than the actual functional form...</strong> 
+                  <br><span class="danger" style="font-weight: 600;">This is especially dangerous when we extrapolate.</span></p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="slide bic-page">
+          <header class="slide-kicker"></header>
+          <div class="slide-body content-layout">
+            <h2 class="slide-title">Bayesian Information Criterion (BIC)</h2>
+            <div class="slide-content bic-slide">
+              <div class="summary-output-wrap">
+                <pre class="summary-output">                            OLS Regression Results                            
+==============================================================================
+Dep. Variable:                   GMST   R-squared:                       0.779
+Model:                            OLS   Adj. R-squared:                  0.778
+Method:                 Least Squares   F-statistic:                     613.1
+Date:                Wed, 03 Jun 2026   Prob (F-statistic):           6.39e-59
+Time:                        08:27:08   Log-Likelihood:                 42.051
+No. Observations:                 176   AIC:                            -80.10
+Df Residuals:                     174   BIC:                            -73.76
+Df Model:                           1                                         
+Covariance Type:            nonrobust                                         
+==============================================================================
+                 coef    std err          t      P&gt;|t|      [0.025      0.975]
+------------------------------------------------------------------------------
+const         -1.0638      0.029    -36.979      0.000      -1.121      -1.007
+x1             0.7040      0.028     24.762      0.000       0.648       0.760
+==============================================================================
+Omnibus:                       13.258   Durbin-Watson:                   0.379
+Prob(Omnibus):                  0.001   Jarque-Bera (JB):               14.522
+Skew:                           0.590   Prob(JB):                      7.02e-4
+Kurtosis:                       3.767   Cond. No.                         3.71
+==============================================================================</pre>
+                <span class="bic-summary-highlight" aria-hidden="true"></span>
+              </div>
+              <div class="bic-right">
+                <p class="bic-explanation">Since complex models tend to generalise worse, 
+                  we can penalise complex models by adding a <strong>penalty term</strong> 
+                  to the loss function, such that these models are less preferred.
+                </p>
+                <p style="text-align: center; font-weight: bold; font-size: 2.2em; color: #cf208f; transform: translate(30px, -30px);">BIC = Loss + Penalty</p>
+                <svg class="bic-chart" id="bicChart" viewBox="0 0 650 390" role="img" aria-label="Bayesian Information Criterion decomposed into loss and complexity penalty for polynomial models"></svg>
+                                <p style="text-align: center; font-weight: bold; font-size: 1.4em; color: #cf208f; transform: translate(30px, -180px);">
+                                  Lower BIC is preferred because it reaches <br>a balance between a better fit and a simpler model.</p>
+              </div>
+            </div>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <nav class="deck-controls" aria-label="Slide controls">
+      <button class="nav-button" id="prevSlide" type="button" aria-label="Previous slide">‹</button>
+      <div class="dot-rail" aria-label="Slide map"></div>
+      <button class="nav-button" id="skipSteps" type="button" aria-label="Reveal all steps on this slide">»</button>
+      <button class="nav-button" id="nextSlide" type="button" aria-label="Next slide">›</button>
+    </nav>
+    <div class="deck-status" aria-live="polite"></div>
+
+    <script>
+      const decompositionPage = document.querySelector(".ols-decomposition-page");
+      const summaryOutputPage = document.querySelector(".summary-output-page");
+      if (decompositionPage && summaryOutputPage) {
+        decompositionPage.parentNode.insertBefore(summaryOutputPage, decompositionPage);
+      }
+    </script>
+    <script src="../assets/js/deck.js"></script>
+    <script>
+      window.addEventListener("DOMContentLoaded", () => {
+        const svg = document.getElementById("gmstTrendChart");
+        if (!svg) return;
+
+        const data = `1850,-1.05
+1851,-0.81
+1852,-0.83
+1853,-0.83
+1854,-0.79
+1855,-0.74
+1856,-0.84
+1857,-0.97
+1858,-0.85
+1859,-0.84
+1860,-0.86
+1861,-0.91
+1862,-1.05
+1863,-0.86
+1864,-0.94
+1865,-0.76
+1866,-0.79
+1867,-0.75
+1868,-0.80
+1869,-0.70
+1870,-0.84
+1871,-0.88
+1872,-0.81
+1873,-0.83
+1874,-0.93
+1875,-0.87
+1876,-0.85
+1877,-0.48
+1878,-0.41
+1879,-0.77
+1880,-0.79
+1881,-0.68
+1882,-0.77
+1883,-0.78
+1884,-0.91
+1885,-0.89
+1886,-0.83
+1887,-0.91
+1888,-0.80
+1889,-0.65
+1890,-0.91
+1891,-0.80
+1892,-0.87
+1893,-0.84
+1894,-0.83
+1895,-0.73
+1896,-0.60
+1897,-0.60
+1898,-0.77
+1899,-0.64
+1900,-0.50
+1901,-0.58
+1902,-0.66
+1903,-0.75
+1904,-0.78
+1905,-0.60
+1906,-0.57
+1907,-0.77
+1908,-0.79
+1909,-0.78
+1910,-0.76
+1911,-0.75
+1912,-0.71
+1913,-0.72
+1914,-0.55
+1915,-0.52
+1916,-0.76
+1917,-0.85
+1918,-0.76
+1919,-0.63
+1920,-0.64
+1921,-0.61
+1922,-0.69
+1923,-0.65
+1924,-0.65
+1925,-0.64
+1926,-0.51
+1927,-0.62
+1928,-0.56
+1929,-0.73
+1930,-0.51
+1931,-0.47
+1932,-0.54
+1933,-0.67
+1934,-0.52
+1935,-0.61
+1936,-0.58
+1937,-0.45
+1938,-0.46
+1939,-0.45
+1940,-0.40
+1941,-0.36
+1942,-0.50
+1943,-0.50
+1944,-0.42
+1945,-0.51
+1946,-0.52
+1947,-0.46
+1948,-0.52
+1949,-0.57
+1950,-0.68
+1951,-0.52
+1952,-0.47
+1953,-0.39
+1954,-0.57
+1955,-0.64
+1956,-0.69
+1957,-0.47
+1958,-0.42
+1959,-0.46
+1960,-0.49
+1961,-0.42
+1962,-0.46
+1963,-0.41
+1964,-0.68
+1965,-0.57
+1966,-0.53
+1967,-0.48
+1968,-0.57
+1969,-0.41
+1970,-0.47
+1971,-0.56
+1972,-0.45
+1973,-0.31
+1974,-0.55
+1975,-0.48
+1976,-0.58
+1977,-0.27
+1978,-0.37
+1979,-0.27
+1980,-0.17
+1981,-0.13
+1982,-0.33
+1983,-0.13
+1984,-0.32
+1985,-0.31
+1986,-0.24
+1987,-0.10
+1988,-0.09
+1989,-0.19
+1990,-0.00
+1991,-0.02
+1992,-0.23
+1993,-0.21
+1994,-0.13
+1995,0.02
+1996,-0.09
+1997,0.03
+1998,0.19
+1999,-0.06
+2000,-0.03
+2001,0.12
+2002,0.17
+2003,0.17
+2004,0.08
+2005,0.23
+2006,0.20
+2007,0.21
+2008,0.09
+2009,0.21
+2010,0.29
+2011,0.15
+2012,0.19
+2013,0.24
+2014,0.30
+2015,0.43
+2016,0.56
+2017,0.47
+2018,0.40
+2019,0.53
+2020,0.55
+2021,0.41
+2022,0.44
+2023,0.72
+2024,0.83
+2025,0.73`
+          .split("\n")
+          .map((row) => row.split(",").map(Number));
+        window.gmstTrendData = data;
+
+        const ns = "http://www.w3.org/2000/svg";
+        const make = (name, attributes = {}, text = "") => {
+          const node = document.createElementNS(ns, name);
+          Object.entries(attributes).forEach(([key, value]) => node.setAttribute(key, value));
+          node.textContent = text;
+          return node;
+        };
+        const geometry = { width: 700, height: 460, margin: { top: 48, right: 28, bottom: 58, left: 78 } };
+        const { width, height, margin } = geometry;
+        const plotWidth = width - margin.left - margin.right;
+        const plotHeight = height - margin.top - margin.bottom;
+        const xMin = 1850;
+        const xMax = 2025;
+        const yMin = -1.2;
+        const yMax = 1.0;
+        const xScale = (value) => margin.left + (value - xMin) / (xMax - xMin) * plotWidth;
+        const yScale = (value) => height - margin.bottom - (value - yMin) / (yMax - yMin) * plotHeight;
+
+        [1850, 1900, 1950, 2000, 2025].forEach((tick) => {
+          const x = xScale(tick);
+          svg.append(
+            make("line", { x1: x, y1: margin.top, x2: x, y2: height - margin.bottom, class: "gmst-gridline" }),
+            make("text", { x, y: height - margin.bottom + 23, class: "gmst-tick" }, String(tick)),
+          );
+        });
+        [-1.0, -0.5, 0, 0.5, 1.0].forEach((tick) => {
+          const y = yScale(tick);
+          svg.append(
+            make("line", { x1: margin.left, y1: y, x2: width - margin.right, y2: y, class: "gmst-gridline" }),
+            make("text", { x: margin.left - 32, y: y + 5, class: "gmst-tick" }, tick.toFixed(1)),
+          );
+        });
+        svg.append(
+          make("line", { x1: margin.left, y1: height - margin.bottom, x2: width - margin.right, y2: height - margin.bottom, class: "gmst-axis" }),
+          make("line", { x1: margin.left, y1: margin.top, x2: margin.left, y2: height - margin.bottom, class: "gmst-axis" }),
+          make("text", { x: margin.left + plotWidth / 2, y: 22, class: "gmst-chart-title" }, "Global Mean Surface Temperature"),
+          make("text", { x: margin.left + plotWidth / 2, y: height - 8, class: "gmst-label" }, "year"),
+          make("text", { x: 18, y: margin.top + plotHeight / 2, class: "gmst-label", transform: `rotate(-90 18 ${margin.top + plotHeight / 2})` }, "GMST anomaly (°C)"),
+        );
+
+        const path = data
+          .map(([year, value], index) => `${index ? "L" : "M"} ${xScale(year).toFixed(2)} ${yScale(value).toFixed(2)}`)
+          .join(" ");
+        svg.append(make("path", { d: path, class: "gmst-line" }));
+
+        const hoverLayer = make("g", { visibility: "hidden" });
+        const hoverLine = make("line", { class: "gmst-hover-line" });
+        const hoverDot = make("circle", { r: 5.4, class: "gmst-hover-dot" });
+        const tooltip = make("g", { class: "gmst-tooltip" });
+        const tooltipBox = make("rect", { width: 150, height: 54, rx: 7 });
+        const tooltipYear = make("text", { x: 12, y: 21, "text-anchor": "start" });
+        const tooltipValue = make("text", { x: 12, y: 42, "text-anchor": "start" });
+        tooltip.append(tooltipBox, tooltipYear, tooltipValue);
+        hoverLayer.append(hoverLine, hoverDot, tooltip);
+        svg.append(hoverLayer);
+
+        const hitArea = make("rect", {
+          x: margin.left,
+          y: margin.top,
+          width: plotWidth,
+          height: plotHeight,
+          class: "gmst-hit-area",
+        });
+        svg.append(hitArea);
+
+        const updateHover = (event) => {
+          const point = svg.createSVGPoint();
+          point.x = event.clientX;
+          point.y = event.clientY;
+          const local = point.matrixTransform(svg.getScreenCTM().inverse());
+          const year = Math.max(xMin, Math.min(xMax, Math.round(xMin + (local.x - margin.left) / plotWidth * (xMax - xMin))));
+          const [selectedYear, value] = data[year - xMin];
+          const x = xScale(selectedYear);
+          const y = yScale(value);
+          const tooltipX = x > width - margin.right - 166 ? x - 158 : x + 10;
+          const tooltipY = Math.max(margin.top + 5, Math.min(height - margin.bottom - 59, y - 62));
+          hoverLayer.setAttribute("visibility", "visible");
+          hoverLine.setAttribute("x1", x);
+          hoverLine.setAttribute("x2", x);
+          hoverLine.setAttribute("y1", margin.top);
+          hoverLine.setAttribute("y2", height - margin.bottom);
+          hoverDot.setAttribute("cx", x);
+          hoverDot.setAttribute("cy", y);
+          tooltip.setAttribute("transform", `translate(${tooltipX} ${tooltipY})`);
+          tooltipYear.textContent = `Year: ${selectedYear}`;
+          tooltipValue.textContent = `GMST: ${value.toFixed(2)} °C`;
+        };
+        hitArea.addEventListener("pointermove", updateHover);
+        hitArea.addEventListener("pointerleave", () => hoverLayer.setAttribute("visibility", "hidden"));
+      });
+    </script>
+    <script>
+      window.addEventListener("DOMContentLoaded", () => {
+        const svg = document.getElementById("linearFormChart");
+        const alphaInput = document.getElementById("linearAlpha");
+        const muInput = document.getElementById("linearMu");
+        const alphaValue = document.getElementById("linearAlphaValue");
+        const muValue = document.getElementById("linearMuValue");
+        const landscapeSvg = document.getElementById("linearLossLandscape");
+        const landscapeReset = document.getElementById("linearLandscapeReset");
+        const data = window.gmstTrendData;
+        if (!svg || !alphaInput || !muInput || !alphaValue || !muValue || !landscapeSvg || !landscapeReset || !data) return;
+
+        const ns = "http://www.w3.org/2000/svg";
+        const make = (name, attributes = {}, text = "") => {
+          const node = document.createElementNS(ns, name);
+          Object.entries(attributes).forEach(([key, value]) => node.setAttribute(key, value));
+          node.textContent = text;
+          return node;
+        };
+        const geometry = { width: 700, height: 460, margin: { top: 38, right: 28, bottom: 58, left: 78 } };
+        const { width, height, margin } = geometry;
+        const plotWidth = width - margin.left - margin.right;
+        const plotHeight = height - margin.top - margin.bottom;
+        const xMin = 1850;
+        const xMax = 2025;
+        const yMin = -1.5;
+        const yMax = 1.2;
+        const xScale = (value) => margin.left + (value - xMin) / (xMax - xMin) * plotWidth;
+        const yScale = (value) => height - margin.bottom - (value - yMin) / (yMax - yMin) * plotHeight;
+
+        [1850, 1900, 1950, 2000, 2025].forEach((tick) => {
+          const x = xScale(tick);
+          svg.append(
+            make("line", { x1: x, y1: margin.top, x2: x, y2: height - margin.bottom, class: "gmst-gridline" }),
+            make("text", { x, y: height - margin.bottom + 23, class: "gmst-tick" }, String(tick)),
+          );
+        });
+        [-1.5, -1.0, -0.5, 0, 0.5, 1.0].forEach((tick) => {
+          const y = yScale(tick);
+          svg.append(
+            make("line", { x1: margin.left, y1: y, x2: width - margin.right, y2: y, class: "gmst-gridline" }),
+            make("text", { x: margin.left - 32, y: y + 5, class: "gmst-tick" }, tick.toFixed(1)),
+          );
+        });
+        svg.append(
+          make("line", { x1: margin.left, y1: height - margin.bottom, x2: width - margin.right, y2: height - margin.bottom, class: "gmst-axis" }),
+          make("line", { x1: margin.left, y1: margin.top, x2: margin.left, y2: height - margin.bottom, class: "gmst-axis" }),
+          make("text", { x: margin.left + plotWidth / 2, y: height - 8, class: "gmst-label" }, "year(t)"),
+          make("text", { x: 18, y: margin.top + plotHeight / 2, class: "gmst-label", transform: `rotate(-90 18 ${margin.top + plotHeight / 2})` }, "GMST anomaly (°C)"),
+        );
+        const residualLayer = make("g", { visibility: "hidden" });
+        svg.append(residualLayer);
+        const observedPath = data
+          .map(([year, value], index) => `${index ? "L" : "M"} ${xScale(year).toFixed(2)} ${yScale(value).toFixed(2)}`)
+          .join(" ");
+        svg.append(make("path", { d: observedPath, class: "gmst-line" }));
+        const fitLine = make("line", { class: "linear-form-fit" });
+        svg.append(fitLine);
+        const page = svg.closest(".linear-form-page");
+        const landscape = { width: 370, height: 330, margin: { top: 14, right: 48, bottom: 46, left: 48 } };
+        const landscapeWidth = landscape.width - landscape.margin.left - landscape.margin.right;
+        const landscapeHeight = landscape.height - landscape.margin.top - landscape.margin.bottom;
+        const alphaMin = Number(alphaInput.min);
+        const alphaMax = Number(alphaInput.max);
+        const muMin = Number(muInput.min);
+        const muMax = Number(muInput.max);
+        const alphaScale = (value) => landscape.margin.left + (value - alphaMin) / (alphaMax - alphaMin) * landscapeWidth;
+        const muScale = (value) => landscape.height - landscape.margin.bottom - (value - muMin) / (muMax - muMin) * landscapeHeight;
+        const mse = (alpha, mu) => data.reduce((sum, [year, value]) => {
+          const fittedValue = alpha * ((year - 1850) / 100) + mu;
+          return sum + (value - fittedValue) ** 2;
+        }, 0) / data.length;
+        const landscapeCells = [];
+        const landscapeResolution = 42;
+        for (let row = 0; row < landscapeResolution; row += 1) {
+          for (let column = 0; column < landscapeResolution; column += 1) {
+            const alpha = alphaMin + (column + 0.5) / landscapeResolution * (alphaMax - alphaMin);
+            const mu = muMin + (row + 0.5) / landscapeResolution * (muMax - muMin);
+            landscapeCells.push({ row, column, loss: mse(alpha, mu) });
+          }
+        }
+        const landscapeLossSamples = landscapeCells.map(({ loss }) => loss);
+        const landscapeLossMin = Math.min(...landscapeLossSamples);
+        const landscapeLossMax = Math.max(...landscapeLossSamples);
+        const landscapeColor = (loss) => {
+          const normalizedLoss = (loss - landscapeLossMin) / (landscapeLossMax - landscapeLossMin);
+          const strength = Math.sqrt(Math.max(0, Math.min(1, normalizedLoss)));
+          const mix = (start, end) => Math.round(start + Math.max(0, Math.min(1, strength)) * (end - start));
+          return `rgb(${mix(255, 170)}, ${mix(224, 10)}, ${mix(232, 42)})`;
+        };
+        const defs = make("defs");
+        const gradient = make("linearGradient", { id: "linearLossLegendGradient", x1: "0%", y1: "100%", x2: "0%", y2: "0%" });
+        gradient.append(
+          make("stop", { offset: "0%", "stop-color": landscapeColor(landscapeLossMin) }),
+          make("stop", { offset: "100%", "stop-color": landscapeColor(landscapeLossMax) }),
+        );
+        defs.append(gradient);
+        landscapeSvg.append(
+          defs,
+          make("rect", {
+            x: landscape.margin.left,
+            y: landscape.margin.top,
+            width: landscapeWidth,
+            height: landscapeHeight,
+            class: "linear-landscape-board",
+          }),
+        );
+        const heatmapLayer = make("g", { class: "linear-landscape-heatmap" });
+        const cellWidth = landscapeWidth / landscapeResolution;
+        const cellHeight = landscapeHeight / landscapeResolution;
+        landscapeCells.forEach(({ row, column, loss }) => {
+          heatmapLayer.append(make("rect", {
+            x: landscape.margin.left + column * cellWidth,
+            y: landscape.height - landscape.margin.bottom - (row + 1) * cellHeight,
+            width: cellWidth + 0.35,
+            height: cellHeight + 0.35,
+            fill: landscapeColor(loss),
+          }));
+        });
+        landscapeSvg.append(heatmapLayer);
+        [-1, 0, 1, 2].forEach((tick) => {
+          const x = alphaScale(tick);
+          landscapeSvg.append(
+            make("line", { x1: x, y1: landscape.margin.top, x2: x, y2: landscape.height - landscape.margin.bottom, class: "linear-landscape-grid" }),
+            make("text", { x, y: landscape.height - landscape.margin.bottom + 19, class: "linear-landscape-tick" }, tick.toFixed(0)),
+          );
+        });
+        [-1.5, -1.0, -0.5, 0, 0.5].forEach((tick) => {
+          const y = muScale(tick);
+          landscapeSvg.append(
+            make("line", { x1: landscape.margin.left, y1: y, x2: landscape.width - landscape.margin.right, y2: y, class: "linear-landscape-grid" }),
+            make("text", { x: landscape.margin.left - 20, y: y + 4, class: "linear-landscape-tick" }, tick.toFixed(1)),
+          );
+        });
+        landscapeSvg.append(
+          make("line", { x1: landscape.margin.left, y1: landscape.height - landscape.margin.bottom, x2: landscape.width - landscape.margin.right, y2: landscape.height - landscape.margin.bottom, class: "linear-landscape-axis" }),
+          make("line", { x1: landscape.margin.left, y1: landscape.margin.top, x2: landscape.margin.left, y2: landscape.height - landscape.margin.bottom, class: "linear-landscape-axis" }),
+          make("text", { x: landscape.margin.left + landscapeWidth / 2, y: landscape.height - 8, class: "linear-landscape-label" }, "α (°C / century)"),
+          make("text", { x: 14, y: landscape.margin.top + landscapeHeight / 2 - 10, class: "linear-landscape-label", transform: `rotate(-90 14 ${landscape.margin.top + landscapeHeight / 2})` }, "μ (°C)"),
+          make("rect", { x: landscape.width - 30, y: landscape.margin.top, width: 11, height: landscapeHeight, fill: "url(#linearLossLegendGradient)", stroke: "rgba(25, 62, 135, 0.28)", "stroke-width": 0.8 }),
+          make("text", { x: landscape.width - 25, y: landscape.margin.top + landscapeHeight / 2 + 30, class: "linear-landscape-legend-label", transform: `rotate(-90 ${landscape.width - 25} ${landscape.margin.top + landscapeHeight / 2})`, "text-anchor": "middle" }, "MSE (°C²)"),
+        );
+        const trajectoryLayer = make("g");
+        const trajectoryPoint = make("circle", { r: 5.3, class: "linear-landscape-point" });
+        const average = (values) => values.reduce((sum, value) => sum + value, 0) / values.length;
+        const times = data.map(([year]) => (year - 1850) / 100);
+        const temperatures = data.map(([, value]) => value);
+        const meanTime = average(times);
+        const meanTemperature = average(temperatures);
+        const optimumAlpha = times.reduce((sum, time, index) => sum + (time - meanTime) * (temperatures[index] - meanTemperature), 0)
+          / times.reduce((sum, time) => sum + (time - meanTime) ** 2, 0);
+        const optimumMu = meanTemperature - optimumAlpha * meanTime;
+        const optimumStar = make("text", {
+          x: alphaScale(optimumAlpha),
+          y: muScale(optimumMu),
+          class: "linear-landscape-star",
+        }, "★");
+        landscapeSvg.append(trajectoryLayer, trajectoryPoint, optimumStar);
+        let trajectory = [];
+        const updateTrajectory = (alpha, mu) => {
+          const previous = trajectory.at(-1);
+          const loss = mse(alpha, mu);
+          if (!previous || previous.alpha !== alpha || previous.mu !== mu) trajectory.push({ alpha, mu, loss });
+          trajectoryLayer.replaceChildren();
+          trajectory.slice(1).forEach((point, index) => {
+            const before = trajectory[index];
+            trajectoryLayer.append(make("line", {
+              x1: alphaScale(before.alpha),
+              y1: muScale(before.mu),
+              x2: alphaScale(point.alpha),
+              y2: muScale(point.mu),
+              stroke: landscapeColor(point.loss),
+              class: "linear-landscape-path",
+            }));
+          });
+          trajectoryPoint.setAttribute("cx", alphaScale(alpha));
+          trajectoryPoint.setAttribute("cy", muScale(mu));
+          trajectoryPoint.setAttribute("fill", landscapeColor(loss));
+        };
+
+        const updateFit = () => {
+          const alpha = Number(alphaInput.value);
+          const mu = Number(muInput.value);
+          const fitted = (year) => alpha * ((year - 1850) / 100) + mu;
+          const squaredErrors = data.map(([year, value]) => (value - fitted(year)) ** 2);
+          const maxSquaredError = Math.max(...squaredErrors, Number.EPSILON);
+          residualLayer.replaceChildren();
+          data.forEach(([year, value], index) => {
+            const strength = Math.sqrt(squaredErrors[index] / maxSquaredError);
+            residualLayer.append(make("line", {
+              x1: xScale(year),
+              x2: xScale(year),
+              y1: yScale(value),
+              y2: yScale(fitted(year)),
+              class: "linear-form-residual",
+              opacity: (0.12 + strength * 0.7).toFixed(3),
+              "stroke-width": (0.8 + strength * 2.7).toFixed(2),
+            }));
+          });
+          fitLine.setAttribute("x1", xScale(xMin));
+          fitLine.setAttribute("y1", yScale(fitted(xMin)));
+          fitLine.setAttribute("x2", xScale(xMax));
+          fitLine.setAttribute("y2", yScale(fitted(xMax)));
+          alphaValue.textContent = `α = ${alpha.toFixed(2)} °C / century`;
+          muValue.textContent = `μ = ${mu.toFixed(2)} °C`;
+          updateTrajectory(alpha, mu);
+        };
+
+        alphaInput.addEventListener("input", updateFit);
+        muInput.addEventListener("input", updateFit);
+        landscapeReset.addEventListener("click", () => {
+          trajectory = [];
+          updateTrajectory(Number(alphaInput.value), Number(muInput.value));
+        });
+        let optimumLocked = false;
+        const syncResidualVisibility = () => {
+          const step = Number(page?.dataset.step || 0);
+          residualLayer.setAttribute("visibility", step >= 1 ? "visible" : "hidden");
+          heatmapLayer.classList.toggle("visible", step >= 3);
+          optimumStar.classList.toggle("visible", step >= 3);
+          alphaInput.disabled = step >= 3;
+          muInput.disabled = step >= 3;
+          if (step >= 3 && !optimumLocked) {
+            optimumLocked = true;
+            alphaInput.value = optimumAlpha.toFixed(2);
+            muInput.value = optimumMu.toFixed(2);
+            updateFit();
+          }
+          if (step < 3) optimumLocked = false;
+        };
+        if (page) new MutationObserver(syncResidualVisibility).observe(page, { attributes: true, attributeFilter: ["data-step"] });
+        updateFit();
+        syncResidualVisibility();
+      });
+    </script>
+    <script>
+      window.addEventListener("DOMContentLoaded", () => {
+        const totalSvg = document.getElementById("varianceTotalChart");
+        const explainedSvg = document.getElementById("varianceExplainedChart");
+        const residualSvg = document.getElementById("varianceResidualChart");
+        const data = window.gmstTrendData;
+        if (!totalSvg || !explainedSvg || !residualSvg || !data) return;
+
+        const ns = "http://www.w3.org/2000/svg";
+        const make = (name, attributes = {}, text = "") => {
+          const node = document.createElementNS(ns, name);
+          Object.entries(attributes).forEach(([key, value]) => node.setAttribute(key, value));
+          node.textContent = text;
+          return node;
+        };
+        const average = (values) => values.reduce((sum, value) => sum + value, 0) / values.length;
+        const years = data.map(([year]) => year);
+        const times = years.map((year) => (year - 1850) / 100);
+        const temperatures = data.map(([, value]) => value);
+        const meanTime = average(times);
+        const meanTemperature = average(temperatures);
+        const slope = times.reduce((sum, time, index) => sum + (time - meanTime) * (temperatures[index] - meanTemperature), 0)
+          / times.reduce((sum, time) => sum + (time - meanTime) ** 2, 0);
+        const intercept = meanTemperature - slope * meanTime;
+        const fitted = times.map((time) => slope * time + intercept);
+        const total = temperatures.map((value) => value - meanTemperature);
+        const explained = fitted.map((value) => value - meanTemperature);
+        const residual = temperatures.map((value, index) => value - fitted[index]);
+
+        const draw = (svg, title, values) => {
+          const width = 410;
+          const height = 235;
+          const margin = { top: 30, right: 10, bottom: 34, left: 42 };
+          const plotWidth = width - margin.left - margin.right;
+          const plotHeight = height - margin.top - margin.bottom;
+          const xScale = (year) => margin.left + (year - 1850) / 175 * plotWidth;
+          const yMin = -0.9;
+          const yMax = 1.3;
+          const yScale = (value) => height - margin.bottom - (value - yMin) / (yMax - yMin) * plotHeight;
+          [1850, 1900, 1950, 2000, 2025].forEach((tick) => {
+            const x = xScale(tick);
+            svg.append(
+              make("line", { x1: x, y1: margin.top, x2: x, y2: height - margin.bottom, class: "variance-chart-grid" }),
+              make("text", { x, y: height - margin.bottom + 17, class: "variance-chart-tick" }, String(tick)),
+            );
+          });
+          [-0.5, 0, 0.5, 1.0].forEach((tick) => {
+            const y = yScale(tick);
+            svg.append(
+              make("line", { x1: margin.left, y1: y, x2: width - margin.right, y2: y, class: "variance-chart-grid" }),
+              make("text", { x: margin.left - 18, y: y + 4, class: "variance-chart-tick" }, tick.toFixed(1)),
+            );
+          });
+          const zeroY = yScale(0);
+          const barWidth = plotWidth / values.length;
+          values.forEach((value, index) => {
+            const valueY = yScale(value);
+            svg.append(make("rect", {
+              x: xScale(years[index]) - barWidth / 2,
+              y: Math.min(zeroY, valueY),
+              width: Math.max(1, barWidth),
+              height: Math.abs(zeroY - valueY),
+              fill: value >= 0 ? "#ffaaaa" : "#aaaaff",
+              opacity: 0.86,
+            }));
+          });
+          const line = values.map((value, index) => `${index ? "L" : "M"} ${xScale(years[index]).toFixed(2)} ${yScale(value).toFixed(2)}`).join(" ");
+          svg.append(
+            make("path", { d: line, class: "variance-chart-line" }),
+            make("line", { x1: margin.left, y1: height - margin.bottom, x2: width - margin.right, y2: height - margin.bottom, class: "variance-chart-axis" }),
+            make("line", { x1: margin.left, y1: margin.top, x2: margin.left, y2: height - margin.bottom, class: "variance-chart-axis" }),
+            make("text", { x: width / 2, y: 18, class: "variance-chart-title" }, title),
+            make("text", { x: width / 2, y: height - 4, class: "variance-chart-label" }, "year"),
+          );
+        };
+
+        draw(totalSvg, "Data", total);
+        draw(explainedSvg, "Fitted", explained);
+        draw(residualSvg, "Error", residual);
+      });
+    </script>
+    <script>
+      window.addEventListener("DOMContentLoaded", () => {
+        const svg = document.getElementById("polynomialChart");
+        const orderInput = document.getElementById("polynomialOrder");
+        const orderValue = document.getElementById("polynomialOrderValue");
+        const data = window.gmstTrendData;
+        if (!svg || !orderInput || !orderValue || !data) return;
+
+        const ns = "http://www.w3.org/2000/svg";
+        const make = (name, attributes = {}, text = "") => {
+          const node = document.createElementNS(ns, name);
+          Object.entries(attributes).forEach(([key, value]) => node.setAttribute(key, value));
+          node.textContent = text;
+          return node;
+        };
+        const width = 700;
+        const height = 460;
+        const margin = { top: 48, right: 28, bottom: 58, left: 78 };
+        const plotWidth = width - margin.left - margin.right;
+        const plotHeight = height - margin.top - margin.bottom;
+        const xMin = 1850;
+        const xMax = 2025;
+        const yMin = -1.2;
+        const yMax = 1.1;
+        const xScale = (value) => margin.left + (value - xMin) / (xMax - xMin) * plotWidth;
+        const yScale = (value) => height - margin.bottom - (value - yMin) / (yMax - yMin) * plotHeight;
+        const normalisedYear = (year) => 2 * (year - xMin) / (xMax - xMin) - 1;
+        const years = data.map(([year]) => year);
+        const temperatures = data.map(([, value]) => value);
+
+        [1850, 1900, 1950, 2000, 2025].forEach((tick) => {
+          const x = xScale(tick);
+          svg.append(
+            make("line", { x1: x, y1: margin.top, x2: x, y2: height - margin.bottom, class: "gmst-gridline" }),
+            make("text", { x, y: height - margin.bottom + 25, class: "gmst-tick" }, String(tick)),
+          );
+        });
+        [-1.0, -0.5, 0, 0.5, 1.0].forEach((tick) => {
+          const y = yScale(tick);
+          svg.append(
+            make("line", { x1: margin.left, y1: y, x2: width - margin.right, y2: y, class: "gmst-gridline" }),
+            make("text", { x: margin.left - 31, y: y + 5, class: "gmst-tick" }, tick.toFixed(1)),
+          );
+        });
+        svg.append(
+          make("line", { x1: margin.left, y1: height - margin.bottom, x2: width - margin.right, y2: height - margin.bottom, class: "gmst-axis" }),
+          make("line", { x1: margin.left, y1: margin.top, x2: margin.left, y2: height - margin.bottom, class: "gmst-axis" }),
+          make("text", { x: margin.left + plotWidth / 2, y: height - 8, class: "gmst-label" }, "year"),
+          make("text", { x: 19, y: margin.top + plotHeight / 2, class: "gmst-label", transform: `rotate(-90 19 ${margin.top + plotHeight / 2})` }, "GMST anomaly (°C)"),
+        );
+
+        const observedPath = data
+          .map(([year, value], index) => `${index ? "L" : "M"} ${xScale(year).toFixed(2)} ${yScale(value).toFixed(2)}`)
+          .join(" ");
+        svg.append(make("path", { d: observedPath, class: "polynomial-observed" }));
+        const fitPath = make("path", { class: "polynomial-fit" });
+        svg.append(fitPath);
+
+        const solve = (matrix, vector) => {
+          const n = vector.length;
+          const augmented = matrix.map((row, index) => [...row, vector[index]]);
+          for (let pivot = 0; pivot < n; pivot += 1) {
+            let best = pivot;
+            for (let row = pivot + 1; row < n; row += 1) {
+              if (Math.abs(augmented[row][pivot]) > Math.abs(augmented[best][pivot])) best = row;
+            }
+            [augmented[pivot], augmented[best]] = [augmented[best], augmented[pivot]];
+            const divisor = augmented[pivot][pivot] || 1e-12;
+            for (let col = pivot; col <= n; col += 1) augmented[pivot][col] /= divisor;
+            for (let row = 0; row < n; row += 1) {
+              if (row === pivot) continue;
+              const factor = augmented[row][pivot];
+              for (let col = pivot; col <= n; col += 1) augmented[row][col] -= factor * augmented[pivot][col];
+            }
+          }
+          return augmented.map((row) => row[n]);
+        };
+
+        const coefficientsFor = (order) => {
+          const size = order + 1;
+          const matrix = Array.from({ length: size }, () => Array(size).fill(0));
+          const vector = Array(size).fill(0);
+          years.forEach((year, index) => {
+            const x = normalisedYear(year);
+            const powers = Array.from({ length: 2 * order + 1 }, (_, power) => x ** power);
+            for (let row = 0; row < size; row += 1) {
+              vector[row] += temperatures[index] * powers[row];
+              for (let col = 0; col < size; col += 1) matrix[row][col] += powers[row + col];
+            }
+          });
+          return solve(matrix, vector);
+        };
+
+        const evaluate = (coefficients, year) => {
+          const x = normalisedYear(year);
+          return coefficients.reduce((sum, coefficient, power) => sum + coefficient * x ** power, 0);
+        };
+
+        const updateFit = () => {
+          const order = Number(orderInput.value);
+          const coefficients = coefficientsFor(order);
+          const curve = Array.from({ length: 351 }, (_, index) => xMin + index * (xMax - xMin) / 350)
+            .map((year, index) => `${index ? "L" : "M"} ${xScale(year).toFixed(2)} ${yScale(evaluate(coefficients, year)).toFixed(2)}`)
+            .join(" ");
+          fitPath.setAttribute("d", curve);
+          orderValue.textContent = String(order);
+        };
+
+        orderInput.addEventListener("input", updateFit);
+        updateFit();
+      });
+    </script>
+    <script>
+      window.addEventListener("DOMContentLoaded", () => {
+        const svg = document.getElementById("residualOrderChart");
+        const data = window.gmstTrendData;
+        if (!svg || !data) return;
+
+        const ns = "http://www.w3.org/2000/svg";
+        const make = (name, attributes = {}, text = "") => {
+          const node = document.createElementNS(ns, name);
+          Object.entries(attributes).forEach(([key, value]) => node.setAttribute(key, value));
+          node.textContent = text;
+          return node;
+        };
+        const width = 780;
+        const height = 560;
+        const margin = { top: 35, right: 24, bottom: 66, left: 92 };
+        const plotWidth = width - margin.left - margin.right;
+        const plotHeight = height - margin.top - margin.bottom;
+        const years = data.map(([year]) => year);
+        const temperatures = data.map(([, value]) => value);
+        const xMin = 1;
+        const xMax = 30;
+        const xScale = (value) => margin.left + (value - xMin) / (xMax - xMin) * plotWidth;
+        const normalisedYear = (year) => 2 * (year - 1850) / (2025 - 1850) - 1;
+
+        const residualError = (order) => {
+          const columns = Array.from({ length: order + 1 }, (_, power) => years.map((year) => normalisedYear(year) ** power));
+          const orthogonal = [];
+          const upper = Array.from({ length: order + 1 }, () => Array(order + 1).fill(0));
+          columns.forEach((column, col) => {
+            const vector = [...column];
+            orthogonal.forEach((basis, row) => {
+              const projection = basis.reduce((sum, value, index) => sum + value * vector[index], 0);
+              upper[row][col] = projection;
+              vector.forEach((value, index) => { vector[index] = value - projection * basis[index]; });
+            });
+            const length = Math.sqrt(vector.reduce((sum, value) => sum + value ** 2, 0)) || 1e-12;
+            upper[col][col] = length;
+            orthogonal.push(vector.map((value) => value / length));
+          });
+          const projected = orthogonal.map((basis) => basis.reduce((sum, value, index) => sum + value * temperatures[index], 0));
+          const coefficients = Array(order + 1).fill(0);
+          for (let row = order; row >= 0; row -= 1) {
+            const remainder = projected[row] - upper[row].reduce((sum, value, col) => sum + (col > row ? value * coefficients[col] : 0), 0);
+            coefficients[row] = remainder / upper[row][row];
+          }
+          const squaredError = years.reduce((sum, year, index) => {
+            const x = normalisedYear(year);
+            const fitted = coefficients.reduce((total, coefficient, power) => total + coefficient * x ** power, 0);
+            return sum + (temperatures[index] - fitted) ** 2;
+          }, 0);
+          return Math.sqrt(squaredError / years.length);
+        };
+
+        const errors = Array.from({ length: 30 }, (_, index) => [index + 1, residualError(index + 1)]);
+        const yMin = Math.floor((Math.min(...errors.map(([, error]) => error)) - 0.005) * 100) / 100;
+        const yMax = Math.ceil((Math.max(...errors.map(([, error]) => error)) + 0.005) * 100) / 100;
+        const yScale = (value) => height - margin.bottom - (value - yMin) / (yMax - yMin) * plotHeight;
+
+        [1, 5, 10, 15, 20, 25, 30].forEach((tick) => {
+          const x = xScale(tick);
+          svg.append(
+            make("line", { x1: x, y1: margin.top, x2: x, y2: height - margin.bottom, class: "gmst-gridline" }),
+            make("text", { x, y: height - margin.bottom + 25, class: "gmst-tick" }, String(tick)),
+          );
+        });
+        Array.from({ length: 5 }, (_, index) => yMin + index * (yMax - yMin) / 4).forEach((tick) => {
+          const y = yScale(tick);
+          svg.append(
+            make("line", { x1: margin.left, y1: y, x2: width - margin.right, y2: y, class: "gmst-gridline" }),
+            make("text", { x: margin.left - 37, y: y + 5, class: "gmst-tick" }, tick.toFixed(3)),
+          );
+        });
+        svg.append(
+          make("line", { x1: margin.left, y1: height - margin.bottom, x2: width - margin.right, y2: height - margin.bottom, class: "gmst-axis" }),
+          make("line", { x1: margin.left, y1: margin.top, x2: margin.left, y2: height - margin.bottom, class: "gmst-axis" }),
+          make("text", { x: margin.left + plotWidth / 2, y: height - 9, class: "gmst-label" }, "Polynomial order (k)"),
+          make("text", { x: 20, y: margin.top + plotHeight / 2, class: "gmst-label", transform: `rotate(-90 20 ${margin.top + plotHeight / 2})` }, "Residual error (°C)"),
+        );
+
+        const line = errors.map(([order, error], index) => `${index ? "L" : "M"} ${xScale(order).toFixed(2)} ${yScale(error).toFixed(2)}`).join(" ");
+        svg.append(make("path", { d: line, class: "residual-order-line" }));
+        errors.forEach(([order, error]) => svg.append(make("circle", { cx: xScale(order), cy: yScale(error), r: 4.7, class: "residual-order-point" })));
+
+        const hoverLayer = make("g", { visibility: "hidden" });
+        const hoverLine = make("line", { class: "residual-order-hover-line" });
+        const hoverDot = make("circle", { r: 6, class: "residual-order-hover-dot" });
+        const tooltip = make("g", { class: "residual-order-tooltip" });
+        const tooltipBox = make("rect", { width: 158, height: 54, rx: 7 });
+        const tooltipOrder = make("text", { x: 12, y: 21, "text-anchor": "start" });
+        const tooltipError = make("text", { x: 12, y: 42, "text-anchor": "start" });
+        tooltip.append(tooltipBox, tooltipOrder, tooltipError);
+        hoverLayer.append(hoverLine, hoverDot, tooltip);
+        svg.append(hoverLayer);
+
+        const hitArea = make("rect", { x: margin.left - 16, y: margin.top, width: plotWidth + 32, height: plotHeight, class: "residual-order-hit" });
+        svg.append(hitArea);
+        hitArea.addEventListener("mousemove", (event) => {
+          const screenMatrix = svg.getScreenCTM();
+          const [order, error] = errors.reduce((closest, candidate) => (
+            Math.abs(new DOMPoint(xScale(candidate[0]), 0).matrixTransform(screenMatrix).x - event.clientX)
+              < Math.abs(new DOMPoint(xScale(closest[0]), 0).matrixTransform(screenMatrix).x - event.clientX)
+              ? candidate
+              : closest
+          ));
+          const x = xScale(order);
+          const y = yScale(error);
+          const tooltipX = x + 170 < width - margin.right ? x + 12 : x - 170;
+          const tooltipY = Math.min(height - margin.bottom - 62, Math.max(margin.top + 8, y - 62));
+          hoverLine.setAttribute("x1", x);
+          hoverLine.setAttribute("x2", x);
+          hoverLine.setAttribute("y1", margin.top);
+          hoverLine.setAttribute("y2", height - margin.bottom);
+          hoverDot.setAttribute("cx", x);
+          hoverDot.setAttribute("cy", y);
+          tooltip.setAttribute("transform", `translate(${tooltipX} ${tooltipY})`);
+          tooltipOrder.textContent = `k = ${order}`;
+          tooltipError.textContent = `error = ${error.toFixed(4)} °C`;
+          hoverLayer.setAttribute("visibility", "visible");
+        });
+        hitArea.addEventListener("mouseleave", () => hoverLayer.setAttribute("visibility", "hidden"));
+      });
+    </script>
+    <script>
+      window.addEventListener("DOMContentLoaded", () => {
+        const svg = document.getElementById("predictionErrorChart");
+        const summarySvg = document.getElementById("predictionErrorSummaryChart");
+        const orderInput = document.getElementById("predictionPolynomialOrder");
+        const orderValue = document.getElementById("predictionPolynomialOrderValue");
+        const data = window.gmstTrendData;
+        if (!svg || !summarySvg || !orderInput || !orderValue || !data) return;
+
+        const ns = "http://www.w3.org/2000/svg";
+        const make = (name, attributes = {}, text = "") => {
+          const node = document.createElementNS(ns, name);
+          Object.entries(attributes).forEach(([key, value]) => node.setAttribute(key, value));
+          node.textContent = text;
+          return node;
+        };
+        const width = 700;
+        const height = 460;
+        const margin = { top: 48, right: 28, bottom: 58, left: 78 };
+        const plotWidth = width - margin.left - margin.right;
+        const plotHeight = height - margin.top - margin.bottom;
+        const xMin = 1850;
+        const xMax = 2025;
+        const holdoutYears = 25;
+        let holdoutStart = 2000;
+        let holdoutEnd = holdoutStart + holdoutYears;
+        const yMin = -1.2;
+        const yMax = 1.1;
+        const xScale = (value) => margin.left + (value - xMin) / (xMax - xMin) * plotWidth;
+        const yScale = (value) => height - margin.bottom - (value - yMin) / (yMax - yMin) * plotHeight;
+        const normalisedYear = (year) => 2 * (year - xMin) / (xMax - xMin) - 1;
+        let trainingData = data.filter(([year]) => year <= holdoutStart || year > holdoutEnd);
+        let testingData = data.filter(([year]) => year > holdoutStart && year <= holdoutEnd);
+
+        const testArea = make("rect", {
+          x: xScale(holdoutStart),
+          y: margin.top,
+          width: xScale(holdoutEnd) - xScale(holdoutStart),
+          height: plotHeight,
+          class: "prediction-error-test-area",
+        });
+        const splitHandle = make("line", {
+          x1: xScale(holdoutStart),
+          x2: xScale(holdoutStart),
+          y1: margin.top,
+          y2: height - margin.bottom,
+          class: "prediction-error-split-handle",
+        });
+        const endHandle = make("line", {
+          x1: xScale(holdoutEnd),
+          x2: xScale(holdoutEnd),
+          y1: margin.top,
+          y2: height - margin.bottom,
+          class: "prediction-error-split-handle",
+        });
+        const splitLabel = make("text", {
+          x: xScale(holdoutStart) + 8,
+          y: margin.top + 18,
+          class: "prediction-error-split-label",
+          "text-anchor": "start",
+        }, ``);
+        const dragArea = make("rect", {
+          x: xScale(holdoutStart),
+          y: margin.top,
+          width: xScale(holdoutEnd) - xScale(holdoutStart),
+          height: plotHeight,
+          class: "prediction-error-drag-area",
+        });
+        svg.append(testArea);
+        [1850, 1900, 1950, 2000, 2025].forEach((tick) => {
+          const x = xScale(tick);
+          svg.append(
+            make("line", { x1: x, y1: margin.top, x2: x, y2: height - margin.bottom, class: "gmst-gridline" }),
+            make("text", { x, y: height - margin.bottom + 23, class: "gmst-tick" }, String(tick)),
+          );
+        });
+        [-1.0, -0.5, 0, 0.5, 1.0].forEach((tick) => {
+          const y = yScale(tick);
+          svg.append(
+            make("line", { x1: margin.left, y1: y, x2: width - margin.right, y2: y, class: "gmst-gridline" }),
+            make("text", { x: margin.left - 32, y: y + 5, class: "gmst-tick" }, tick.toFixed(1)),
+          );
+        });
+        svg.append(
+          make("line", { x1: margin.left, y1: height - margin.bottom, x2: width - margin.right, y2: height - margin.bottom, class: "gmst-axis" }),
+          make("line", { x1: margin.left, y1: margin.top, x2: margin.left, y2: height - margin.bottom, class: "gmst-axis" }),
+          make("text", { x: 18, y: margin.top + plotHeight / 2, class: "gmst-label", transform: `rotate(-90 18 ${margin.top + plotHeight / 2})` }, "GMST anomaly (°C)"),
+        );
+        const observedPath = data
+          .map(([year, value], index) => `${index ? "L" : "M"} ${xScale(year).toFixed(2)} ${yScale(value).toFixed(2)}`)
+          .join(" ");
+        svg.append(make("path", { d: observedPath, class: "prediction-error-observed" }));
+        const trainingFit = make("path", { class: "prediction-error-training-fit" });
+        const testingFit = make("path", { class: "prediction-error-testing-fit" });
+        svg.append(trainingFit, testingFit, splitHandle, endHandle, splitLabel, dragArea);
+
+        const solve = (matrix, vector) => {
+          const n = vector.length;
+          const augmented = matrix.map((row, index) => [...row, vector[index]]);
+          for (let pivot = 0; pivot < n; pivot += 1) {
+            let best = pivot;
+            for (let row = pivot + 1; row < n; row += 1) {
+              if (Math.abs(augmented[row][pivot]) > Math.abs(augmented[best][pivot])) best = row;
+            }
+            [augmented[pivot], augmented[best]] = [augmented[best], augmented[pivot]];
+            const divisor = augmented[pivot][pivot] || 1e-12;
+            for (let col = pivot; col <= n; col += 1) augmented[pivot][col] /= divisor;
+            for (let row = 0; row < n; row += 1) {
+              if (row === pivot) continue;
+              const factor = augmented[row][pivot];
+              for (let col = pivot; col <= n; col += 1) augmented[row][col] -= factor * augmented[pivot][col];
+            }
+          }
+          return augmented.map((row) => row[n]);
+        };
+        const coefficientsFor = (order) => {
+          const size = order + 1;
+          const matrix = Array.from({ length: size }, () => Array(size).fill(0));
+          const vector = Array(size).fill(0);
+          trainingData.forEach(([year, temperature]) => {
+            const x = normalisedYear(year);
+            const powers = Array.from({ length: 2 * order + 1 }, (_, power) => x ** power);
+            for (let row = 0; row < size; row += 1) {
+              vector[row] += temperature * powers[row];
+              for (let col = 0; col < size; col += 1) matrix[row][col] += powers[row + col];
+            }
+          });
+          return solve(matrix, vector);
+        };
+        const evaluate = (coefficients, year) => {
+          const x = normalisedYear(year);
+          return coefficients.reduce((sum, coefficient, power) => sum + coefficient * x ** power, 0);
+        };
+        const pathForRange = (coefficients, start, end) => Array.from({ length: 220 }, (_, index) => start + index * (end - start) / 219)
+          .map((year, index) => `${index ? "L" : "M"} ${xScale(year).toFixed(2)} ${yScale(evaluate(coefficients, year)).toFixed(2)}`)
+          .join(" ");
+        const rmse = (coefficients, subset) => Math.sqrt(subset.reduce((sum, [year, temperature]) => (
+          sum + (temperature - evaluate(coefficients, year)) ** 2
+        ), 0) / subset.length);
+        const updateFit = () => {
+          const order = Number(orderInput.value);
+          const coefficients = coefficientsFor(order);
+          const trainingSegments = [
+            pathForRange(coefficients, xMin, holdoutStart),
+            holdoutEnd < xMax ? pathForRange(coefficients, holdoutEnd, xMax) : "",
+          ].filter(Boolean).join(" ");
+          trainingFit.setAttribute("d", trainingSegments);
+          testingFit.setAttribute("d", pathForRange(coefficients, holdoutStart, holdoutEnd));
+          orderValue.textContent = String(order);
+        };
+        orderInput.addEventListener("input", updateFit);
+
+        const summaryWidth = 700;
+        const summaryHeight = 430;
+        const summaryMargin = { top: 46, right: 28, bottom: 58, left: 78 };
+        const summaryPlotWidth = summaryWidth - summaryMargin.left - summaryMargin.right;
+        const summaryPlotHeight = summaryHeight - summaryMargin.top - summaryMargin.bottom;
+        const summaryXScale = (value) => summaryMargin.left + (value - 1) / 9 * summaryPlotWidth;
+        const renderSummary = () => {
+          const errors = Array.from({ length: 10 }, (_, index) => {
+            const order = index + 1;
+            const coefficients = coefficientsFor(order);
+            return [order, rmse(coefficients, trainingData), rmse(coefficients, testingData)];
+          });
+          const summaryValues = errors.flatMap(([, trainingError, testingError]) => [trainingError, testingError]);
+          const summaryLogMin = Math.floor(Math.log10(Math.min(...summaryValues)));
+          const summaryLogMax = Math.max(summaryLogMin + 1, Math.ceil(Math.log10(Math.max(...summaryValues))));
+          const summaryYScale = (value) => summaryHeight - summaryMargin.bottom
+            - (Math.log10(value) - summaryLogMin) / (summaryLogMax - summaryLogMin) * summaryPlotHeight;
+          summarySvg.replaceChildren();
+          [1, 3, 5, 7, 9, 10].forEach((tick) => {
+            const x = summaryXScale(tick);
+            summarySvg.append(
+              make("line", { x1: x, y1: summaryMargin.top, x2: x, y2: summaryHeight - summaryMargin.bottom, class: "gmst-gridline" }),
+              make("text", { x, y: summaryHeight - summaryMargin.bottom + 23, class: "gmst-tick" }, String(tick)),
+            );
+          });
+          for (let exponent = summaryLogMin; exponent < summaryLogMax; exponent += 1) {
+            for (let multiplier = 2; multiplier <= 9; multiplier += 1) {
+              const tick = multiplier * 10 ** exponent;
+              const y = summaryYScale(tick);
+              summarySvg.append(make("line", {
+                x1: summaryMargin.left,
+                y1: y,
+                x2: summaryWidth - summaryMargin.right,
+                y2: y,
+                class: "prediction-error-summary-minor-grid",
+              }));
+            }
+          }
+          Array.from({ length: summaryLogMax - summaryLogMin + 1 }, (_, index) => 10 ** (summaryLogMin + index)).forEach((tick) => {
+            const y = summaryYScale(tick);
+            summarySvg.append(
+              make("line", { x1: summaryMargin.left, y1: y, x2: summaryWidth - summaryMargin.right, y2: y, class: "gmst-gridline" }),
+              make("text", { x: summaryMargin.left - 34, y: y + 5, class: "gmst-tick" }, tick.toLocaleString("en-US", { maximumFractionDigits: 6 })),
+            );
+          });
+          summarySvg.append(
+            make("line", { x1: summaryMargin.left, y1: summaryHeight - summaryMargin.bottom, x2: summaryWidth - summaryMargin.right, y2: summaryHeight - summaryMargin.bottom, class: "gmst-axis" }),
+            make("line", { x1: summaryMargin.left, y1: summaryMargin.top, x2: summaryMargin.left, y2: summaryHeight - summaryMargin.bottom, class: "gmst-axis" }),
+            make("text", { x: summaryMargin.left + summaryPlotWidth / 2, y: 22, class: "gmst-chart-title" }, "vs."),
+            make("text", { x: summaryMargin.left + summaryPlotWidth / 2, y: summaryHeight - 8, class: "gmst-label" }, "Polynomial order (k)"),
+            make("text", { x: 18, y: summaryMargin.top + summaryPlotHeight / 2, class: "gmst-label", transform: `rotate(-90 18 ${summaryMargin.top + summaryPlotHeight / 2})` }, "RMSE (°C, log scale)"),
+          );
+          const trainingErrorPath = errors.map(([order, error], index) => `${index ? "L" : "M"} ${summaryXScale(order).toFixed(2)} ${summaryYScale(error).toFixed(2)}`).join(" ");
+          const testingErrorPath = errors.map(([order, , error], index) => `${index ? "L" : "M"} ${summaryXScale(order).toFixed(2)} ${summaryYScale(error).toFixed(2)}`).join(" ");
+          summarySvg.append(
+            make("path", { d: trainingErrorPath, class: "prediction-error-summary-training" }),
+            make("path", { d: testingErrorPath, class: "prediction-error-summary-testing" }),
+          );
+          errors.forEach(([order, trainingError, testingError]) => summarySvg.append(
+            make("circle", { cx: summaryXScale(order), cy: summaryYScale(trainingError), r: 4.4, class: "prediction-error-summary-point-training" }),
+            make("circle", { cx: summaryXScale(order), cy: summaryYScale(testingError), r: 4.4, class: "prediction-error-summary-point-testing" }),
+          ));
+          summarySvg.append(
+            make("text", { x: 260, y: 22, class: "gmst-tick err-training", "text-anchor": "start" }, "Training error"),
+            make("text", { x: 500, y: 22, class: "gmst-tick err-testing", "text-anchor": "start" }, "Prediction error"),
+          );
+        };
+        const updateSplit = () => {
+          holdoutEnd = holdoutStart + holdoutYears;
+          trainingData = data.filter(([year]) => year <= holdoutStart || year > holdoutEnd);
+          testingData = data.filter(([year]) => year > holdoutStart && year <= holdoutEnd);
+          const startX = xScale(holdoutStart);
+          const endX = xScale(holdoutEnd);
+          testArea.setAttribute("x", startX);
+          testArea.setAttribute("width", endX - startX);
+          dragArea.setAttribute("x", startX);
+          dragArea.setAttribute("width", endX - startX);
+          splitHandle.setAttribute("x1", startX);
+          splitHandle.setAttribute("x2", startX);
+          endHandle.setAttribute("x1", endX);
+          endHandle.setAttribute("x2", endX);
+          splitLabel.setAttribute("x", startX + 8);
+          splitLabel.textContent = `leave out`;
+          document.getElementById("predictionHoldoutCopy").textContent = `${holdoutStart + 1}–${holdoutEnd}`;
+          updateFit();
+          renderSummary();
+        };
+        const localX = (event) => {
+          const point = svg.createSVGPoint();
+          point.x = event.clientX;
+          point.y = event.clientY;
+          return point.matrixTransform(svg.getScreenCTM().inverse()).x;
+        };
+        let dragging = false;
+        let dragOffset = 0;
+        dragArea.addEventListener("pointerdown", (event) => {
+          dragging = true;
+          dragOffset = localX(event) - xScale(holdoutStart);
+          dragArea.classList.add("dragging");
+          dragArea.setPointerCapture(event.pointerId);
+          event.stopPropagation();
+        });
+        dragArea.addEventListener("pointermove", (event) => {
+          if (!dragging) return;
+          const year = xMin + (localX(event) - dragOffset - margin.left) / plotWidth * (xMax - xMin);
+          holdoutStart = Math.max(xMin, Math.min(xMax - holdoutYears, Math.round(year)));
+          updateSplit();
+          event.stopPropagation();
+        });
+        dragArea.addEventListener("pointerup", (event) => {
+          dragging = false;
+          dragArea.classList.remove("dragging");
+          dragArea.releasePointerCapture(event.pointerId);
+          event.stopPropagation();
+        });
+        dragArea.addEventListener("pointercancel", () => {
+          dragging = false;
+          dragArea.classList.remove("dragging");
+        });
+        updateSplit();
+      });
+    </script>
+    <script>
+      window.addEventListener("DOMContentLoaded", () => {
+        const svg = document.getElementById("bicChart");
+        const data = window.gmstTrendData;
+        if (!svg || !data) return;
+
+        const ns = "http://www.w3.org/2000/svg";
+        const make = (name, attributes = {}, text = "") => {
+          const node = document.createElementNS(ns, name);
+          Object.entries(attributes).forEach(([key, value]) => node.setAttribute(key, value));
+          node.textContent = text;
+          return node;
+        };
+        const width = 650;
+        const height = 390;
+        const margin = { top: 50, right: 66, bottom: 58, left: 66 };
+        const plotWidth = width - margin.left - margin.right;
+        const plotHeight = height - margin.top - margin.bottom;
+        const years = data.map(([year]) => year);
+        const temperatures = data.map(([, value]) => value);
+        const sampleCount = data.length;
+        const normalisedYear = (year) => 2 * (year - 1850) / (2025 - 1850) - 1;
+
+        const solve = (matrix, vector) => {
+          const n = vector.length;
+          const augmented = matrix.map((row, index) => [...row, vector[index]]);
+          for (let pivot = 0; pivot < n; pivot += 1) {
+            let best = pivot;
+            for (let row = pivot + 1; row < n; row += 1) {
+              if (Math.abs(augmented[row][pivot]) > Math.abs(augmented[best][pivot])) best = row;
+            }
+            [augmented[pivot], augmented[best]] = [augmented[best], augmented[pivot]];
+            const divisor = augmented[pivot][pivot] || 1e-12;
+            for (let col = pivot; col <= n; col += 1) augmented[pivot][col] /= divisor;
+            for (let row = 0; row < n; row += 1) {
+              if (row === pivot) continue;
+              const factor = augmented[row][pivot];
+              for (let col = pivot; col <= n; col += 1) augmented[row][col] -= factor * augmented[pivot][col];
+            }
+          }
+          return augmented.map((row) => row[n]);
+        };
+        const coefficientsFor = (order) => {
+          const size = order + 1;
+          const matrix = Array.from({ length: size }, () => Array(size).fill(0));
+          const vector = Array(size).fill(0);
+          years.forEach((year, index) => {
+            const x = normalisedYear(year);
+            const powers = Array.from({ length: 2 * order + 1 }, (_, power) => x ** power);
+            for (let row = 0; row < size; row += 1) {
+              vector[row] += temperatures[index] * powers[row];
+              for (let col = 0; col < size; col += 1) matrix[row][col] += powers[row + col];
+            }
+          });
+          return solve(matrix, vector);
+        };
+        const maxOrder = 24;
+        const values = Array.from({ length: maxOrder }, (_, index) => {
+          const order = index + 1;
+          const coefficients = coefficientsFor(order);
+          const rss = years.reduce((sum, year, dataIndex) => {
+            const x = normalisedYear(year);
+            const fitted = coefficients.reduce((total, coefficient, power) => total + coefficient * x ** power, 0);
+            return sum + (temperatures[dataIndex] - fitted) ** 2;
+          }, 0);
+          const loss = sampleCount * Math.log(rss / sampleCount);
+          const penalty = (order + 1) * Math.log(sampleCount);
+          return { order, loss, penalty, bic: loss + penalty };
+        });
+        const minimum = values.reduce((best, value) => value.bic < best.bic ? value : best);
+        const yMin = Math.floor(Math.min(...values.map(({ loss }) => loss)) / 20) * 20;
+        const yMax = Math.ceil(Math.max(...values.map(({ bic }) => bic)) / 20) * 20;
+        const penaltyOffset = yMin;
+        const xScale = (order) => margin.left + (order - 0.5) / maxOrder * plotWidth;
+        const yScale = (value) => height - margin.bottom - (value - yMin) / (yMax - yMin) * plotHeight;
+        const penaltyScale = (value) => yScale(value + penaltyOffset);
+
+        [1, 5, 10, 15, 20, 24].forEach((tick) => {
+          const x = xScale(tick);
+          svg.append(
+            make("line", { x1: x, y1: margin.top, x2: x, y2: height - margin.bottom, class: "gmst-gridline" }),
+            make("text", { x, y: height - margin.bottom + 24, class: "gmst-tick" }, String(tick)),
+          );
+        });
+        const tickStep = Math.max(20, Math.ceil((yMax - yMin) / 5 / 20) * 20);
+        for (let tick = yMin; tick <= yMax; tick += tickStep) {
+          const y = yScale(tick);
+          svg.append(
+            make("line", { x1: margin.left, y1: y, x2: width - margin.right, y2: y, class: "gmst-gridline" }),
+            make("text", { x: margin.left - 36, y: y + 5, class: "gmst-tick" }, String(tick)),
+          );
+        }
+        for (let tick = yMin; tick <= yMax; tick += tickStep) {
+          const y = yScale(tick);
+          svg.append(make("text", { x: width - margin.right + 30, y: y + 5, class: "bic-penalty-tick" }, String(tick - penaltyOffset)));
+        }
+        svg.append(make("rect", {
+          x: xScale(minimum.order) - plotWidth / maxOrder * 0.75,
+          y: margin.top,
+          width: plotWidth / maxOrder * 1.5,
+          height: plotHeight,
+          fill: "rgba(255, 171, 84, 0.28)",
+        }));
+        const totalLine = values.map(({ order, bic }, index) => `${index ? "L" : "M"} ${xScale(order).toFixed(2)} ${yScale(bic).toFixed(2)}`).join(" ");
+        const lossLine = values.map(({ order, loss }, index) => `${index ? "L" : "M"} ${xScale(order).toFixed(2)} ${yScale(loss).toFixed(2)}`).join(" ");
+        const penaltyLine = values.map(({ order, penalty }, index) => `${index ? "L" : "M"} ${xScale(order).toFixed(2)} ${penaltyScale(penalty).toFixed(2)}`).join(" ");
+        svg.append(
+          make("path", { d: lossLine, class: "bic-loss-line" }),
+          make("path", { d: penaltyLine, class: "bic-penalty-line" }),
+          make("path", { d: totalLine, class: "bic-total-line" }),
+          make("line", { x1: margin.left, y1: height - margin.bottom, x2: width - margin.right, y2: height - margin.bottom, class: "gmst-axis" }),
+          make("line", { x1: margin.left, y1: margin.top, x2: margin.left, y2: height - margin.bottom, class: "gmst-axis" }),
+          make("line", { x1: width - margin.right, y1: margin.top, x2: width - margin.right, y2: height - margin.bottom, class: "bic-penalty-axis" }),
+          make("text", { x: margin.left + plotWidth / 2, y: height - 8, class: "gmst-label" }, "Polynomial order (k)"),
+          make("text", { x: 20, y: margin.top + plotHeight / 2 -30, class: "gmst-label", transform: `rotate(-90 20 ${margin.top + plotHeight / 2})` }, "BIC / Loss"),
+          make("text", { x: width - 12, y: margin.top + plotHeight / 2 + 20, class: "bic-penalty-label", transform: `rotate(-90 ${width - 12} ${margin.top + plotHeight / 2})` }, "Penalty"),
+        );
+        values.forEach(({ order, loss, penalty, bic }) => svg.append(
+          make("circle", { cx: xScale(order), cy: yScale(bic), r: 4.1, class: "bic-total-point" }),
+          make("circle", { cx: xScale(order), cy: yScale(loss), r: 3.4, class: "bic-loss-point" }),
+          make("circle", { cx: xScale(order), cy: penaltyScale(penalty), r: 3.4, class: "bic-penalty-point" }),
+        ));
+        svg.append(
+          make("line", { x1: 330, y1: 20, x2: 358, y2: 20, class: "bic-total-line" }),
+          make("text", { x: 366, y: 26, class: "bic-legend", "text-anchor": "start" }, "BIC"),
+          make("line", { x1: 414, y1: 20, x2: 442, y2: 20, class: "bic-loss-line" }),
+          make("text", { x: 450, y: 26, class: "bic-legend", "text-anchor": "start" }, "Loss"),
+          make("line", { x1: 504, y1: 20, x2: 532, y2: 20, class: "bic-penalty-line" }),
+          make("text", { x: 540, y: 26, class: "bic-legend", "text-anchor": "start" }, "Penalty"),
+          make("text", { x: xScale(minimum.order) + 40, y: yScale(minimum.bic) - 124, class: "bic-legend", "text-anchor": "middle" }, `lowest at k = ${minimum.order}`),
+        );
+      });
+    </script>
+  </body>
+</html>

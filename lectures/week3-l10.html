@@ -1,0 +1,2479 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>L10 Review</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;520;650;720;820&display=swap" rel="stylesheet">
+    <link href="https://fonts.cdnfonts.com/css/intel-one-mono" rel="stylesheet">
+    <link rel="stylesheet" href="../assets/css/course.css">
+    <style>
+      .title-lockup {
+        width: 1400px;
+      }
+
+      .title-lockup h2 {
+        font-size: 46px;
+        white-space: nowrap;
+      }
+
+      /* Lecture 10 page 2 handles: move/resize each large block here. */
+      .review-single-dataset-page {
+        --review-map-x: 0px;
+        --review-map-y: -8px;
+        --review-map-width: 1440px;
+        --review-map-height: 650px;
+        --review-flow-x: 52px;
+        --review-flow-y: 68px;
+        --review-flow-width: 252px;
+        --review-flow-gap: 7px;
+        --review-flow-arrow-height: 24px;
+        --review-arrow-line-width: 4px;
+        --review-arrow-head-side: 8px;
+        --review-arrow-head-height: 13px;
+        --review-arrow-head-offset: -10px;
+        --review-pdf-x: 395px;
+        --review-pdf-y: 20px;
+        --review-pdf-width: 250px;
+        --review-normal-x: 410px;
+        --review-normal-y: 240px;
+        --review-normal-width: 250px;
+        --review-lecture-label-x: 1160px;
+        --review-lecture-label-y: 44px;
+        --review-clt-text-x: 710px;
+        --review-clt-text-y: 105px;
+        --review-clt-text-width: 790px;
+        --review-clt-charts-x: 670px;
+        --review-clt-charts-y: 210px;
+        --review-clt-charts-width: 760px;
+        --review-ks-x: 390px;
+        --review-ks-y: 430px;
+        --review-ks-width: 270px;
+        --review-ks-height: 200px;
+        --review-table-x: 710px;
+        --review-table-y: 490px;
+        --review-table-width: 700px;
+      }
+
+      .review-single-dataset {
+        position: relative;
+        width: var(--review-map-width);
+        height: var(--review-map-height);
+        transform: translate(var(--review-map-x), var(--review-map-y));
+      }
+
+      .review-flow {
+        position: absolute;
+        left: var(--review-flow-x);
+        top: var(--review-flow-y);
+        width: var(--review-flow-width);
+        display: grid;
+        justify-items: center;
+        gap: var(--review-flow-gap);
+      }
+
+      .review-flow-box {
+        width: 340px;
+        min-height: 56px;
+        display: grid;
+        place-items: center;
+        padding: 8px 12px;
+        background: #2b64b3;
+        color: #ffffff;
+        font-size: 20px;
+        font-weight: 820;
+        line-height: 1.12;
+        text-align: center;
+      }
+
+      .review-flow-box.warning {
+        background: #ef2b18;
+      }
+
+      .review-flow-box.test {
+        min-height: 48px;
+        background: #e75480;
+        font-size: 20px;
+      }
+
+      .review-flow-question {
+        margin: -2px 0 0;
+        color: #2b64b3;
+        font-size: 34px;
+        font-weight: 520;
+      }
+
+      .review-flow-arrow {
+        width: 0;
+        height: var(--review-flow-arrow-height);
+        border-left: var(--review-arrow-line-width) solid #2b64b3;
+        position: relative;
+      }
+
+      .review-flow-arrow::after {
+        content: "";
+        position: absolute;
+        left: var(--review-arrow-head-offset);
+        bottom: -2px;
+        width: 0;
+        height: 0;
+        border-left: var(--review-arrow-head-side) solid transparent;
+        border-right: var(--review-arrow-head-side) solid transparent;
+        border-top: var(--review-arrow-head-height) solid #2b64b3;
+      }
+
+      .review-reveal {
+        opacity: 0;
+        transform: translateY(8px);
+        transition: opacity 260ms ease, transform 260ms ease;
+        pointer-events: none;
+      }
+
+      .review-single-dataset-page .review-step-1,
+      .review-single-dataset-page[data-step="1"] .review-step-2,
+      .review-single-dataset-page[data-step="2"] .review-step-2,
+      .review-single-dataset-page[data-step="3"] .review-step-2,
+      .review-single-dataset-page[data-step="4"] .review-step-2,
+      .review-single-dataset-page[data-step="5"] .review-step-2,
+      .review-single-dataset-page[data-step="2"] .review-step-3,
+      .review-single-dataset-page[data-step="3"] .review-step-3,
+      .review-single-dataset-page[data-step="4"] .review-step-3,
+      .review-single-dataset-page[data-step="5"] .review-step-3,
+      .review-single-dataset-page[data-step="3"] .review-step-4,
+      .review-single-dataset-page[data-step="4"] .review-step-4,
+      .review-single-dataset-page[data-step="5"] .review-step-4,
+      .review-single-dataset-page[data-step="4"] .review-step-5,
+      .review-single-dataset-page[data-step="5"] .review-step-5,
+      .review-single-dataset-page[data-step="4"] .review-step-6,
+      .review-single-dataset-page[data-step="5"] .review-step-6 {
+        opacity: 1;
+        transform: translateY(0);
+        pointer-events: auto;
+      }
+
+      .review-single-dataset-page .review-flow-arrow.review-step-2,
+      .review-single-dataset-page .review-flow-arrow.review-step-3,
+      .review-single-dataset-page .review-flow-arrow.review-step-4,
+      .review-single-dataset-page .review-flow-arrow.review-step-5,
+      .review-single-dataset-page .review-flow-arrow.review-step-6 {
+        transform: translateY(8px);
+      }
+
+      .review-single-dataset-page[data-step="1"] .review-flow-arrow.review-step-2,
+      .review-single-dataset-page[data-step="2"] .review-flow-arrow.review-step-2,
+      .review-single-dataset-page[data-step="3"] .review-flow-arrow.review-step-2,
+      .review-single-dataset-page[data-step="4"] .review-flow-arrow.review-step-2,
+      .review-single-dataset-page[data-step="5"] .review-flow-arrow.review-step-2,
+      .review-single-dataset-page[data-step="2"] .review-flow-arrow.review-step-3,
+      .review-single-dataset-page[data-step="3"] .review-flow-arrow.review-step-3,
+      .review-single-dataset-page[data-step="4"] .review-flow-arrow.review-step-3,
+      .review-single-dataset-page[data-step="5"] .review-flow-arrow.review-step-3,
+      .review-single-dataset-page[data-step="3"] .review-flow-arrow.review-step-4,
+      .review-single-dataset-page[data-step="4"] .review-flow-arrow.review-step-4,
+      .review-single-dataset-page[data-step="5"] .review-flow-arrow.review-step-4,
+      .review-single-dataset-page[data-step="4"] .review-flow-arrow.review-step-5,
+      .review-single-dataset-page[data-step="5"] .review-flow-arrow.review-step-5,
+      .review-single-dataset-page[data-step="4"] .review-flow-arrow.review-step-6,
+      .review-single-dataset-page[data-step="5"] .review-flow-arrow.review-step-6 {
+        transform: translateY(0);
+      }
+
+      .review-link-block {
+        color: inherit;
+        cursor: pointer;
+        text-decoration: none;
+      }
+
+      .review-link-block:hover {
+        filter: drop-shadow(0 0 0.45rem rgba(25, 62, 135, 0.18));
+      }
+
+      .review-flow-box.review-link-block,
+      .review-flow-box.review-link-block:visited,
+      .review-flow-box.review-link-block:hover,
+      .review-flow-box.review-link-block:active,
+      .review-flow-box a,
+      .review-flow-box a:visited,
+      .review-flow-box a:hover,
+      .review-flow-box a:active {
+        color: #ffffff;
+        text-decoration: underline;
+        text-decoration-thickness: 2px;
+        text-underline-offset: 4px;
+      }
+
+      .review-map-label {
+        position: absolute;
+        left: var(--review-lecture-label-x);
+        top: var(--review-lecture-label-y);
+        font-size: 25px;
+        font-weight: 820;
+      }
+
+      .review-mini-chart {
+        position: absolute;
+        background: #ffffff;
+      }
+
+      .review-mini-chart svg {
+        display: block;
+        width: 100%;
+        height: auto;
+      }
+
+      .review-pdf-chart {
+        left: var(--review-pdf-x);
+        top: var(--review-pdf-y);
+        width: var(--review-pdf-width);
+      }
+
+      .review-normal-chart {
+        left: var(--review-normal-x);
+        top: var(--review-normal-y);
+        width: var(--review-normal-width);
+      }
+
+      .review-normal-caption {
+        margin: 0px 0 0;
+        font-size: 18px;
+        font-weight: 600;
+        line-height: 1.25;
+        text-align: center;
+        transform: translateY(-15px);
+      }
+
+      .review-clt-text {
+        position: absolute;
+        left: var(--review-clt-text-x);
+        top: var(--review-clt-text-y);
+        width: var(--review-clt-text-width);
+        font-size: 21px;
+        font-weight: 520;
+        line-height: 1.25;
+      }
+
+      .review-clt-text strong {
+        font-weight: 820;
+      }
+
+      .review-clt-text .hot {
+        color: #ef2b18;
+        font-weight: 820;
+      }
+
+      .review-clt-charts {
+        position: absolute;
+        left: var(--review-clt-charts-x);
+        top: var(--review-clt-charts-y);
+        width: var(--review-clt-charts-width);
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 14px;
+      }
+
+      .review-clt-charts svg {
+        width: 100%;
+        height: auto;
+      }
+
+      .review-ks-chart {
+        left: var(--review-ks-x);
+        top: var(--review-ks-y);
+        width: var(--review-ks-width);
+        height: var(--review-ks-height);
+      }
+
+      .review-ks-chart svg {
+        width: 100%;
+        height: 100%;
+      }
+
+      .review-test-workflow {
+        position: absolute;
+        left: var(--review-table-x);
+        top: var(--review-table-y);
+        width: var(--review-table-width);
+        display: grid;
+        grid-template-columns: repeat(5, minmax(92px, 1fr));
+        gap: 20px 18px;
+        align-items: center;
+        color: var(--site-blue-dark);
+      }
+
+      .review-test-workflow-step {
+        position: relative;
+        min-height: 54px;
+        display: grid;
+        place-items: center;
+        padding: 8px 10px;
+        border: 2px solid rgba(25, 62, 135, 0.28);
+        border-radius: 8px;
+        background: #eef5ff;
+        font-size: 15px;
+        font-weight: 820;
+        line-height: 1.16;
+        text-align: center;
+      }
+
+      .review-test-workflow-step:not(:last-child)::after {
+        content: "";
+        position: absolute;
+        top: 50%;
+        right: -18px;
+        width: 18px;
+        height: 3px;
+        background: var(--site-blue-dark);
+        transform: translateY(-50%);
+      }
+
+      .review-test-workflow-step:not(:last-child)::before {
+        content: "";
+        position: absolute;
+        top: 50%;
+        right: -24px;
+        width: 0;
+        height: 0;
+        border-top: 7px solid transparent;
+        border-bottom: 7px solid transparent;
+        border-left: 10px solid var(--site-blue-dark);
+        transform: translateY(-50%);
+        z-index: 1;
+      }
+
+      .review-test-workflow-step.threshold {
+        background: #fff4de;
+        border-color: rgba(242, 142, 43, 0.45);
+      }
+
+      .review-test-workflow-step.decision {
+        background: #ffeaf2;
+        border-color: rgba(231, 84, 128, 0.45);
+      }
+
+      .review-test-workflow.two-row {
+        grid-template-columns: repeat(3, minmax(92px, 1fr));
+      }
+
+      .review-chart-axis,
+      .review-chart-grid {
+        stroke: #aab3c5;
+        stroke-width: 1;
+      }
+
+      .review-chart-axis {
+        stroke: #3b4b6c;
+        stroke-width: 1.3;
+      }
+
+      .review-chart-text {
+        font-family: var(--font-body);
+        font-size: 12px;
+        font-weight: 620;
+      }
+
+      .review-chart-title {
+        font-family: var(--font-body);
+        font-size: 15px;
+        font-weight: 820;
+      }
+
+      .review-chart-bar {
+        fill: #4f79e6;
+        opacity: 0.82;
+      }
+
+      .review-chart-pdf-bar {
+        fill: #ef2b18;
+      }
+
+      .review-chart-line {
+        fill: none;
+        stroke: #4f79e6;
+        stroke-width: 2.2;
+      }
+
+      .review-clt-normal-line {
+        fill: none;
+        stroke: #193e87;
+        stroke-width: 3.2;
+      }
+
+      .review-chart-cutoff {
+        stroke: #ef2b18;
+        stroke-width: 2.2;
+      }
+
+      .review-chart-observed {
+        stroke: #4f79e6;
+        stroke-width: 2.2;
+      }
+
+      /* Lecture 10 page 3 handles: move/resize each large block here. */
+      .review-correlation-page {
+        --corr-map-x: 0px;
+        --corr-map-y: -8px;
+        --corr-map-width: 1440px;
+        --corr-map-height: 650px;
+        --corr-section-label-x: 32px;
+        --corr-prepare-y: 142px;
+        --corr-analysis-y: 315px;
+        --corr-significance-y: 488px;
+        --corr-divider-x: 42px;
+        --corr-divider-width: 980px;
+        --corr-analysis-divider-y: 285px;
+        --corr-significance-divider-y: 375px;
+        --corr-flow-x: 180px;
+        --corr-flow-y: 42px;
+        --corr-flow-width: 255px;
+        --corr-flow-box-width: 380px;
+        /* Increase this to loosen the left workflow vertically; decrease it to compress. */
+        --corr-flow-looseness: 1.91;
+        --corr-flow-gap-base: 4px;
+        --corr-flow-gap: calc(var(--corr-flow-gap-base) * var(--corr-flow-looseness));
+        --corr-flow-box-height: 44px;
+        --corr-arrow-height-base: 15px;
+        --corr-arrow-height: calc(var(--corr-arrow-height-base) * var(--corr-flow-looseness));
+        --corr-arrow-line-width: 4px;
+        --corr-arrow-head-side: 8px;
+        --corr-arrow-head-height: 13px;
+        --corr-arrow-head-offset: -10px;
+        --corr-no-linear-x: 580px;
+        --corr-no-linear-y: 223px;
+        --corr-yes-linear-x: 310px;
+        --corr-yes-linear-y: 270px;
+        --corr-linear-arrow-x: 560px;
+        --corr-linear-arrow-y: 251px;
+        --corr-linear-arrow-width: 60px;
+        --corr-no-gaussian-x: 580px;
+        --corr-no-gaussian-y: 475px;
+        --corr-yes-gaussian-x: 310px;
+        --corr-yes-gaussian-y: 533px;
+        --corr-gaussian-arrow-x: 560px;
+        --corr-gaussian-arrow-y: 502px;
+        --corr-gaussian-arrow-width: 78px;
+        --corr-horizontal-arrow-line-width: 4px;
+        --corr-horizontal-arrow-head-side: 8px;
+        --corr-horizontal-arrow-head-width: 13px;
+        --corr-horizontal-arrow-head-offset: -10px;
+        --corr-nonlinear-x: 550px;
+        --corr-nonlinear-y: -25px;
+        --corr-nonlinear-width: 700px;
+        --corr-nonlinear-gap: 50px;
+        --corr-nonlinear-second-chart-x: -150px;
+        --corr-nonlinear-columns: 2;
+        --corr-nonlinear-chart-aspect: 1.19;
+        --corr-other-x: 630px;
+        --corr-other-y: 242px;
+        --corr-other-width: 820px;
+        --corr-code-x: 620px;
+        --corr-code-y: 304px;
+        --corr-code-width: 430px;
+        --corr-bootstrap-button-x: 640px;
+        --corr-bootstrap-button-y: 482px;
+        --corr-bootstrap-button-width: 200px;
+        --corr-bootstrap-x: 870px;
+        --corr-bootstrap-y: 400px;
+        --corr-bootstrap-width: 320px;
+        --corr-lecture-label-x: 1160px;
+        --corr-lecture-label-y: 44px;
+      }
+
+      .review-correlation-map {
+        position: relative;
+        width: var(--corr-map-width);
+        height: var(--corr-map-height);
+        transform: translate(var(--corr-map-x), var(--corr-map-y));
+      }
+
+      .corr-section-label {
+        position: absolute;
+        left: var(--corr-section-label-x);
+        font-size: 19px;
+        font-weight: 820;
+      }
+
+      .corr-section-label.prepare {
+        top: var(--corr-prepare-y);
+      }
+
+      .corr-section-label.analysis {
+        top: var(--corr-analysis-y);
+      }
+
+      .corr-section-label.significance {
+        top: var(--corr-significance-y);
+      }
+
+      .corr-divider {
+        position: absolute;
+        left: var(--corr-divider-x);
+        width: var(--corr-divider-width);
+        border-top: 4px dashed rgba(0, 0, 0, 0.18);
+      }
+
+      .corr-divider.analysis {
+        top: var(--corr-analysis-divider-y);
+      }
+
+      .corr-divider.significance {
+        top: var(--corr-significance-divider-y);
+      }
+
+      .corr-flow {
+        position: absolute;
+        left: var(--corr-flow-x);
+        top: var(--corr-flow-y);
+        width: var(--corr-flow-width);
+        display: grid;
+        justify-items: center;
+        gap: var(--corr-flow-gap);
+      }
+
+      .corr-flow-box {
+        width: var(--corr-flow-box-width);
+        min-height: var(--corr-flow-box-height);
+        display: grid;
+        place-items: center;
+        padding: 7px 10px;
+        background: #2c57ad;
+        color: #ffffff;
+        font-size: 20px;
+        font-weight: 820;
+        line-height: 1.14;
+        text-align: center;
+      }
+
+      .corr-flow-box.question,
+      .corr-flow-box.gaussian {
+        background: #ef2b18;
+      }
+
+      .corr-flow-box.pearson,
+      .corr-flow-box.ks {
+        background: #e75480;
+      }
+
+      .corr-flow-box.bootstrap {
+        width: var(--corr-bootstrap-button-width);
+        min-height: 42px;
+        background: #2ba69a;
+        font-size: 20px;
+      }
+
+      .corr-bootstrap-button {
+        position: absolute;
+        left: var(--corr-bootstrap-button-x);
+        top: var(--corr-bootstrap-button-y);
+      }
+
+      .corr-flow-box.pvalue {
+        width: var(--corr-pvalue-width);
+        min-height: 68px;
+        background: #ffffff;
+        border: 3px solid #e75480;
+        color: #e75480;
+        font-family: var(--font-mono);
+        font-size: 20px;
+      }
+
+      .corr-arrow {
+        width: 0;
+        height: var(--corr-arrow-height);
+        border-left: var(--corr-arrow-line-width) solid;
+        position: relative;
+      }
+
+      .corr-arrow::after {
+        content: "";
+        position: absolute;
+        left: var(--corr-arrow-head-offset);
+        bottom: -2px;
+        width: 0;
+        height: 0;
+        border-left: var(--corr-arrow-head-side) solid transparent;
+        border-right: var(--corr-arrow-head-side) solid transparent;
+        border-top: var(--corr-arrow-head-height) solid;
+      }
+
+      .corr-branch {
+        position: absolute;
+        font-size: 20px;
+        font-weight: 620;
+      }
+
+      .corr-branch.no-linear {
+        left: var(--corr-no-linear-x);
+        top: var(--corr-no-linear-y);
+      }
+
+      .corr-branch.yes-linear {
+        left: var(--corr-yes-linear-x);
+        top: var(--corr-yes-linear-y);
+      }
+
+      .corr-branch.no-gaussian {
+        left: var(--corr-no-gaussian-x);
+        top: var(--corr-no-gaussian-y);
+      }
+
+      .corr-branch.yes-gaussian {
+        left: var(--corr-yes-gaussian-x);
+        top: var(--corr-yes-gaussian-y);
+      }
+
+      .corr-horizontal-arrow {
+        position: absolute;
+        height: 0;
+        border-top: var(--corr-horizontal-arrow-line-width) solid;
+      }
+
+      .corr-horizontal-arrow::after {
+        content: "";
+        position: absolute;
+        right: -2px;
+        top: var(--corr-horizontal-arrow-head-offset);
+        width: 0;
+        height: 0;
+        border-top: var(--corr-horizontal-arrow-head-side) solid transparent;
+        border-bottom: var(--corr-horizontal-arrow-head-side) solid transparent;
+        border-left: var(--corr-horizontal-arrow-head-width) solid;
+      }
+
+      .corr-horizontal-arrow.linear-no {
+        left: var(--corr-linear-arrow-x);
+        top: var(--corr-linear-arrow-y);
+        width: var(--corr-linear-arrow-width);
+      }
+
+      .corr-horizontal-arrow.gaussian-no {
+        left: var(--corr-gaussian-arrow-x);
+        top: var(--corr-gaussian-arrow-y);
+        width: var(--corr-gaussian-arrow-width);
+      }
+
+      .corr-nonlinear-gallery {
+        position: absolute;
+        left: var(--corr-nonlinear-x);
+        top: var(--corr-nonlinear-y);
+        width: var(--corr-nonlinear-width);
+        display: grid;
+        grid-template-columns: repeat(var(--corr-nonlinear-columns), minmax(0, 1fr));
+        gap: var(--corr-nonlinear-gap);
+      }
+
+      .corr-nonlinear-gallery svg {
+        display: block;
+        width: 100%;
+        height: auto;
+        aspect-ratio: var(--corr-nonlinear-chart-aspect);
+      }
+
+      .corr-nonlinear-gallery svg:nth-child(2) {
+        transform: translateX(var(--corr-nonlinear-second-chart-x));
+      }
+
+      .corr-bootstrap-plot svg {
+        display: block;
+        width: 100%;
+        height: auto;
+      }
+
+      .corr-other-methods {
+        position: absolute;
+        left: var(--corr-other-x);
+        top: var(--corr-other-y);
+        width: var(--corr-other-width);
+        font-size: 19px;
+        line-height: 1.28;
+      }
+
+      .corr-pearson-code {
+        position: absolute;
+        left: var(--corr-code-x);
+        top: var(--corr-code-y);
+        width: var(--corr-code-width);
+        display: grid;
+        place-items: center;
+        min-height: 48px;
+        border: 4px solid;
+        background: #ffffff;
+        color: #e75480;
+        font-family: var(--font-mono);
+        font-size: 20px;
+        font-weight: 820;
+        text-align: center;
+      }
+
+      .corr-bootstrap-plot {
+        position: absolute;
+        left: var(--corr-bootstrap-x);
+        top: var(--corr-bootstrap-y);
+        width: var(--corr-bootstrap-width);
+      }
+
+      .corr-lecture-label {
+        position: absolute;
+        left: var(--corr-lecture-label-x);
+        top: var(--corr-lecture-label-y);
+        font-size: 25px;
+        font-weight: 820;
+      }
+
+      .corr-reveal {
+        opacity: 0;
+        transform: translateY(8px);
+        transition: opacity 260ms ease, transform 260ms ease;
+        pointer-events: none;
+      }
+
+      .review-correlation-page .corr-step-1,
+      .review-correlation-page[data-step="1"] .corr-step-2,
+      .review-correlation-page[data-step="2"] .corr-step-2,
+      .review-correlation-page[data-step="3"] .corr-step-2,
+      .review-correlation-page[data-step="4"] .corr-step-2,
+      .review-correlation-page[data-step="5"] .corr-step-2,
+      .review-correlation-page[data-step="2"] .corr-step-3,
+      .review-correlation-page[data-step="3"] .corr-step-3,
+      .review-correlation-page[data-step="4"] .corr-step-3,
+      .review-correlation-page[data-step="5"] .corr-step-3,
+      .review-correlation-page[data-step="3"] .corr-step-4,
+      .review-correlation-page[data-step="4"] .corr-step-4,
+      .review-correlation-page[data-step="5"] .corr-step-4,
+      .review-correlation-page[data-step="4"] .corr-step-5,
+      .review-correlation-page[data-step="5"] .corr-step-5,
+      .review-correlation-page[data-step="5"] .corr-step-6 {
+        opacity: 1;
+        transform: translateY(0);
+        pointer-events: auto;
+      }
+
+      .corr-link-block {
+        color: inherit;
+        cursor: pointer;
+        text-decoration: none;
+      }
+
+      .corr-flow-box.corr-link-block:not(.pvalue),
+      .corr-flow-box.corr-link-block:not(.pvalue):visited,
+      .corr-flow-box.corr-link-block:not(.pvalue):hover,
+      .corr-flow-box.corr-link-block:not(.pvalue):active {
+        color: #ffffff;
+        text-decoration: underline;
+        text-decoration-thickness: 2px;
+        text-underline-offset: 4px;
+      }
+
+      .corr-flow-box.pvalue.corr-link-block {
+        text-decoration: underline;
+        text-decoration-thickness: 2px;
+        text-underline-offset: 4px;
+      }
+
+      .corr-link-block:hover {
+        filter: drop-shadow(0 0 0.45rem rgba(25, 62, 135, 0.18));
+      }
+
+      /* Lecture 10 page 4 handles: move/resize each large block here. */
+      .review-regression-page {
+        --reg-map-x: 0px;
+        --reg-map-y: -8px;
+        --reg-map-width: 1440px;
+        --reg-map-height: 650px;
+        --reg-section-label-x: 34px;
+        --reg-prepare-y: 68px;
+        --reg-analysis-y: 245px;
+        --reg-significance-y: 448px;
+        --reg-divider-x: 36px;
+        --reg-divider-width: 900px;
+        --reg-analysis-divider-y: 135px;
+        --reg-significance-divider-y: 366px;
+        --reg-top-flow-x: 150px;
+        --reg-top-flow-y: 45px;
+        --reg-top-flow-gap: 54px;
+        --reg-top-box-width: 200px;
+        --reg-prepare-red-box-width: 350px;
+        --reg-significance-red-box-width: 220px;
+        --reg-arrow-color: var(--site-blue-dark);
+        --reg-arrow-line-width: 4px;
+        --reg-arrow-top-1-x: 346px;
+        --reg-arrow-top-1-y: 76px;
+        --reg-arrow-top-1-length: 45px;
+        --reg-arrow-top-2-x: 600px;
+        --reg-arrow-top-2-y: 76px;
+        --reg-arrow-top-2-length: 45px;
+        --reg-arrow-down-analysis-x: 780px;
+        --reg-arrow-down-analysis-y: 55px;
+        --reg-arrow-down-analysis-length: 90px;
+        --reg-arrow-to-bic-x: 875px;
+        --reg-arrow-to-bic-y: 178px;
+        --reg-arrow-to-bic-length: 245px;
+        --reg-arrow-step-1-to-2-x: 780px;
+        --reg-arrow-step-1-to-2-y: 190px;
+        --reg-arrow-step-1-to-2-length: 34px;
+        --reg-arrow-step-2-to-3-x: 780px;
+        --reg-arrow-step-2-to-3-y: 256px;
+        --reg-arrow-step-2-to-3-length: 48px;
+        --reg-arrow-to-gaussian-x: 780px;
+        --reg-arrow-to-gaussian-y: 320px;
+        --reg-arrow-to-gaussian-bend-y: 380px;
+        --reg-arrow-to-gaussian-end-x: 370px;
+        --reg-arrow-to-gaussian-end-y: 393px;
+        --reg-arrow-to-pivot-x: 780px;
+        --reg-arrow-to-pivot-y: 380px;
+        --reg-arrow-to-pivot-bend-y: 380px;
+        --reg-arrow-to-pivot-end-x: 1065px;
+        --reg-arrow-to-pivot-end-y: 393px;
+        --reg-arrow-gaussian-to-summary-x: 456px;
+        --reg-arrow-gaussian-to-summary-y: 430px;
+        --reg-arrow-gaussian-to-summary-length: 102px;
+        --reg-arrow-pivot-to-summary-x: 988px;
+        --reg-arrow-pivot-to-summary-y: 430px;
+        --reg-arrow-pivot-to-summary-length: -115px;
+        --reg-arrow-bootstrap-left-x: 370px;
+        --reg-arrow-bootstrap-left-y: 455;
+        --reg-arrow-bootstrap-left-length: 93px;
+        --reg-arrow-bootstrap-right-x: 1065px;
+        --reg-arrow-bootstrap-right-y: 455px;
+        --reg-arrow-bootstrap-right-length: 93px;
+        --reg-top-yes-x: 1742px;
+        --reg-top-yes-y: 54px;
+        --reg-outlier-no-x: 735px;
+        --reg-outlier-no-y: 108px;
+        --reg-code-x: 250px;
+        --reg-code-y: 190px;
+        --reg-code-width: 320px;
+        --reg-code-font-size: 20px;
+        --reg-steps-x: 635px;
+        --reg-steps-y: 160px;
+        --reg-step-width: 250px;
+        --reg-step-height: 36px;
+        --reg-step-gap: 34px;
+        --reg-bic-x: 1132px;
+        --reg-bic-y: 158px;
+        --reg-bic-width: 230px;
+        --reg-bic-height: 36px;
+        --reg-bic-chart-x: 1108px;
+        --reg-bic-chart-y: 200px;
+        --reg-bic-chart-width: 260px;
+        --reg-significance-main-x: 570px;
+        --reg-significance-main-y: 405px;
+        --reg-significance-main-width: 290px;
+        --reg-summary-x: 520px;
+        --reg-summary-y: 470px;
+        --reg-summary-width: 390px;
+        --reg-summary-font-size: 5.9px;
+        --reg-gaussian-x: 245px;
+        --reg-gaussian-y: 405px;
+        --reg-bootstrap-left-x: 250px;
+        --reg-bootstrap-left-y: 560px;
+        --reg-pivot-x: 935px;
+        --reg-pivot-y: 405px;
+        --reg-bootstrap-right-x: 950px;
+        --reg-bootstrap-right-y: 560px;
+        --reg-gaussian-yes-x: 510px;
+        --reg-gaussian-yes-y: 403px;
+        --reg-gaussian-no-x: 330px;
+        --reg-gaussian-no-y: 495px;
+        --reg-pivot-no-x: 890px;
+        --reg-pivot-no-y: 403px;
+        --reg-pivot-yes-x: 1015px;
+        --reg-pivot-yes-y: 495px;
+        --reg-final-bic-x: 760px;
+        --reg-final-bic-y: 560px;
+        --reg-final-bic-width: 150px;
+        --reg-final-bic-height: 50px;
+        --reg-lecture-label-x: 1160px;
+        --reg-lecture-label-y: 44px;
+      }
+
+      .review-regression-map {
+        position: relative;
+        width: var(--reg-map-width);
+        height: var(--reg-map-height);
+        transform: translate(var(--reg-map-x), var(--reg-map-y));
+      }
+
+      .reg-section-label {
+        position: absolute;
+        left: var(--reg-section-label-x);
+        font-size: 19px;
+        font-weight: 820;
+      }
+
+      .reg-section-label.prepare { top: var(--reg-prepare-y); }
+      .reg-section-label.analysis { top: var(--reg-analysis-y); }
+      .reg-section-label.significance { top: var(--reg-significance-y); }
+
+      .reg-divider {
+        position: absolute;
+        left: var(--reg-divider-x);
+        width: var(--reg-divider-width);
+        border-top: 4px dashed rgba(0, 0, 0, 0.18);
+      }
+
+      .reg-divider.analysis { top: var(--reg-analysis-divider-y); }
+      .reg-divider.significance { top: var(--reg-significance-divider-y); }
+
+      .reg-flow-row {
+        position: absolute;
+        left: var(--reg-top-flow-x);
+        top: var(--reg-top-flow-y);
+        display: flex;
+        align-items: center;
+        gap: var(--reg-top-flow-gap);
+      }
+
+      .reg-box {
+        display: grid;
+        place-items: center;
+        min-height: 50px;
+        padding: 8px 12px;
+        font-size: 20px;
+        font-weight: 820;
+        line-height: 1.12;
+        text-align: center;
+        text-decoration: none;
+      }
+
+      .reg-box.dark {
+        width: var(--reg-top-box-width);
+        background: #2265a0;
+        color: #ffffff;
+      }
+
+      .reg-box.red {
+        width: var(--reg-prepare-red-box-width);
+        background: #ef2b18;
+        color: #ffffff;
+      }
+
+      .reg-box.teal {
+        background: #2ba69a;
+        color: #ffffff;
+      }
+
+      .reg-box.outline {
+        min-height: 34px;
+        background: #ffffff;
+        border: 3px solid;
+        font-size: 20px;
+      }
+
+      .reg-box.outline.red-border { border-color: #ef2b18; }
+      .reg-box.outline.blue-border { border-color: #2f9ef5; }
+      .reg-box.outline.green-border { border-color: #16a51e; }
+
+      .reg-analysis-code {
+        position: absolute;
+        left: var(--reg-code-x);
+        top: var(--reg-code-y);
+        width: var(--reg-code-width);
+        padding: 10px 12px;
+        border: 3px solid;
+        background: #ffffff;
+        font-family: var(--font-mono);
+        font-size: var(--reg-code-font-size);
+        line-height: 1.18;
+      }
+
+      .reg-analysis-code .code-green { color: #149b25; font-weight: 820; }
+      .reg-analysis-code .code-blue { color: #168ad8; }
+
+      .reg-step-stack {
+        position: absolute;
+        left: var(--reg-steps-x);
+        top: var(--reg-steps-y);
+        display: grid;
+        gap: var(--reg-step-gap);
+      }
+
+      .reg-step-row {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+
+      .reg-step-number {
+        width: 24px;
+        font-size: 30px;
+        font-weight: 820;
+        line-height: 1;
+        text-align: center;
+      }
+
+      .reg-step-number.one { color: #ef2b18; }
+      .reg-step-number.two { color: #2f9ef5; }
+      .reg-step-number.three { color: #16a51e; }
+
+      .reg-step-row .reg-box {
+        width: var(--reg-step-width);
+        min-height: var(--reg-step-height);
+      }
+
+      .reg-bic-button {
+        position: absolute;
+        left: var(--reg-bic-x);
+        top: var(--reg-bic-y);
+        width: var(--reg-bic-width);
+        min-height: var(--reg-bic-height);
+      }
+
+      .reg-bic-chart {
+        position: absolute;
+        left: var(--reg-bic-chart-x);
+        top: var(--reg-bic-chart-y);
+        width: var(--reg-bic-chart-width);
+        background: #ffffff;
+      }
+
+      .reg-bic-chart svg {
+        display: block;
+        width: 100%;
+        height: auto;
+      }
+
+      .reg-bic-chart:hover {
+        filter: none;
+      }
+
+      .reg-significance-main {
+        position: absolute;
+        left: var(--reg-significance-main-x);
+        top: var(--reg-significance-main-y);
+        width: var(--reg-significance-main-width);
+        border-color: #e75480;
+        color: #e75480;
+        font-size: 20px;
+      }
+
+      .reg-significance-main:visited,
+      .reg-significance-main:hover,
+      .reg-significance-main:active {
+        color: #e75480;
+      }
+
+      .reg-summary-preview {
+        position: absolute;
+        left: var(--reg-summary-x);
+        top: var(--reg-summary-y);
+        width: var(--reg-summary-width);
+        padding: 0px 0px;
+        background: #ffffff;
+      }
+
+      .reg-summary-output {
+        margin: 0;
+        color: #111111;
+        font-family: var(--font-mono);
+        font-size: var(--reg-summary-font-size);
+        font-weight: 520;
+        line-height: 1.08;
+        white-space: pre;
+      }
+
+      .reg-box.reg-gaussian-box {
+        position: absolute;
+        left: var(--reg-gaussian-x);
+        top: var(--reg-gaussian-y);
+        width: var(--reg-significance-red-box-width);
+      }
+
+      .reg-box.reg-pivot-box {
+        position: absolute;
+        left: var(--reg-pivot-x);
+        top: var(--reg-pivot-y);
+        width: var(--reg-significance-red-box-width);
+      }
+
+      .reg-bootstrap-left,
+      .reg-bootstrap-right {
+        position: absolute;
+        width: 200px;
+        min-height: 38px;
+      }
+
+      .reg-bootstrap-left {
+        left: var(--reg-bootstrap-left-x);
+        top: var(--reg-bootstrap-left-y);
+      }
+
+      .reg-bootstrap-right {
+        left: var(--reg-bootstrap-right-x);
+        top: var(--reg-bootstrap-right-y);
+      }
+
+      .reg-final-bic-button {
+        position: absolute;
+        left: var(--reg-final-bic-x);
+        top: var(--reg-final-bic-y);
+        width: var(--reg-final-bic-width);
+        min-height: var(--reg-final-bic-height);
+      }
+
+      .reg-branch-label {
+        position: absolute;
+        font-size: 18px;
+        font-weight: 520;
+      }
+
+      .reg-branch-label.top-yes { left: var(--reg-top-yes-x); top: var(--reg-top-yes-y); }
+      .reg-branch-label.outlier-no { left: var(--reg-outlier-no-x); top: var(--reg-outlier-no-y); }
+      .reg-branch-label.gaussian-yes { left: var(--reg-gaussian-yes-x); top: var(--reg-gaussian-yes-y); }
+      .reg-branch-label.gaussian-no { left: var(--reg-gaussian-no-x); top: var(--reg-gaussian-no-y); }
+      .reg-branch-label.pivot-no { left: var(--reg-pivot-no-x); top: var(--reg-pivot-no-y); }
+      .reg-branch-label.pivot-yes { left: var(--reg-pivot-yes-x); top: var(--reg-pivot-yes-y); }
+
+      .reg-lecture-label {
+        position: absolute;
+        left: var(--reg-lecture-label-x);
+        top: var(--reg-lecture-label-y);
+        font-size: 25px;
+        font-weight: 820;
+      }
+
+      .reg-arrow-layer {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        color: var(--reg-arrow-color);
+        overflow: visible;
+        pointer-events: none;
+      }
+
+      .reg-arrow-layer path,
+      .reg-arrow-layer line,
+      .reg-arrow-layer polyline {
+        fill: none;
+        stroke: currentColor;
+        stroke-width: var(--reg-arrow-line-width);
+        stroke-linecap: square;
+        stroke-linejoin: miter;
+      }
+
+      .reg-arrow-layer marker path {
+        fill: currentColor;
+        stroke: none;
+      }
+
+      .reg-reveal {
+        opacity: 0;
+        transform: translateY(8px);
+        transition: opacity 260ms ease, transform 260ms ease;
+        pointer-events: none;
+      }
+
+      .review-regression-page .reg-step-1,
+      .review-regression-page .reg-arrow-layer .reg-step-1,
+      .review-regression-page[data-step="1"] .reg-step-3,
+      .review-regression-page[data-step="2"] .reg-step-3,
+      .review-regression-page[data-step="3"] .reg-step-3,
+      .review-regression-page[data-step="4"] .reg-step-3,
+      .review-regression-page[data-step="1"] .reg-arrow-layer .reg-step-3,
+      .review-regression-page[data-step="2"] .reg-arrow-layer .reg-step-3,
+      .review-regression-page[data-step="3"] .reg-arrow-layer .reg-step-3,
+      .review-regression-page[data-step="4"] .reg-arrow-layer .reg-step-3,
+      .review-regression-page[data-step="2"] .reg-step-4,
+      .review-regression-page[data-step="3"] .reg-step-4,
+      .review-regression-page[data-step="4"] .reg-step-4,
+      .review-regression-page[data-step="2"] .reg-arrow-layer .reg-step-4,
+      .review-regression-page[data-step="3"] .reg-arrow-layer .reg-step-4,
+      .review-regression-page[data-step="4"] .reg-arrow-layer .reg-step-4,
+      .review-regression-page[data-step="3"] .reg-step-5,
+      .review-regression-page[data-step="4"] .reg-step-5,
+      .review-regression-page[data-step="4"] .reg-step-6 {
+        opacity: 1;
+        transform: translateY(0);
+        pointer-events: auto;
+      }
+
+      .reg-link-block {
+        color: inherit;
+        cursor: pointer;
+        text-decoration: none;
+      }
+
+      .reg-link-block:hover {
+        filter: drop-shadow(0 0 0.45rem rgba(25, 62, 135, 0.18));
+      }
+
+      /* Lecture 10 final page handles: PCA/EOF problem 2 workflow. */
+      .review-pca-page {
+        --pca-map-x: 0px;
+        --pca-map-y: -8px;
+        --pca-map-width: 1440px;
+        --pca-map-height: 650px;
+        --pca-section-label-x: 18px;
+        --pca-prepare-y: 170px;
+        --pca-analysis-y: 402px;
+        --pca-post-y: 535px;
+        --pca-divider-x: 24px;
+        --pca-divider-width: 1420px;
+        --pca-analysis-divider-y: 365px;
+        --pca-post-divider-y: 455px;
+        --pca-flow-x: 200px;
+        --pca-flow-y: 34px;
+        --pca-flow-width: 340px;
+        --pca-box-height: 44px;
+        --pca-left-box-gap: 45px;
+        --pca-left-box-step: calc(var(--pca-box-height) + var(--pca-left-box-gap));
+        --pca-weight-y: calc(var(--pca-left-box-step) + var(--pca-left-box-step));
+        --pca-weight-width: 340px;
+        --pca-reshape-y: calc(var(--pca-left-box-step) + var(--pca-left-box-step) + var(--pca-left-box-step));
+        --pca-svd-y: calc(var(--pca-left-box-step) + var(--pca-left-box-step) + var(--pca-left-box-step) + var(--pca-left-box-step));
+        --pca-svd-width: 340px;
+        --pca-code-x: 615px;
+        --pca-code-y: calc(var(--pca-flow-y) + var(--pca-svd-y));
+        --pca-code-width: 330px;
+        --pca-notes-x: 1000px;
+        --pca-notes-y: 380px;
+        --pca-notes-width: 430px;
+        --pca-globe-x: 585px;
+        --pca-globe-y: 150px;
+        --pca-globe-size: 170px;
+        --pca-start-x: 200px;
+        --pca-start-y: calc(var(--pca-flow-y) + var(--pca-left-box-step) + var(--pca-left-box-step) + var(--pca-left-box-step) + var(--pca-left-box-step) + var(--pca-left-box-step));
+        --pca-start-width: 340px;
+        --pca-standardise-x: 200px;
+        --pca-standardise-y: calc(var(--pca-flow-y) + var(--pca-left-box-step) + var(--pca-left-box-step) + var(--pca-left-box-step) + var(--pca-left-box-step) + var(--pca-left-box-step) + var(--pca-left-box-step));
+        --pca-standardise-width: 340px;
+        --pca-regression-x: 620px;
+        --pca-regression-y: var(--pca-standardise-y);
+        --pca-regression-width: 400px;
+        --pca-formula-x: 1080px;
+        --pca-formula-y: 495px;
+        --pca-formula-width: 250px;
+        --pca-stop-x: 1090px;
+        --pca-stop-y: 607px;
+        --pca-stop-width: 460px;
+        --pca-lecture-label-x: 1160px;
+        --pca-lecture-label-y: 44px;
+        --pca-arrow-color: var(--site-blue-dark);
+        --pca-arrow-line-width: 4px;
+      }
+
+      .review-pca-map {
+        position: relative;
+        width: var(--pca-map-width);
+        height: var(--pca-map-height);
+        transform: translate(var(--pca-map-x), var(--pca-map-y));
+      }
+
+      .pca-review-section-label {
+        position: absolute;
+        left: var(--pca-section-label-x);
+        font-size: 19px;
+        font-weight: 820;
+      }
+
+      .pca-review-section-label.prepare { top: var(--pca-prepare-y); }
+      .pca-review-section-label.analysis { top: var(--pca-analysis-y); }
+      .pca-review-section-label.post { top: var(--pca-post-y); text-decoration: underline dotted #ef2b18 2px; }
+
+      .pca-review-divider {
+        position: absolute;
+        left: var(--pca-divider-x);
+        width: var(--pca-divider-width);
+        border-top: 4px dashed rgba(0, 0, 0, 0.18);
+      }
+
+      .pca-review-divider.analysis { top: var(--pca-analysis-divider-y); }
+      .pca-review-divider.post { top: var(--pca-post-divider-y); }
+
+      .pca-flow {
+        position: absolute;
+        left: var(--pca-flow-x);
+        top: var(--pca-flow-y);
+        width: var(--pca-flow-width);
+      }
+
+      .pca-flow-box {
+        position: absolute;
+        left: 0;
+        width: var(--pca-flow-width);
+        height: var(--pca-box-height);
+        box-sizing: border-box;
+        display: grid;
+        place-items: center;
+        padding: 5px 10px;
+        font-size: 20px;
+        font-weight: 820;
+        line-height: 1.12;
+        text-align: center;
+      }
+
+      .pca-flow-box.dark {
+        background: #2265a0;
+        color: #ffffff;
+      }
+
+      .pca-flow-box.red {
+        background: #ef2b18;
+        color: #ffffff;
+      }
+
+      .pca-flow-box.purple {
+        background: #b94ee9;
+        color: #ffffff;
+      }
+
+      .pca-flow-box.unit { top: 0; }
+      .pca-flow-box.remove { top: var(--pca-left-box-step); }
+      .pca-flow-box.weight { top: var(--pca-weight-y); width: var(--pca-weight-width); }
+      .pca-flow-box.reshape { top: var(--pca-reshape-y); }
+      .pca-flow-box.svd { top: var(--pca-svd-y); width: var(--pca-svd-width); }
+
+      .pca-branch-label {
+        position: absolute;
+        font-size: 20px;
+        font-weight: 520;
+      }
+
+      .pca-branch-label.yes { left: 316px; top: 86px; }
+      .pca-branch-label.no { left: 548px; top: 27px; }
+
+      .pca-stop-label {
+        position: absolute;
+        left: 590px;
+        top: 45px;
+        font-size: 20px;
+        font-weight: 820;
+      }
+
+      .pca-review-code {
+        position: absolute;
+        left: var(--pca-code-x);
+        top: var(--pca-code-y);
+        width: var(--pca-code-width);
+        height: var(--pca-box-height);
+        box-sizing: border-box;
+        display: grid;
+        place-items: center;
+        border: 3px solid;
+        background: #ffffff;
+        font-family: var(--font-mono);
+        font-size: 20px;
+        font-weight: 820;
+        text-decoration: none;
+      }
+
+      .pca-review-notes {
+        position: absolute;
+        left: var(--pca-notes-x);
+        top: var(--pca-notes-y);
+        width: var(--pca-notes-width);
+        font-size: 21px;
+        line-height: 1.42;
+      }
+
+      .pca-review-notes p {
+        margin: 0 0 8px;
+      }
+
+      .pca-review-note-link {
+        display: block;
+        color: inherit;
+        text-decoration: none;
+      }
+
+      .pca-review-notes .blue {
+        color: #0b8ff0;
+        font-weight: 820;
+      }
+
+      .pca-review-globe {
+        position: absolute;
+        left: var(--pca-globe-x);
+        top: var(--pca-globe-y);
+        width: var(--pca-globe-size);
+        height: var(--pca-globe-size);
+        display: block;
+        color: inherit;
+        text-decoration: none;
+      }
+
+      .pca-review-globe img {
+        display: block;
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+      }
+
+      .pca-post-start {
+        position: absolute;
+        left: var(--pca-start-x);
+        top: var(--pca-start-y);
+        width: var(--pca-start-width);
+        height: var(--pca-box-height);
+        box-sizing: border-box;
+        display: grid;
+        place-items: center;
+        border: 3px solid;
+        background: #ffffff;
+        padding: 5px 10px;
+        font-size: 20px;
+        font-weight: 820;
+        line-height: 1.12;
+      }
+
+      .pca-post-box {
+        position: absolute;
+        display: grid;
+        place-items: center;
+        height: var(--pca-box-height);
+        box-sizing: border-box;
+        padding: 5px 10px;
+        background: #ef2b18;
+        color: #ffffff;
+        font-size: 20px;
+        font-weight: 820;
+        line-height: 1.12;
+        text-align: center;
+      }
+
+      .pca-post-box.standardise {
+        left: var(--pca-standardise-x);
+        top: var(--pca-standardise-y);
+        width: var(--pca-standardise-width);
+      }
+
+      .pca-post-box.regression {
+        left: var(--pca-regression-x);
+        top: var(--pca-regression-y);
+        width: var(--pca-regression-width);
+      }
+
+      .pca-review-formula {
+        position: absolute;
+        left: var(--pca-formula-x);
+        top: var(--pca-formula-y);
+        width: var(--pca-formula-width);
+        padding: 8px 10px;
+        border: 2px solid;
+        background: #ffffff;
+        font-family: Georgia, "Times New Roman", serif;
+        font-size: 24px;
+        font-style: italic;
+        line-height: 1.15;
+        text-align: center;
+      }
+
+      .review-pca-page .pca-flow-box.reshape.reg-link-block,
+      .review-pca-page .pca-flow-box.remove.reg-link-block,
+      .review-pca-page .pca-flow-box.weight.reg-link-block,
+      .review-pca-page .pca-review-note-link.reg-link-block,
+      .review-pca-page .pca-post-box.reg-link-block {
+        text-decoration: underline;
+        text-decoration-thickness: 2px;
+        text-underline-offset: 4px;
+      }
+
+      .pca-review-fraction-formula {
+        display: inline-grid;
+        grid-template-rows: auto auto;
+        gap: 3px;
+        vertical-align: middle;
+      }
+
+      .pca-review-fraction-formula span {
+        padding: 0 8px;
+      }
+
+      .pca-review-fraction-formula .numerator {
+        border-bottom: 2px solid;
+      }
+
+      .pca-review-stop {
+        position: absolute;
+        left: var(--pca-stop-x);
+        top: var(--pca-stop-y);
+        width: var(--pca-stop-width);
+        font-size: 21px;
+        line-height: 1.08;
+      }
+
+      .pca-review-lecture-label {
+        position: absolute;
+        left: var(--pca-lecture-label-x);
+        top: var(--pca-lecture-label-y);
+        font-size: 25px;
+        font-weight: 820;
+      }
+
+      .pca-arrow-layer {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        color: var(--pca-arrow-color);
+        overflow: visible;
+        pointer-events: none;
+      }
+
+      .pca-arrow-layer path {
+        fill: none;
+        stroke: currentColor;
+        stroke-width: var(--pca-arrow-line-width);
+        stroke-linecap: butt;
+        stroke-linejoin: miter;
+      }
+
+      .pca-arrow-layer marker path {
+        fill: currentColor;
+        stroke: none;
+      }
+
+      .review-pca-page .pca-step-analysis,
+      .review-pca-page .pca-step-post {
+        opacity: 0;
+        visibility: hidden;
+        pointer-events: none;
+        transition: opacity 180ms ease;
+      }
+
+      .review-pca-page[data-step="1"] .pca-step-analysis,
+      .review-pca-page[data-step="2"] .pca-step-analysis,
+      .review-pca-page[data-step="2"] .pca-step-post {
+        opacity: 1;
+        visibility: visible;
+        pointer-events: auto;
+      }
+
+      .review-pca-page .pca-arrow-layer .pca-step-analysis,
+      .review-pca-page .pca-arrow-layer .pca-step-post {
+        pointer-events: none;
+      }
+    </style>
+  </head>
+  <body class="deck-page">
+    <template id="deckHeaderTemplate">
+      <span class="slide-section">
+        <a class="deck-home" href="../index.html" aria-label="Back to course home">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M3 11.5L12 4l9 7.5"></path>
+            <path d="M6.5 10.5V20h11v-9.5"></path>
+            <path d="M10 20v-5h4v5"></path>
+          </svg>
+        </a>
+        <span>SOES3042/6025 · Statistics</span>
+      </span>
+      <span class="slide-lecture-nav">
+        <span>Week 5 · Lecture 10</span>
+        <span class="lecture-jump" aria-label="Lecture navigation">
+          <a class="lecture-jump-link lecture-jump-prev" href="week3-l9.html" aria-label="Previous lecture" title="Previous lecture"></a>
+          <span class="lecture-jump-disabled lecture-jump-next" aria-disabled="true" aria-label="No next lecture" title="No next lecture"></span>
+          <a class="lecture-jump-link lecture-jump-home" href="week3-l10.html?slide=1" aria-label="Restart this lecture" title="Restart this lecture"></a>
+        </span>
+      </span>
+    </template>
+
+    <div class="deck-viewport">
+      <main class="deck-stage" aria-live="polite">
+        <section class="slide active">
+          <header class="slide-kicker"></header>
+          <div class="slide-body title-layout">
+            <div class="title-lockup">
+              <h1>Lecture 10</h1>
+              <h2>Review</h2>
+            </div>
+            <aside class="title-meta">
+              <p><b>No new methods today.</b></p>
+              <p>Review how to choose, apply, and interpret the statistical tools from this part of the module.</p>
+            </aside>
+          </div>
+        </section>
+
+        <section class="slide review-single-dataset-page">
+          <header class="slide-kicker"></header>
+          <div class="slide-body content-layout">
+            <h2 class="slide-title review-problem-title">Explore a Single Dataset</h2>
+            <div class="slide-content review-single-dataset">
+              <div class="review-map-label">Lecture/Practical 6</div>
+
+              <div class="review-flow" aria-label="Single dataset analysis workflow">
+                <div class="review-flow-box review-reveal review-step-1">Remove mean 
+                  <a href="week3-l5.html?slide=8&amp;step=11" target="_blank" rel="noopener" aria-label="Open Lecture 6 visualise data distributions slide">
+                  seasonal cycle...
+                  </a>
+                </div>
+                <div class="review-flow-arrow review-reveal review-step-2"></div>
+                <div class="review-flow-box review-reveal review-step-2">Plot and visualise your data</div>
+                <div class="review-flow-arrow review-reveal review-step-3"></div>
+                <a class="review-flow-box review-reveal review-step-3 review-link-block" href="week3-l6.html?slide=3&amp;step=5" target="_blank" rel="noopener">Calculate Summary Statistics</a>
+                <div class="review-flow-arrow review-reveal review-step-4"></div>
+                <a class="review-flow-box warning review-reveal review-step-4 review-link-block" href="week3-l6.html?slide=7&amp;step=4" target="_blank" rel="noopener">Do data follow a Normal distribution?</a>
+                <div class="review-flow-arrow review-reveal review-step-5"></div>
+                <a class="review-flow-box test review-reveal review-step-5 review-link-block" href="week3-l6.html?slide=9&amp;step=6" target="_blank" rel="noopener">Lilliefors test</a>
+                <div class="review-flow-arrow review-reveal review-step-6"></div>
+                <p class="review-flow-question review-reveal review-step-6">p-value?</p>
+              </div>
+
+              <a class="review-mini-chart review-pdf-chart review-reveal review-step-2 review-link-block" href="week3-l6.html?slide=2&amp;step=5" target="_blank" rel="noopener" aria-label="Open Lecture 6 visualise data distributions slide">
+                <svg id="reviewPdfMini" viewBox="0 0 240 190" role="img" aria-label="pdf"></svg>
+              </a>
+
+              <a class="review-mini-chart review-normal-chart review-reveal review-step-3 review-link-block" href="week3-l6.html?slide=4&amp;step=3" target="_blank" rel="noopener" aria-label="Open Lecture 6 normal distribution slide">
+                <svg id="reviewGaussianMini" viewBox="0 0 300 165" role="img" aria-label="Normal distribution rule"></svg>
+                <figcaption class="review-normal-caption">Skewness of 0<br>Kurtosis of 3</figcaption>
+              </a>
+
+              <div class="review-clt-text review-reveal review-step-4">
+                <p><strong>Central Limit Theorem:</strong><br>Likely Gaussian when average or sum over <span class="hot">&gt;30 independent</span> samples.</p>
+              </div>
+
+              <a class="review-clt-charts review-reveal review-step-4 review-link-block" href="week3-l6.html?slide=6&amp;step=5" target="_blank" rel="noopener" aria-label="Open Lecture 6 central limit theorem slide">
+                <svg id="reviewCltDaily" viewBox="0 0 245 205" role="img" aria-label="Daily rainfall PDF"></svg>
+                <svg id="reviewCltMonthly" viewBox="0 0 245 205" role="img" aria-label="Monthly rainfall PDF"></svg>
+                <svg id="reviewCltAnnual" viewBox="0 0 245 205" role="img" aria-label="Annual rainfall PDF"></svg>
+              </a>
+
+              <a class="review-mini-chart review-ks-chart review-reveal review-step-5 review-link-block" href="week3-l6.html?slide=8&amp;step=4" target="_blank" rel="noopener" aria-label="Open Lecture 6 distance simulation slide">
+                <svg id="reviewKsMini" viewBox="0 0 360 185" role="img" aria-label="K-S null distribution"></svg>
+              </a>
+
+              <a class="review-test-workflow review-reveal review-step-6 review-link-block" href="week3-l6.html?slide=9&amp;step=5" target="_blank" rel="noopener" aria-label="Open Lecture 6 hypothesis testing workflow slide">
+                <span class="review-test-workflow-step">1. Define<br>H₀ and H₁</span>
+                <span class="review-test-workflow-step">2. Define<br>a distance</span>
+                <span class="review-test-workflow-step">3. Simulate<br>randomness</span>
+                <span class="review-test-workflow-step threshold">4. Set<br>a threshold</span>
+                <span class="review-test-workflow-step decision">5. Compare<br>observed data</span>
+              </a>
+              <span class="step-marker fragment" aria-hidden="true"></span>
+              <span class="step-marker fragment" aria-hidden="true"></span>
+              <span class="step-marker fragment" aria-hidden="true"></span>
+              <span class="step-marker fragment" aria-hidden="true"></span>
+            </div>
+          </div>
+        </section>
+
+        <section class="slide review-correlation-page">
+          <header class="slide-kicker"></header>
+          <div class="slide-body content-layout">
+            <h2 class="slide-title review-correlation-title">Evaluating Correlations Between Two Variables</h2>
+              <div class="slide-content review-correlation-map">
+              <div class="corr-section-label prepare">Prepare</div>
+              <div class="corr-section-label analysis corr-reveal corr-step-3">Analysis</div>
+              <div class="corr-section-label significance corr-reveal corr-step-4">Significance</div>
+              <div class="corr-divider analysis corr-reveal corr-step-3"></div>
+              <div class="corr-divider significance corr-reveal corr-step-4"></div>
+
+              <div class="corr-flow" aria-label="Correlation workflow">
+                <div class="corr-flow-box corr-reveal corr-step-1">Remove mean /seasonal cycle...</div>
+                <div class="corr-arrow corr-reveal corr-step-1"></div>
+                <div class="corr-flow-box corr-reveal corr-step-1">Plot and visualise your data</div>
+                <div class="corr-arrow corr-reveal corr-step-2"></div>
+                <div class="corr-flow-box question corr-reveal corr-step-2">Linear relationship?</div>
+                <div class="corr-arrow corr-reveal corr-step-3"></div>
+                <a class="corr-flow-box pearson corr-reveal corr-step-3 corr-link-block" href="week3-l7.html?slide=3&amp;step=0" target="_blank" rel="noopener">Calculate Pearson's Correlation</a>
+                <div class="corr-arrow corr-reveal corr-step-4"></div>
+                <div class="corr-flow-box gaussian corr-reveal corr-step-4">Is data Gaussian?</div>
+                <div class="corr-arrow corr-reveal corr-step-5"></div>
+                <a class="corr-flow-box ks corr-reveal corr-step-5 corr-link-block" href="week3-l6.html?slide=9&amp;step=6" target="_blank" rel="noopener">Lilliefors test</a>
+                <div class="corr-arrow corr-reveal corr-step-5"></div>
+                <a class="corr-flow-box pvalue corr-reveal corr-step-5 corr-link-block" href="week3-l7.html?slide=7&amp;step=5" target="_blank" rel="noopener">use scipy's p value to evaluate significance</a>
+              </div>
+
+              <span class="corr-branch no-linear corr-reveal corr-step-2">No</span>
+              <span class="corr-horizontal-arrow linear-no corr-reveal corr-step-2"></span>
+              <span class="corr-branch yes-linear corr-reveal corr-step-3">Yes</span>
+              <span class="corr-branch no-gaussian corr-reveal corr-step-6">No</span>
+              <span class="corr-horizontal-arrow gaussian-no corr-reveal corr-step-6"></span>
+              <span class="corr-branch yes-gaussian corr-reveal corr-step-5">Yes</span>
+
+              <a class="corr-nonlinear-gallery corr-reveal corr-step-2 corr-link-block" href="week3-l7.html?slide=4&amp;step=3" target="_blank" rel="noopener" aria-label="Open Lecture 7 nonlinear correlation examples">
+                <svg id="corrReviewCircle" viewBox="0 0 220 170" role="img" aria-label="Circle with zero Pearson correlation"></svg>
+                <svg id="corrReviewQuadratic" viewBox="0 0 220 170" role="img" aria-label="Quadratic with zero Pearson correlation"></svg>
+              </a>
+
+              <a class="corr-other-methods corr-reveal corr-step-2 corr-link-block" href="week3-l8.html?slide=9&amp;step=2" target="_blank" rel="noopener">
+                Use other methods, e.g., quadratic/cubic regression
+              </a>
+
+              <a class="corr-pearson-code corr-reveal corr-step-3 corr-link-block" href="week3-l7.html?slide=7&amp;step=1" target="_blank" rel="noopener">
+                r, p = scipy.stats.pearsonr(x, y)
+              </a>
+
+              <a class="corr-flow-box bootstrap corr-bootstrap-button corr-reveal corr-step-6 corr-link-block" href="week3-l7.html?slide=8&amp;step=5" target="_blank" rel="noopener">Bootstrapping</a>
+              <a class="corr-bootstrap-plot corr-reveal corr-step-6 corr-link-block" href="week3-l7.html?slide=8&amp;step=5" target="_blank" rel="noopener" aria-label="Open Lecture 7 bootstrap correlation slide">
+                <svg id="corrReviewBootstrap" viewBox="0 0 300 220" role="img" aria-label="Bootstrap PDF of correlation"></svg>
+              </a>
+
+              <div class="corr-lecture-label">Lecture/Practical 7</div>
+              <span class="step-marker fragment" aria-hidden="true"></span>
+              <span class="step-marker fragment" aria-hidden="true"></span>
+              <span class="step-marker fragment" aria-hidden="true"></span>
+              <span class="step-marker fragment" aria-hidden="true"></span>
+              <span class="step-marker fragment" aria-hidden="true"></span>
+            </div>
+          </div>
+        </section>
+
+        <section class="slide review-regression-page">
+          <header class="slide-kicker"></header>
+          <div class="slide-body content-layout">
+            <h2 class="slide-title review-regression-title">Linear Regression using Ordinary Least Squares</h2>
+              <div class="slide-content review-regression-map">
+              <div class="reg-section-label prepare">Prepare</div>
+              <div class="reg-section-label analysis reg-reveal reg-step-3">Analysis</div>
+              <div class="reg-section-label significance reg-reveal reg-step-4">Significance</div>
+              <div class="reg-divider analysis reg-reveal reg-step-3"></div>
+              <div class="reg-divider significance reg-reveal reg-step-4"></div>
+
+              <svg class="reg-arrow-layer" viewBox="0 0 1440 650" aria-hidden="true">
+                <defs>
+                  <marker id="regArrowHead" viewBox="0 0 13 16" refX="0" refY="8" markerWidth="16" markerHeight="16" markerUnits="userSpaceOnUse" orient="auto">
+                    <path d="M0 0L13 8L0 16z"></path>
+                  </marker>
+                </defs>
+                <path class="reg-reveal reg-step-1" data-reg-arrow="top-1" marker-end="url(#regArrowHead)"></path>
+                <path class="reg-reveal reg-step-1" data-reg-arrow="top-2" marker-end="url(#regArrowHead)"></path>
+                <path class="reg-reveal reg-step-3" data-reg-arrow="down-analysis" marker-end="url(#regArrowHead)"></path>
+                <path class="reg-reveal reg-step-6" data-reg-arrow="to-bic" marker-end="url(#regArrowHead)"></path>
+                <path class="reg-reveal reg-step-3" data-reg-arrow="step-1-to-2" marker-end="url(#regArrowHead)"></path>
+                <path class="reg-reveal reg-step-3" data-reg-arrow="step-2-to-3" marker-end="url(#regArrowHead)"></path>
+                <path class="reg-reveal reg-step-4" data-reg-arrow="to-gaussian" marker-end="url(#regArrowHead)"></path>
+                <path class="reg-reveal reg-step-4" data-reg-arrow="to-pivot" marker-end="url(#regArrowHead)"></path>
+                <path class="reg-reveal reg-step-4" data-reg-arrow="gaussian-to-summary" marker-end="url(#regArrowHead)"></path>
+                <path class="reg-reveal reg-step-4" data-reg-arrow="pivot-to-summary" marker-end="url(#regArrowHead)"></path>
+                <path class="reg-reveal reg-step-5" data-reg-arrow="bootstrap-left" marker-end="url(#regArrowHead)"></path>
+                <path class="reg-reveal reg-step-5" data-reg-arrow="bootstrap-right" marker-end="url(#regArrowHead)"></path>
+              </svg>
+
+              <div class="reg-flow-row reg-reveal reg-step-1" aria-label="Regression preparation workflow">
+                <div class="reg-box dark">Remove mean /<br>seasonal cycle...</div>
+                <div class="reg-box dark">Plot and visualise<br>your data</div>
+                <div class="reg-box red">Are there apparent outliers outside the functional form?</div>
+              </div>
+              <span class="reg-branch-label top-yes reg-reveal reg-step-1">Yes</span>
+              <span class="reg-branch-label outlier-no reg-reveal reg-step-3">No</span>
+
+              <a class="reg-analysis-code reg-reveal reg-step-3 reg-link-block" href="week3-l8.html?slide=5&amp;step=0" target="_blank" rel="noopener" aria-label="Open Lecture 9 regression code slide">
+                <span class="code-green">import</span> statsmodels.api as sm<br>
+                X = ...<br>
+                model = sm.OLS(Y, X)<br>
+                results = model.<span class="code-blue">fit()</span><br>
+                Y_hat = <span class="code-blue">results.fittedvalues</span>
+              </a>
+
+              <div class="reg-step-stack reg-reveal reg-step-3" aria-label="Regression fitting workflow">
+                <div class="reg-step-row">
+                  <span class="reg-step-number one">1</span>
+                  <a class="reg-box outline red-border reg-link-block" href="week3-l8.html?slide=4&amp;step=0" target="_blank" rel="noopener">Choose function form</a>
+                </div>
+                <div class="reg-step-row">
+                  <span class="reg-step-number two">2</span>
+                  <a class="reg-box outline blue-border reg-link-block" href="week3-l8.html?slide=4&amp;step=1" target="_blank" rel="noopener">Choose loss function</a>
+                </div>
+                <div class="reg-step-row">
+                  <span class="reg-step-number three">3</span>
+                  <a class="reg-box outline green-border reg-link-block" href="week3-l8.html?slide=4&amp;step=4" target="_blank" rel="noopener">Optimization</a>
+                </div>
+              </div>
+
+              <a class="reg-box teal reg-bic-button reg-reveal reg-step-6 reg-link-block" href="week3-l8.html?slide=13&amp;step=0" target="_blank" rel="noopener">BIC</a>
+              <a class="reg-bic-chart reg-reveal reg-step-6 reg-link-block" href="week3-l8.html?slide=13&amp;step=0" target="_blank" rel="noopener" aria-label="Open Lecture 8 BIC slide">
+                <svg id="regReviewBicChart" viewBox="0 0 300 210" role="img" aria-label="BIC, loss, and penalty by polynomial degree"></svg>
+              </a>
+
+              <div class="reg-box red reg-gaussian-box reg-reveal reg-step-4">Is error Gaussian?</div>
+              <a class="reg-box outline reg-significance-main reg-reveal reg-step-4 reg-link-block" href="week3-l8.html?slide=6&amp;step=0" target="_blank" rel="noopener">use result.summary() to<br>evaluate significance</a>
+              <div class="reg-box teal reg-bootstrap-left reg-reveal reg-step-5">Bootstrapping</div>
+              <div class="reg-box red reg-pivot-box reg-reveal reg-step-4">Are there pivot points?</div>
+              <div class="reg-box teal reg-bootstrap-right reg-reveal reg-step-5">Bootstrapping</div>
+              <span class="reg-branch-label gaussian-yes reg-reveal reg-step-4">Yes</span>
+              <span class="reg-branch-label gaussian-no reg-reveal reg-step-5">No</span>
+              <span class="reg-branch-label pivot-no reg-reveal reg-step-4">No</span>
+              <span class="reg-branch-label pivot-yes reg-reveal reg-step-5">Yes</span>
+              <a class="reg-box teal reg-final-bic-button reg-reveal reg-step-6 reg-link-block" href="week3-l8.html?slide=13&amp;step=0" target="_blank" rel="noopener">BIC</a>
+
+              <a class="reg-summary-preview reg-reveal reg-step-4 reg-link-block" href="week3-l8.html?slide=6&amp;step=0" target="_blank" rel="noopener" aria-label="Open Lecture 8 OLS summary slide">
+                <pre class="reg-summary-output">                            OLS Regression Results                            
+==============================================================================
+Dep. Variable:                   GMST   R-squared:                       0.779
+Model:                            OLS   Adj. R-squared:                  0.778
+Method:                 Least Squares   F-statistic:                     613.1
+Date:                Wed, 03 Jun 2026   Prob (F-statistic):           6.39e-59
+Time:                        08:27:08   Log-Likelihood:                 42.051
+No. Observations:                 176   AIC:                            -80.10
+Df Residuals:                     174   BIC:                            -73.76
+Df Model:                           1                                         
+Covariance Type:            nonrobust                                         
+==============================================================================
+                 coef    std err          t      P&gt;|t|      [0.025      0.975]
+------------------------------------------------------------------------------
+const         -1.0638      0.029    -36.979      0.000      -1.121      -1.007
+x1             0.7040      0.028     24.762      0.000       0.648       0.760
+==============================================================================
+Omnibus:                       13.258   Durbin-Watson:                   0.379
+Prob(Omnibus):                  0.001   Jarque-Bera (JB):               14.522
+Skew:                           0.590   Prob(JB):                      7.02e-4
+Kurtosis:                       3.767   Cond. No.                         3.71
+==============================================================================</pre>
+              </a>
+
+              <div class="reg-lecture-label">Lecture/Practical 8</div>
+              <span class="step-marker fragment" aria-hidden="true"></span>
+              <span class="step-marker fragment" aria-hidden="true"></span>
+              <span class="step-marker fragment" aria-hidden="true"></span>
+              <span class="step-marker fragment" aria-hidden="true"></span>
+            </div>
+          </div>
+        </section>
+
+        <section class="slide review-pca-page">
+          <header class="slide-kicker"></header>
+          <div class="slide-body content-layout">
+            <h2 class="slide-title review-pca-title">Principal Component Analysis | Empirical Orthogonal Functions</h2>
+            <div class="slide-content review-pca-map">
+              <div class="pca-review-section-label prepare">Prepare</div>
+              <div class="pca-review-section-label analysis pca-step-analysis">Analysis</div>
+              <div class="pca-review-section-label post pca-step-post">Post-process</div>
+              <div class="pca-review-divider analysis pca-step-analysis"></div>
+              <div class="pca-review-divider post pca-step-post"></div>
+
+              <svg class="pca-arrow-layer" viewBox="0 0 1440 650" aria-hidden="true">
+                <defs>
+                  <marker id="pcaArrowHead" viewBox="0 0 13 16" refX="0" refY="8" markerWidth="16" markerHeight="16" markerUnits="userSpaceOnUse" orient="auto">
+                    <path d="M0 0L13 8L0 16z"></path>
+                  </marker>
+                </defs>
+                <path data-pca-arrow="unit-no" d="M540 576H2" marker-end="url(#pcaArrowHead)"></path>
+                <path data-pca-arrow="unit-yes" d="M370 78V114" marker-end="url(#pcaArrowHead)"></path>
+                <path data-pca-arrow="remove-to-weight" d="M370 158V190" marker-end="url(#pcaArrowHead)"></path>
+                <path data-pca-arrow="weight-to-reshape" d="M370 234V272" marker-end="url(#pcaArrowHead)"></path>
+                <path class="pca-step-analysis" data-pca-arrow="reshape-to-svd" d="M370 316V354" marker-end="url(#pcaArrowHead)"></path>
+                <path class="pca-step-post" data-pca-arrow="svd-to-start" d="M370 398V435" marker-end="url(#pcaArrowHead)"></path>
+                <path class="pca-step-post" data-pca-arrow="start-to-standardise" d="M370 469V505" marker-end="url(#pcaArrowHead)"></path>
+                <path class="pca-step-post" data-pca-arrow="standardise-to-regression" d="M540 537H620" marker-end="url(#pcaArrowHead)"></path>
+                <path class="pca-step-post" data-pca-arrow="regression-to-formula" d="M920 537H980" marker-end="url(#pcaArrowHead)"></path>
+                <path class="pca-step-post" data-pca-arrow="formula-to-start" d="M1075 505V455H540" marker-end="url(#pcaArrowHead)"></path>
+              </svg>
+
+              <div class="pca-flow" aria-label="PCA/EOF workflow">
+                <div class="pca-flow-box dark unit">Do all data have the same unit?</div>
+                <a class="pca-flow-box dark remove reg-link-block" href="week3-l5.html?slide=8&amp;step=11" target="_blank" rel="noopener">Remove mean /seasonal cycle</a>
+                <a class="pca-flow-box red weight reg-link-block" href="week3-l9.html?slide=9&amp;step=0" target="_blank" rel="noopener">x square root of cosine latitude</a>
+                <a class="pca-flow-box dark reshape reg-link-block" href="week3-l9.html?slide=3&amp;step=0" target="_blank" rel="noopener">Reshape data: space x time</a>
+                <div class="pca-flow-box purple svd pca-step-analysis">SVD</div>
+              </div>
+              <span class="pca-branch-label yes">Yes</span>
+              <span class="pca-branch-label no">No</span>
+              <span class="pca-stop-label">JUST STOP HERE!!!</span>
+
+              <a class="pca-review-globe" href="week3-l9.html?slide=9&amp;step=0" target="_blank" rel="noopener" aria-label="Open Lecture 9 long-lat grid weighting slide">
+                <img src="../figures/eof_longlat_globe.png" alt="Long-lat grid globe">
+              </a>
+
+              <a class="pca-review-code pca-step-analysis reg-link-block" href="week3-l9.html?slide=4&amp;step=1" target="_blank" rel="noopener">
+                U, D, V' = np.linalg.svd(A)
+              </a>
+              <div class="pca-review-notes pca-step-analysis">
+                <a class="pca-review-note-link reg-link-block" href="week3-l9.html?slide=6&amp;step=0" target="_blank" rel="noopener">
+                  <p>(1) Individual columns of <strong>V</strong> are <strong>orthogonal</strong>.</p>
+                </a>
+                <a class="pca-review-note-link reg-link-block" href="week3-l9.html?slide=7&amp;step=0" target="_blank" rel="noopener">
+                  <p>(2) D<sub>ii</sub> is ranked in a <span class="blue">descending order</span>.</p>
+                </a>
+              </div>
+
+              <div class="pca-post-start pca-step-post">Start from the first mode</div>
+              <a class="pca-post-box standardise pca-step-post reg-link-block" href="week3-l9.html?slide=10&amp;step=2" target="_blank" rel="noopener">Standardise columns of V</a>
+              <a class="pca-post-box regression pca-step-post reg-link-block" href="week3-l9.html?slide=10&amp;step=2" target="_blank" rel="noopener">Regression to get the spatial pattern</a>
+              <a class="pca-review-formula pca-step-post reg-link-block" href="week3-l9.html?slide=7&amp;step=0" target="_blank" rel="noopener">
+                FC(s) =
+                <span class="pca-review-fraction-formula">
+                  <span class="numerator">&Sigma;<sup>s</sup><sub>i=1</sub> d<sub>i</sub><sup>2</sup></span>
+                  <span>&Sigma;<sup>k</sup><sub>i=1</sub> d<sub>i</sub><sup>2</sup></span>
+                </span>
+              </a>
+              <div class="pca-review-stop pca-step-post">Stop when the accumulated<br>FC fits your purpose.</div>
+
+              <div class="pca-review-lecture-label">Lecture/Practical 9</div>
+              <span class="step-marker fragment" aria-hidden="true"></span>
+              <span class="step-marker fragment" aria-hidden="true"></span>
+            </div>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <nav class="deck-controls" aria-label="Slide controls">
+      <button class="nav-button" id="prevSlide" type="button" aria-label="Previous slide">‹</button>
+      <div class="dot-rail" aria-label="Slide map"></div>
+      <button class="nav-button" id="skipSteps" type="button" aria-label="Reveal all steps on this slide">»</button>
+      <button class="nav-button" id="nextSlide" type="button" aria-label="Next slide">›</button>
+    </nav>
+    <div class="deck-status" aria-live="polite"></div>
+
+    <script>
+      window.addEventListener("DOMContentLoaded", () => {
+        const ns = "http://www.w3.org/2000/svg";
+        const make = (name, attrs = {}, text = "") => {
+          const node = document.createElementNS(ns, name);
+          Object.entries(attrs).forEach(([key, value]) => node.setAttribute(key, value));
+          if (text) node.textContent = text;
+          return node;
+        };
+        const normalPdf = (x, mean = 0, sigma = 1) => Math.exp(-0.5 * ((x - mean) / sigma) ** 2) / (sigma * Math.sqrt(2 * Math.PI));
+        const erf = (x) => {
+          const sign = Math.sign(x);
+          const value = Math.abs(x);
+          const t = 1 / (1 + 0.3275911 * value);
+          const polynomial = (((((1.061405429 * t - 1.453152027) * t) + 1.421413741) * t - 0.284496736) * t + 0.254829592) * t;
+          return sign * (1 - polynomial * Math.exp(-value * value));
+        };
+        const normalCdf = (x) => 0.5 * (1 + erf(x / Math.sqrt(2)));
+        const mean = (values) => values.reduce((sum, value) => sum + value, 0) / values.length;
+        const standardDeviation = (values, average) => Math.sqrt(values.reduce((sum, value) => sum + (value - average) ** 2, 0) / values.length);
+        const standardise = (values) => {
+          const average = mean(values);
+          const sigma = standardDeviation(values, average);
+          return sigma ? values.map((value) => (value - average) / sigma) : values.map(() => 0);
+        };
+        const maximumCdfDistance = (sample) => {
+          const sorted = [...sample].sort((a, b) => a - b);
+          return sorted.reduce((maximum, value, index) => {
+            const theoretical = normalCdf(value);
+            return Math.max(maximum, Math.abs(index / sorted.length - theoretical), Math.abs((index + 1) / sorted.length - theoretical));
+          }, 0);
+        };
+        const seededRandom = (() => {
+          let seed = 30426025;
+          return () => {
+            seed = (seed * 1664525 + 1013904223) >>> 0;
+            return seed / 4294967296;
+          };
+        })();
+        const sampleNormal = () => {
+          const u1 = Math.max(Number.EPSILON, seededRandom());
+          const u2 = seededRandom();
+          return Math.sqrt(-2 * Math.log(u1)) * Math.cos(2 * Math.PI * u2);
+        };
+        const pathFrom = (points) => points.map(([x, y], i) => `${i ? "L" : "M"}${x.toFixed(2)} ${y.toFixed(2)}`).join(" ");
+
+        const drawPdfMini = () => {
+          const svg = document.getElementById("reviewPdfMini");
+          if (!svg) return;
+          const width = 240, height = 190;
+          const margin = { top: 26, right: 16, bottom: 38, left: 42 };
+          const plotW = width - margin.left - margin.right;
+          const plotH = height - margin.top - margin.bottom;
+          const xScale = (x) => margin.left + (x + 24) / 48 * plotW;
+          const yScale = (y) => margin.top + (1 - y / 0.085) * plotH;
+          svg.replaceChildren();
+          svg.append(make("text", { x: width / 2+15, y: 17, class: "review-chart-title", "text-anchor": "middle" }, "pdf"));
+          [-20, -10, 0, 10, 20].forEach((tick) => {
+            svg.append(make("text", { x: xScale(tick), y: height - 18, class: "review-chart-text", "text-anchor": "middle" }, String(tick)));
+          });
+          [0, 0.02, 0.04, 0.06, 0.08].forEach((tick) => {
+            svg.append(make("line", { x1: margin.left, y1: yScale(tick), x2: width - margin.right, y2: yScale(tick), class: "review-chart-grid" }));
+          });
+          svg.append(
+            make("line", { x1: margin.left, y1: margin.top, x2: margin.left, y2: height - margin.bottom, class: "review-chart-axis" }),
+            make("line", { x1: margin.left, y1: height - margin.bottom, x2: width - margin.right, y2: height - margin.bottom, class: "review-chart-axis" })
+          );
+          for (let x = -18; x <= 18; x += 1.5) {
+            const density = normalPdf(x, 0, 5);
+            const barX = xScale(x - 0.68);
+            const barY = yScale(density);
+            svg.append(make("rect", {
+              x: barX,
+              y: barY,
+              width: Math.max(1, xScale(x + 0.68) - barX),
+              height: height - margin.bottom - barY,
+              class: "review-chart-pdf-bar"
+            }));
+          }
+          svg.append(make("text", { x: width / 2+13, y: height - 3, class: "review-chart-text", "text-anchor": "middle" }, "x"));
+        };
+
+        const drawGaussianMini = () => {
+          const svg = document.getElementById("reviewGaussianMini");
+          if (!svg) return;
+          const width = 300, height = 165;
+          const margin = { top: 16, right: 18, bottom: 34, left: 18 };
+          const plotW = width - margin.left - margin.right;
+          const plotH = height - margin.top - margin.bottom;
+          const xScale = (x) => margin.left + (x + 3.4) / 6.8 * plotW;
+          const yScale = (y) => margin.top + (1 - y / 0.42) * plotH;
+          svg.replaceChildren();
+          const fills = [
+            { low: -3, high: 3, color: "#d9f3ef" },
+            { low: -2, high: 2, color: "#8be0d6" },
+            { low: -1, high: 1, color: "#2fc9bd" }
+          ];
+          fills.forEach(({ low, high, color }) => {
+            const points = [[xScale(low), yScale(0)]];
+            for (let x = low; x <= high; x += 0.05) points.push([xScale(x), yScale(normalPdf(x))]);
+            points.push([xScale(high), yScale(0)]);
+            svg.append(make("path", { d: pathFrom(points) + "Z", fill: color, opacity: 0.95 }));
+          });
+          [-3, -2, -1, 0, 1, 2, 3].forEach((tick) => {
+            svg.append(make("line", { x1: xScale(tick), y1: yScale(0), x2: xScale(tick), y2: margin.top + 8, stroke: "#678", "stroke-dasharray": tick === 0 ? "0" : "3 4" }));
+          });
+          const curve = [];
+          for (let x = -3.3; x <= 3.3; x += 0.04) curve.push([xScale(x), yScale(normalPdf(x))]);
+          svg.append(make("path", { d: pathFrom(curve), class: "review-chart-line", stroke: "#39c9bd" }));
+          svg.append(make("line", { x1: xScale(-3.3), y1: yScale(0), x2: xScale(3.3), y2: yScale(0), class: "review-chart-axis" }));
+        };
+
+        const parseCsv = (text) => {
+          const rows = text.trim().split(/\r?\n/);
+          const parseRow = (line) => {
+            const cols = [];
+            const pattern = /(?:^|,)(?:"([^"]*)"|([^",]*))/g;
+            let match;
+            while ((match = pattern.exec(line)) !== null) cols.push(match[1] ?? match[2]);
+            return cols;
+          };
+          const headers = parseRow(rows.shift());
+          return rows.map((line) => {
+            const cols = parseRow(line);
+            return Object.fromEntries(headers.map((header, index) => [header, cols[index]]));
+          });
+        };
+
+        const drawSmallPdf = (svg, values, config) => {
+          const width = 245, height = 205;
+          const margin = { top: 26, right: 12, bottom: 39, left: 38 };
+          const plotW = width - margin.left - margin.right;
+          const plotH = height - margin.top - margin.bottom;
+          const { title, label, xMin, xMax, binWidth, countLabel } = config;
+          const bins = Math.ceil((xMax - xMin) / binWidth);
+          const counts = Array.from({ length: bins }, () => 0);
+          values.forEach((value) => {
+            if (value < xMin || value > xMax) return;
+            counts[Math.min(bins - 1, Math.floor((value - xMin) / binWidth))] += 1;
+          });
+          const included = counts.reduce((sum, count) => sum + count, 0) || 1;
+          const densities = counts.map((count) => count / (included * binWidth));
+          const mean = values.reduce((sum, value) => sum + value, 0) / values.length;
+          const variance = values.reduce((sum, value) => sum + (value - mean) ** 2, 0) / Math.max(1, values.length - 1);
+          const sigma = Math.sqrt(variance);
+          const normalPoints = Array.from({ length: 161 }, (_, index) => {
+            const x = xMin + (xMax - xMin) * index / 160;
+            return [x, normalPdf(x, mean, sigma)];
+          });
+          const yMax = Math.max(...densities, ...normalPoints.map(([, y]) => y)) * 1.08;
+          const xScale = (x) => margin.left + (x - xMin) / (xMax - xMin) * plotW;
+          const yScale = (y) => margin.top + (1 - y / yMax) * plotH;
+          svg.replaceChildren();
+          svg.append(make("text", { x: width / 2, y: 18, class: "review-chart-title", "text-anchor": "middle" }, title));
+          svg.append(make("text", { x: width - 8, y: 38, class: "review-chart-title", "text-anchor": "end" }, countLabel));
+          [0, yMax / 2].forEach((tick) => {
+            svg.append(make("line", { x1: margin.left, y1: yScale(tick), x2: width - margin.right, y2: yScale(tick), class: "review-chart-grid" }));
+          });
+          [xMin, (xMin + xMax) / 2, xMax].forEach((tick) => {
+            svg.append(make("text", { x: xScale(tick), y: height - 17, class: "review-chart-text", "text-anchor": "middle" }, tick.toFixed(0)));
+          });
+          svg.append(
+            make("line", { x1: margin.left, y1: margin.top, x2: margin.left, y2: height - margin.bottom, class: "review-chart-axis" }),
+            make("line", { x1: margin.left, y1: height - margin.bottom, x2: width - margin.right, y2: height - margin.bottom, class: "review-chart-axis" })
+          );
+          densities.forEach((density, index) => {
+            const x0 = xMin + index * binWidth;
+            const barY = yScale(density);
+            svg.append(make("rect", {
+              x: xScale(x0) + 0.5,
+              y: barY,
+              width: Math.max(1, xScale(x0 + binWidth) - xScale(x0) - 1),
+              height: height - margin.bottom - barY,
+              class: "review-chart-bar"
+            }));
+          });
+          svg.append(make("path", {
+            d: pathFrom(normalPoints.map(([x, y]) => [xScale(x), yScale(y)])),
+            class: "review-clt-normal-line"
+          }));
+          svg.append(make("text", { x: width / 2, y: height - 2, class: "review-chart-text", "text-anchor": "middle" }, label));
+          svg.append(make("text", { x: 13, y: margin.top + plotH / 2, class: "review-chart-text", transform: `rotate(-90 13 ${margin.top + plotH / 2})`, "text-anchor": "middle" }, "pdf"));
+        };
+
+        const drawCltReview = async () => {
+          const dailySvg = document.getElementById("reviewCltDaily");
+          const monthlySvg = document.getElementById("reviewCltMonthly");
+          const annualSvg = document.getElementById("reviewCltAnnual");
+          if (!dailySvg || !monthlySvg || !annualSvg) return;
+          try {
+            const response = await fetch("../data/BOURNEMOUTH.csv");
+            const rows = parseCsv(await response.text()).map((row) => ({
+              date: new Date(`${row.DATE}T00:00:00`),
+              prcp: Number(row.PRCP)
+            })).filter((row) => Number.isFinite(row.prcp));
+            const daily = rows.map((row) => row.prcp);
+            const byMonth = new Map();
+            const byYear = new Map();
+            rows.forEach((row) => {
+              const y = row.date.getFullYear();
+              const m = `${y}-${String(row.date.getMonth() + 1).padStart(2, "0")}`;
+              byMonth.set(m, (byMonth.get(m) || 0) + row.prcp);
+              byYear.set(y, (byYear.get(y) || 0) + row.prcp);
+            });
+            const monthly = Array.from(byMonth.values());
+            const annual = Array.from(byYear.entries()).filter(([year]) => year !== 2023).map(([, total]) => total);
+            drawSmallPdf(dailySvg, daily, { title: "Daily rainfall", countLabel: "15,000+ days", label: "Daily precipitation", xMin: 0, xMax: 4.2, binWidth: 0.08 });
+            drawSmallPdf(monthlySvg, monthly, { title: "Monthly rainfall", countLabel: "610 months", label: "Monthly precipitation", xMin: 0, xMax: 9.5, binWidth: 0.3 });
+            drawSmallPdf(annualSvg, annual, { title: "Annual rainfall", countLabel: "50 years", label: "Annual precipitation", xMin: 8, xMax: 50, binWidth: 1.5 });
+          } catch (error) {
+            [dailySvg, monthlySvg, annualSvg].forEach((svg) => {
+              svg.append(make("text", { x: 20, y: 60, class: "review-chart-text" }, "Unable to load rainfall data"));
+            });
+          }
+        };
+
+        const drawKsMini = () => {
+          const svg = document.getElementById("reviewKsMini");
+          if (!svg) return;
+          const chart = svg.closest(".review-ks-chart");
+          const readChartPx = (name, fallback) => {
+            const value = chart ? getComputedStyle(chart).getPropertyValue(name).trim() : "";
+            return Number.parseFloat(value) || fallback;
+          };
+          const width = readChartPx("--review-ks-width", 360);
+          const height = readChartPx("--review-ks-height", 185);
+          svg.setAttribute("viewBox", `0 0 ${width} ${height}`);
+          const margin = { top: 18, right: 18, bottom: 36, left: 46 };
+          const plotW = width - margin.left - margin.right;
+          const plotH = height - margin.top - margin.bottom;
+          const sampleSize = 50;
+          const realisations = 5000;
+          const bins = 48;
+          const xMin = 0;
+          const xMax = 0.25;
+          const values = Array.from({ length: realisations }, () => {
+            const sample = standardise(Array.from({ length: sampleSize }, sampleNormal));
+            return maximumCdfDistance(sample);
+          });
+          const sortedValues = [...values].sort((a, b) => a - b);
+          const cutoff = sortedValues[Math.ceil(sortedValues.length * 0.95) - 1];
+          const binWidth = (xMax - xMin) / bins;
+          const counts = Array.from({ length: bins }, () => 0);
+          values.forEach((value) => {
+            const index = Math.min(bins - 1, Math.max(0, Math.floor((value - xMin) / binWidth)));
+            counts[index] += 1;
+          });
+          const yMax = Math.max(...counts) * 1.08;
+          const xScale = (x) => margin.left + (x - xMin) / (xMax - xMin) * plotW;
+          const yScale = (y) => margin.top + (1 - y / yMax) * plotH;
+          svg.replaceChildren();
+          [0, yMax / 2, yMax].forEach((tick) => {
+            svg.append(make("line", { x1: margin.left, y1: yScale(tick), x2: width - margin.right, y2: yScale(tick), class: "review-chart-grid" }));
+          });
+          [0, 0.1, 0.2, 0.3].filter((tick) => tick <= xMax).forEach((tick) => {
+            svg.append(make("text", { x: xScale(tick), y: height - 14, class: "review-chart-text", "text-anchor": "middle" }, tick.toFixed(1)));
+          });
+          svg.append(
+            make("line", { x1: margin.left, y1: margin.top, x2: margin.left, y2: height - margin.bottom, class: "review-chart-axis" }),
+            make("line", { x1: margin.left, y1: height - margin.bottom, x2: width - margin.right, y2: height - margin.bottom, class: "review-chart-axis" })
+          );
+          counts.forEach((count, index) => {
+            const x0 = xMin + index * binWidth;
+            const barY = yScale(count);
+            svg.append(make("rect", {
+              x: xScale(x0) + 0.5,
+              y: barY,
+              width: xScale(x0 + binWidth) - xScale(x0) - 1,
+              height: height - margin.bottom - barY,
+              class: "review-chart-bar"
+            }));
+          });
+          svg.append(
+            make("line", { x1: xScale(cutoff), y1: margin.top, x2: xScale(cutoff), y2: height - margin.bottom, class: "review-chart-cutoff" }),
+            make("text", { x: margin.left + 8, y: margin.top + 13, class: "review-chart-text" }, "5,000 realisations"),
+            make("text", { x: margin.left + 8, y: margin.top + 29, class: "review-chart-text" }, "n = 50"),
+            make("text", { x: width / 2, y: height - 1, class: "review-chart-text", "text-anchor": "middle" }, "Maximum distance"),
+            make("text", { x: 14, y: margin.top + plotH / 2 + 20, class: "review-chart-text", transform: `rotate(-90 14 ${margin.top + plotH / 2})`, "text-anchor": "middle" }, "Null Distribution")
+          );
+        };
+
+        const drawCorrReviewMiniCharts = () => {
+          const drawScatter = (svg, config) => {
+            if (!svg) return;
+            const width = 220, height = 170;
+            const margin = { top: 32, right: 14, bottom: 30, left: 32 };
+            const availableW = width - margin.left - margin.right;
+            const availableH = height - margin.top - margin.bottom;
+            const plotSize = Math.min(availableW, availableH);
+            const plotLeft = margin.left + (availableW - plotSize) / 2;
+            const plotTop = margin.top + (availableH - plotSize) / 2;
+            const plotW = plotSize;
+            const plotH = plotSize;
+            const xScale = (x) => margin.left + (x - config.xMin) / (config.xMax - config.xMin) * plotW;
+            const yScale = (y) => plotTop + (1 - (y - config.yMin) / (config.yMax - config.yMin)) * plotH;
+            const xScaleSquare = (x) => plotLeft + (x - config.xMin) / (config.xMax - config.xMin) * plotW;
+            svg.replaceChildren();
+            svg.append(make("text", { x: width / 2, y: 14, class: "review-chart-title", "text-anchor": "middle" }, config.title));
+            svg.append(make("text", { x: width / 2, y: 29, class: "review-chart-text", "text-anchor": "middle" }, config.subtitle));
+            [config.xMin, 0, config.xMax].forEach((tick) => {
+              if (tick < config.xMin || tick > config.xMax) return;
+              svg.append(make("line", { x1: xScaleSquare(tick), y1: plotTop, x2: xScaleSquare(tick), y2: plotTop + plotH, class: "review-chart-grid" }));
+            });
+            [config.yMin, 0, config.yMax].forEach((tick) => {
+              if (tick < config.yMin || tick > config.yMax) return;
+              svg.append(make("line", { x1: plotLeft, y1: yScale(tick), x2: plotLeft + plotW, y2: yScale(tick), class: "review-chart-grid" }));
+            });
+            svg.append(
+              make("line", { x1: plotLeft, y1: plotTop, x2: plotLeft, y2: plotTop + plotH, class: "review-chart-axis" }),
+              make("line", { x1: plotLeft, y1: plotTop + plotH, x2: plotLeft + plotW, y2: plotTop + plotH, class: "review-chart-axis" })
+            );
+            config.points.forEach(([x, y]) => {
+              svg.append(make("circle", { cx: xScaleSquare(x), cy: yScale(y), r: 2.5, fill: "#2f86c8", opacity: 0.9 }));
+            });
+            svg.append(
+              make("text", { x: plotLeft + plotW / 2, y: height - 10, class: "review-chart-text", "text-anchor": "middle" }, "x"),
+              make("text", { x: 11, y: plotTop + plotH / 2 + 40, class: "review-chart-text", transform: `rotate(-90 11 ${plotTop + plotH / 2})`, "text-anchor": "middle" }, "y")
+            );
+          };
+
+          const circlePoints = Array.from({ length: 76 }, (_, index) => {
+            const theta = 2 * Math.PI * index / 76;
+            return [5 * Math.cos(theta), 5 * Math.sin(theta)];
+          });
+          const quadraticPoints = Array.from({ length: 60 }, (_, index) => {
+            const x = -9 + 18 * index / 59;
+            return [x, x * x];
+          });
+          const monotonicPoints = Array.from({ length: 48 }, (_, index) => {
+            const x = 10 * index / 47;
+            return [x, x * x];
+          });
+
+          drawScatter(document.getElementById("corrReviewCircle"), {
+            xMin: -6,
+            xMax: 6,
+            yMin: -6,
+            yMax: 6,
+            points: circlePoints
+          });
+          drawScatter(document.getElementById("corrReviewQuadratic"), {
+            xMin: -10,
+            xMax: 10,
+            yMin: -5,
+            yMax: 100,
+            points: quadraticPoints
+          });
+          drawScatter(document.getElementById("corrReviewMonotonic"), {
+            xMin: 0,
+            xMax: 10,
+            yMin: 0,
+            yMax: 100,
+            points: monotonicPoints
+          });
+
+          const svg = document.getElementById("corrReviewBootstrap");
+          if (!svg) return;
+          const width = 300, height = 220;
+          const margin = { top: 28, right: 18, bottom: 43, left: 48 };
+          const plotW = width - margin.left - margin.right;
+          const plotH = height - margin.top - margin.bottom;
+          const xMin = -0.6, xMax = 0.8;
+          const bins = 28;
+          const binWidth = (xMax - xMin) / bins;
+          const centers = Array.from({ length: bins }, (_, index) => xMin + (index + 0.5) * binWidth);
+          const densities = centers.map((x) => 0.45 * normalPdf(x, -0.18, 0.10) + 0.55 * normalPdf(x, 0.48, 0.12));
+          const yMax = Math.max(...densities) * 1.12;
+          const xScale = (x) => margin.left + (x - xMin) / (xMax - xMin) * plotW;
+          const yScale = (y) => margin.top + (1 - y / yMax) * plotH;
+          svg.replaceChildren();
+          svg.append(make("text", { x: width / 2, y: 16, class: "review-chart-title", "text-anchor": "middle" }, "Bootstrap PDF"));
+          [0, yMax / 2, yMax].forEach((tick) => {
+            svg.append(make("line", { x1: margin.left, y1: yScale(tick), x2: width - margin.right, y2: yScale(tick), class: "review-chart-grid" }));
+          });
+          [-0.5, 0, 0.5].forEach((tick) => {
+            svg.append(make("text", { x: xScale(tick), y: height - 15, class: "review-chart-text", "text-anchor": "middle" }, tick.toFixed(1)));
+          });
+          svg.append(
+            make("line", { x1: margin.left, y1: margin.top, x2: margin.left, y2: height - margin.bottom, class: "review-chart-axis" }),
+            make("line", { x1: margin.left, y1: height - margin.bottom, x2: width - margin.right, y2: height - margin.bottom, class: "review-chart-axis" })
+          );
+          densities.forEach((density, index) => {
+            const x0 = xMin + index * binWidth;
+            const barY = yScale(density);
+            svg.append(make("rect", {
+              x: xScale(x0) + 0.8,
+              y: barY,
+              width: Math.max(1, xScale(x0 + binWidth) - xScale(x0) - 1.6),
+              height: height - margin.bottom - barY,
+              fill: "#7ec2e3",
+              opacity: 0.86
+            }));
+          });
+          svg.append(
+            make("text", { x: width / 2, y: height - 2, class: "review-chart-text", "text-anchor": "middle" }, "Bootstrapped correlation coefficients"),
+            make("text", { x: 14, y: margin.top + plotH / 2, class: "review-chart-text", transform: `rotate(-90 14 ${margin.top + plotH / 2})`, "text-anchor": "middle" }, "pdf")
+          );
+        };
+
+        const drawRegArrowHandles = () => {
+          const map = document.querySelector(".review-regression-map");
+          if (!map) return;
+          const styles = getComputedStyle(map.closest(".review-regression-page") || map);
+          const value = (name) => parseFloat(styles.getPropertyValue(`--reg-arrow-${name}`)) || 0;
+          const path = (name, d) => map.querySelector(`[data-reg-arrow="${name}"]`)?.setAttribute("d", d);
+          const horizontal = (name) => {
+            const x = value(`${name}-x`);
+            const y = value(`${name}-y`);
+            path(name, `M${x} ${y}H${x + value(`${name}-length`)}`);
+          };
+          const vertical = (name) => {
+            const x = value(`${name}-x`);
+            const y = value(`${name}-y`);
+            path(name, `M${x} ${y}V${y + value(`${name}-length`)}`);
+          };
+          const elbow = (name) => {
+            const x = value(`${name}-x`);
+            const y = value(`${name}-y`);
+            path(name, `M${x} ${y}V${value(`${name}-bend-y`)}H${value(`${name}-end-x`)}V${value(`${name}-end-y`)}`);
+          };
+
+          horizontal("top-1");
+          horizontal("top-2");
+          vertical("down-analysis");
+          horizontal("to-bic");
+          vertical("step-1-to-2");
+          vertical("step-2-to-3");
+          elbow("to-gaussian");
+          elbow("to-pivot");
+          horizontal("gaussian-to-summary");
+          horizontal("pivot-to-summary");
+          vertical("bootstrap-left");
+          vertical("bootstrap-right");
+        };
+
+        const drawPcaArrowHandles = () => {
+          const map = document.querySelector(".review-pca-map");
+          if (!map) return;
+          const mapRect = map.getBoundingClientRect();
+          if (!mapRect.width || !mapRect.height) return;
+          const scaleX = 1440 / mapRect.width;
+          const scaleY = 650 / mapRect.height;
+          const arrowHead = 13;
+          const path = (name, d) => map.querySelector(`[data-pca-arrow="${name}"]`)?.setAttribute("d", d);
+          const box = (selector) => {
+            const element = map.querySelector(selector);
+            if (!element) return null;
+            const rect = element.getBoundingClientRect();
+            const left = (rect.left - mapRect.left) * scaleX;
+            const right = (rect.right - mapRect.left) * scaleX;
+            const top = (rect.top - mapRect.top) * scaleY;
+            const bottom = (rect.bottom - mapRect.top) * scaleY;
+            return {
+              left,
+              right,
+              top,
+              bottom,
+              centerX: (left + right) / 2,
+              centerY: (top + bottom) / 2
+            };
+          };
+          const verticalBetween = (name, from, to) => {
+            if (!from || !to) return;
+            path(name, `M${from.centerX} ${from.bottom}V${to.top - arrowHead}`);
+          };
+          const horizontalOrElbow = (name, from, to) => {
+            if (!from || !to) return;
+            if (Math.abs(from.centerY - to.centerY) < 1) {
+              path(name, `M${from.right} ${from.centerY}H${to.left - arrowHead}`);
+              return;
+            }
+            const midX = from.right + Math.max(20, (to.left - from.right) / 2);
+            path(name, `M${from.right} ${from.centerY}H${midX}V${to.centerY}H${to.left - arrowHead}`);
+          };
+
+          const unit = box(".pca-flow-box.unit");
+          const remove = box(".pca-flow-box.remove");
+          const weight = box(".pca-flow-box.weight");
+          const reshape = box(".pca-flow-box.reshape");
+          const svd = box(".pca-flow-box.svd");
+          const start = box(".pca-post-start");
+          const standardise = box(".pca-post-box.standardise");
+          const regression = box(".pca-post-box.regression");
+          const formula = box(".pca-review-formula");
+
+          if (unit) path("unit-no", `M${unit.right} ${unit.centerY}H${unit.right + 44 - arrowHead}`);
+          verticalBetween("unit-yes", unit, remove);
+          verticalBetween("remove-to-weight", remove, weight);
+          verticalBetween("weight-to-reshape", weight, reshape);
+          verticalBetween("reshape-to-svd", reshape, svd);
+          verticalBetween("svd-to-start", svd, start);
+          verticalBetween("start-to-standardise", start, standardise);
+          horizontalOrElbow("standardise-to-regression", standardise, regression);
+          if (regression && formula) path("regression-to-formula", `M${regression.right} ${regression.centerY}H${formula.left - arrowHead}`);
+          if (formula && start) path("formula-to-start", `M${formula.centerX} ${formula.top}V${start.centerY}H${start.right + arrowHead}`);
+        };
+
+        const drawRegReviewBicChart = () => {
+          const svg = document.getElementById("regReviewBicChart");
+          if (!svg) return;
+          const width = 300, height = 210;
+          const margin = { top: 28, right: 34, bottom: 38, left: 44 };
+          const plotW = width - margin.left - margin.right;
+          const plotH = height - margin.top - margin.bottom;
+          const maxOrder = 24;
+          const values = Array.from({ length: maxOrder }, (_, index) => {
+            const order = index + 1;
+            const loss = -34 - 118 * (1 - Math.exp(-order / 3.7)) - 0.55 * order + 2.4 * Math.sin(order * 0.85);
+            const penalty = 5.18 * (order + 1);
+            return { order, loss, penalty, bic: loss + penalty };
+          });
+          const yMin = Math.floor(Math.min(...values.map(({ loss }) => loss)) / 20) * 20;
+          const yMax = Math.ceil(Math.max(...values.map(({ bic }) => bic)) / 20) * 20;
+          const penaltyOffset = yMin;
+          const xScale = (order) => margin.left + (order - 0.5) / maxOrder * plotW;
+          const yScale = (value) => height - margin.bottom - (value - yMin) / (yMax - yMin) * plotH;
+          const penaltyScale = (value) => yScale(value + penaltyOffset);
+          const toPoints = (key, scale = yScale) => values.map((value) => [xScale(value.order), scale(value[key])]);
+          svg.replaceChildren();
+
+          [1, 5, 10, 15, 20, 24].forEach((tick) => {
+            svg.append(make("line", { x1: xScale(tick), y1: margin.top, x2: xScale(tick), y2: height - margin.bottom, class: "review-chart-grid" }));
+            svg.append(make("text", { x: xScale(tick), y: height - 18, class: "review-chart-text", "text-anchor": "middle" }, String(tick)));
+          });
+          const tickStep = Math.max(20, Math.ceil((yMax - yMin) / 4 / 20) * 20);
+          for (let tick = yMin; tick <= yMax; tick += tickStep) {
+            svg.append(make("line", { x1: margin.left, y1: yScale(tick), x2: width - margin.right, y2: yScale(tick), class: "review-chart-grid" }));
+          }
+          svg.append(
+            make("line", { x1: margin.left, y1: margin.top, x2: margin.left, y2: height - margin.bottom, class: "review-chart-axis" }),
+            make("line", { x1: margin.left, y1: height - margin.bottom, x2: width - margin.right, y2: height - margin.bottom, class: "review-chart-axis" }),
+            make("line", { x1: width - margin.right, y1: margin.top, x2: width - margin.right, y2: height - margin.bottom, stroke: "#ef2b16", "stroke-width": 1.3 }),
+            make("path", { d: pathFrom(toPoints("loss")), fill: "none", style: "stroke:#2356e8", "stroke-width": 2.2 }),
+            make("path", { d: pathFrom(toPoints("penalty", penaltyScale)), fill: "none", style: "stroke:#ef2b16", "stroke-width": 2.2 }),
+            make("path", { d: pathFrom(toPoints("bic")), fill: "none", style: "stroke:#193e87", "stroke-width": 2.2 }),
+            make("text", { x: width / 2, y: height - 2, class: "review-chart-text", "text-anchor": "middle" }, "Polynomial order (k)"),
+            make("text", { x: 24, y: margin.top + plotH / 2 +10, class: "review-chart-text", transform: `rotate(-90 24 ${margin.top + plotH / 2})`, "text-anchor": "middle" }, "BIC / Loss"),
+            make("text", { x: width - 18, y: margin.top + plotH / 2 + 16, class: "review-chart-text", fill: "#ef2b16", transform: `rotate(-90 ${width - 18} ${margin.top + plotH / 2})`, "text-anchor": "middle" }, "Penalty")
+          );
+          values.forEach(({ order, loss, penalty, bic }) => svg.append(
+            make("circle", { cx: xScale(order), cy: yScale(bic), r: 1.9, fill: "#193e87", stroke: "#ffffff", "stroke-width": 0.8 }),
+            make("circle", { cx: xScale(order), cy: yScale(loss), r: 1.5, fill: "#2356e8" }),
+            make("circle", { cx: xScale(order), cy: penaltyScale(penalty), r: 1.5, fill: "#ef2b16" })
+          ));
+
+          [
+            ["BIC", "#193e87", 45],
+            ["Loss", "#2356e8", 59],
+            ["Penalty", "#ef2b16", 73]
+          ].forEach(([label, color, y]) => {
+            svg.append(
+              make("line", { x1: 190, y1: y - 4, x2: 214, y2: y - 4, stroke: color, "stroke-width": 2 }),
+              make("text", { x: 220, y, class: "review-chart-text" }, label)
+            );
+          });
+        };
+
+        drawPdfMini();
+        drawGaussianMini();
+        drawCltReview();
+        drawKsMini();
+        drawCorrReviewMiniCharts();
+        drawRegArrowHandles();
+        drawPcaArrowHandles();
+        drawRegReviewBicChart();
+      });
+    </script>
+    <script src="../assets/js/deck.js"></script>
+  </body>
+</html>

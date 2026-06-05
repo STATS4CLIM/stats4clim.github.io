@@ -1,0 +1,3088 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>L9 PCA/EOF</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;520;650;720;820&display=swap" rel="stylesheet">
+    <link href="https://fonts.cdnfonts.com/css/intel-one-mono" rel="stylesheet">
+    <link rel="stylesheet" href="../assets/css/course.css">
+    <style>
+      .title-lockup {
+        width: 1420px;
+      }
+
+      .title-lockup h2 {
+        font-size: 50px;
+        white-space: nowrap;
+      }
+
+      .title-meta {
+        width: 840px;
+      }
+
+      .title-meta p {
+        white-space: nowrap;
+      }
+
+      .pca-patterns {
+        display: grid;
+        gap: 28px;
+        align-self: start;
+        padding-top: 4px;
+      }
+
+      .pca-equation-wrap {
+        position: relative;
+        width: 1040px;
+        scale: 0.95;
+      }
+
+      .pca-equation {
+        display: grid;
+        grid-template-columns: 1fr 54px 1fr 54px 1fr 54px 1fr;
+        align-items: center;
+        gap: 18px;
+      }
+
+      .pca-term {
+        display: grid;
+        gap: 12px;
+        justify-items: center;
+      }
+
+      .pca-term-title {
+        margin: 0;
+        color: #1d419d;
+        font-size: 24px;
+        font-weight: 820;
+        line-height: 1;
+        text-align: center;
+      }
+
+      .pca-term-canvas {
+        display: block;
+        width: 310px;
+        height: 310px;
+        border: 1.6px solid rgba(0, 0, 0, 0.58);
+        background: #ffffff;
+      }
+
+      .pca-operator {
+        color: #1d419d;
+        font-size: 56px;
+        font-weight: 820;
+        text-align: center;
+        transform: translateY(30px);
+      }
+
+      .pca-term-formula {
+        min-height: 34px;
+        margin: 0;
+        color: var(--site-blue-dark);
+        font-size: 18px;
+        font-weight: 760;
+        text-align: center;
+      }
+
+      .pca-term-formula .pc {
+        color: #e75480;
+      }
+
+      .pca-equation-rest,
+      .pca-explanation,
+      .pca-top-use {
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 260ms ease, transform 260ms ease;
+      }
+
+      .pca-patterns-page[data-step="1"] .pca-equation-rest,
+      .pca-patterns-page[data-step="2"] .pca-equation-rest,
+      .pca-patterns-page[data-step="3"] .pca-equation-rest,
+      .pca-patterns-page[data-step="2"] .pca-explanation,
+      .pca-patterns-page[data-step="3"] .pca-explanation,
+      .pca-patterns-page[data-step="3"] .pca-top-use {
+        opacity: 1;
+        pointer-events: auto;
+      }
+
+      .pca-step-marker {
+        display: none;
+      }
+
+      .pca-controls {
+        position: absolute;
+        right: 0;
+        top: -54px;
+        display: flex;
+        gap: 12px;
+        align-items: center;
+        transform: translate(470px, -20px);
+      }
+
+      .pca-control-button {
+        border: 2px solid var(--site-blue-dark);
+        border-radius: 999px;
+        background: rgba(255, 255, 255, 0.96);
+        color: var(--site-blue-dark);
+        cursor: pointer;
+        font-family: var(--font-body);
+        font-size: 16px;
+        font-weight: 760;
+        padding: 8px 18px;
+      }
+
+      .pca-control-button:hover {
+        background: var(--site-blue-pale);
+      }
+
+      .pca-explanation {
+        width: 1340px;
+        margin: 10px auto 0;
+        color: #1d419d;
+        font-size: 28px;
+        line-height: 1.42;
+        transform: translate(30px, 0px);
+      }
+
+      .pca-explanation strong {
+        font-weight: 820;
+      }
+
+      .pca-explanation .emphasis {
+        color: #ef2b16;
+      }
+
+      .pca-top-use {
+        width: 1340px;
+        margin: 10px auto 0;
+        color: #cb1470;
+        font-size: 30px;
+        line-height: 1.42;
+        transform: translate(30px, -10px);
+        font-weight: 820;
+      }
+
+      .pca-preprocess {
+        display: grid;
+        grid-template-columns: 440px 1fr;
+        gap: 70px;
+        align-items: start;
+        align-self: start;
+        padding-top: 48px;
+      }
+
+      .pca-preprocess-figures {
+        display: grid;
+        gap: 78px;
+        justify-items: center;
+      }
+
+      .pca-tensor-figure,
+      .pca-matrix-figure {
+        position: relative;
+        width: 330px;
+        min-height: 205px;
+      }
+
+      .pca-tensor-title {
+        margin: 0 0 -2px;
+        font-size: 23px;
+        font-style: italic;
+        font-weight: 820;
+        text-align: center;
+        text-decoration: underline;
+      }
+
+      .pca-tensor-svg {
+        display: block;
+        width: 330px;
+        height: 190px;
+        overflow: visible;
+      }
+
+      .pca-layer {
+        fill: #94c6e4;
+        stroke: #ffffff;
+        stroke-width: 3;
+      }
+
+      .pca-layer.front {
+        fill: #94c6e4;
+      }
+
+      .pca-layer-grid {
+        fill: none;
+        stroke: #ffffff;
+        stroke-width: 2;
+        opacity: 0.9;
+      }
+
+      .pca-axis-line {
+        fill: none;
+        stroke: #1d419d;
+        stroke-width: 1.6;
+      }
+
+      .pca-axis-arrow {
+        fill: #1d419d;
+      }
+
+      .pca-axis-label {
+        fill: #1d419d;
+        font-family: var(--font-body);
+        font-size: 18px;
+        font-weight: 650;
+        text-anchor: middle;
+      }
+
+      .pca-axis-label.vertical {
+        writing-mode: vertical-rl;
+        text-orientation: mixed;
+      }
+
+      .pca-matrix-card {
+        display: grid;
+        gap: 8px;
+        width: 250px;
+        padding: 10px 12px;
+        background: hsl(0, 0%, 100%);
+      }
+
+      .pca-matrix-row {
+        height: 23px;
+        display: grid;
+        grid-template-columns: 1fr auto 1fr;
+        align-items: center;
+        gap: 8px;
+        font-size: 23px;
+        font-weight: 820;
+      }
+
+      .pca-matrix-row::before,
+      .pca-matrix-row::after {
+        content: "";
+        display: block;
+        height: 1.5px;
+        background: rgba(25, 62, 135, 0.72);
+      }
+
+      .pca-bracket {
+        position: absolute;
+        top: 12px;
+        width: 10px;
+        height: 136px;
+        border-top: 2.6px solid rgba(25, 62, 135, 0.72);
+        border-bottom: 2.6px solid rgba(25, 62, 135, 0.72);
+      }
+
+      .pca-bracket.left {
+        left: 24px;
+        border-left: 2.6px solid rgba(25, 62, 135, 0.72);
+      }
+
+      .pca-bracket.right {
+        right: 24px;
+        border-right: 2.6px solid rgba(25, 62, 135, 0.72);
+      }
+
+      .svd-bracket {
+        position: absolute;
+        top: 12px;
+        width: 10px;
+        height: 150px;
+        border-top: 2.6px solid rgba(25, 62, 135, 0.72);
+        border-bottom: 2.6px solid rgba(25, 62, 135, 0.72);
+      }
+      
+      .svd-bracket.left {
+        left: -2px;
+        border-left: 2.6px solid rgba(25, 62, 135, 0.72);
+      }
+
+      .svd-bracket.right {
+        right: 0px;
+        border-right: 2.6px solid rgba(25, 62, 135, 0.72);
+      }
+
+      .svd-u-bracket {
+        position: absolute;
+        top: 10px;
+        width: 10px;
+        height: 146px;
+        border-top: 2.6px solid rgba(25, 62, 135, 0.72);
+        border-bottom: 2.6px solid rgba(25, 62, 135, 0.72);
+      }
+      
+      .svd-u-bracket.left {
+        left: -2px;
+        border-left: 2.6px solid rgba(25, 62, 135, 0.72);
+      }
+
+      .svd-u-bracket.right {
+        right: 0px;
+        border-right: 2.6px solid rgba(25, 62, 135, 0.72);
+      }
+
+      .svd-d-bracket {
+        position: absolute;
+        top: 0;
+        width: 10px;
+        height: 170px;
+        border-top: 2.6px solid rgba(25, 62, 135, 0.72);
+        border-bottom: 2.6px solid rgba(25, 62, 135, 0.72);
+      }
+      
+      .svd-d-bracket.left {
+        left: -2px;
+        border-left: 2.6px solid rgba(25, 62, 135, 0.72);
+      }
+
+      .svd-d-bracket.right {
+        right: 0px;
+        border-right: 2.6px solid rgba(25, 62, 135, 0.72);
+      }
+
+      .svd-vt-bracket {
+        position: absolute;
+        top: 0;
+        width: 10px;
+        height: 155px;
+        border-top: 2.6px solid rgba(25, 62, 135, 0.72);
+        border-bottom: 2.6px solid rgba(25, 62, 135, 0.72);
+      }
+      
+      .svd-vt-bracket.left {
+        left: -2px;
+        border-left: 2.6px solid rgba(25, 62, 135, 0.72);
+      }
+
+      .svd-vt-bracket.right {
+        right: 0px;
+        border-right: 2.6px solid rgba(25, 62, 135, 0.72);
+      }
+
+      .pca-matrix-axis-x,
+      .pca-matrix-axis-y {
+        position: absolute;
+        font-size: 18px;
+        font-weight: 650;
+      }
+
+      .pca-matrix-axis-x {
+        left: 82px;
+        bottom: 0;
+        width: 190px;
+        padding-top: 8px;
+        text-align: center;
+        transform: translate(-12px, -10px);
+      }
+
+      .pca-matrix-axis-y {
+        left: -8px;
+        top: 52px;
+        transform: rotate(-90deg) translate(-20px, -20px);
+      }
+
+      .pca-preprocess-text {
+        display: grid;
+        gap: 82px;
+        padding-top: 8px;
+      }
+
+      .pca-preprocess-block h3 {
+        margin: 0 0 12px;
+        font-size: 28px;
+        font-weight: 820;
+      }
+
+      .pca-preprocess-block p {
+        margin: 0 0 12px;
+        font-size: 23px;
+        line-height: 1.42;
+      }
+
+      .pca-preprocess-link {
+        display: inline-block;
+        margin-top: 6px;
+        color: #e75480;
+        font-size: 18px;
+        font-weight: 100;
+        text-underline-offset: 5px;
+        text-align: right;
+      }
+
+      .pca-demean-link {
+        display: inline-block;
+        margin-top: 6px;
+        font-weight: 700;
+        text-underline-offset: 5px;
+        text-align: right;
+      }
+
+      .svd-slide {
+        display: grid;
+        gap: 20px;
+        align-self: start;
+        padding-top: 12px;
+      }
+
+      .svd-code {
+        justify-self: center;
+        border: 2px solid;
+        padding: 14px 34px;
+        font-family: var(--font-mono);
+        font-size: 25px;
+        font-weight: 650;
+      }
+
+      .svd-code a {
+        color: inherit;
+        text-underline-offset: 5px;
+      }
+
+      .svd-code .svd-code-red {
+        color: #cb0a2a;
+        font-weight: 820;
+      }
+
+      .svd-decomposition,
+      .svd-bottom {
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 240ms ease;
+      }
+
+      .svd-page[data-step="1"] .svd-decomposition,
+      .svd-page[data-step="2"] .svd-decomposition,
+      .svd-page[data-step="3"] .svd-decomposition,
+      .svd-page[data-step="2"] .svd-bottom,
+      .svd-page[data-step="3"] .svd-bottom {
+        opacity: 1;
+        pointer-events: auto;
+      }
+
+      .svd-page[data-step="1"] .mode1-target,
+      .svd-page[data-step="1"] .mode2-target,
+      .svd-page[data-step="2"] .mode2-target,
+      .svd-page[data-step="3"] .mode1-target {
+        background: transparent;
+        color: inherit;
+        font-weight: 820;
+      }
+
+      .svd-page[data-step="1"] .mode1-target,
+      .svd-page[data-step="3"] .mode1-target {
+        --svd-u-vector-line: rgba(25, 62, 135, 0.72);
+      }
+
+      .svd-page[data-step="3"] .mode2-target {
+        background: #ff9aa3;
+        color: #b32635;
+        font-weight: 900;
+        --svd-u-vector-line: #b32635;
+      }
+
+      .svd-step-marker {
+        display: none;
+      }
+
+      .svd-decomposition {
+        display: grid;
+        grid-template-columns: 300px 44px 260px 44px 230px 44px 310px;
+        gap: 16px;
+        align-items: center;
+        justify-content: center;
+        transform: translateY(-12px) scale(0.94);
+      }
+
+      .svd-piece {
+        position: relative;
+        display: grid;
+        gap: 8px;
+        justify-items: center;
+      }
+
+      .svd-piece-title {
+        min-height: 22px;
+        margin: 0;
+        font-size: 20px;
+        font-weight: 100;
+        text-align: center;
+        color:#1a99e2
+      }
+
+      .svd-piece-label {
+        margin: 0;
+        font-size: 31px;
+        font-weight: 820;
+        text-align: center;
+        color: #bc1c4c;
+      }
+
+      .svd-op {
+        font-size: 42px;
+        font-weight: 620;
+        text-align: center;
+      }
+
+      .svd-matrix {
+        position: relative;
+        display: grid;
+        gap: 8px;
+        width: 250px;
+        padding: 10px 12px;
+      }
+
+      .svd-row {
+        display: grid;
+        grid-template-columns: 1fr auto 1fr;
+        align-items: center;
+        gap: 8px;
+        height: 23px;
+        font-size: 23px;
+        font-weight: 820;
+      }
+
+      .svd-row::before,
+      .svd-row::after {
+        content: "";
+        height: 1.4px;
+        background: rgb(25, 62, 135);
+      }
+
+      .svd-axis-word {
+        position: absolute;
+        color: #d635b1;
+        font-size: 23px;
+        font-weight: 820;
+      }
+
+      .svd-axis-word.space {
+        left: -40px;
+        top: 52px;
+        transform: rotate(-90deg);
+      }
+
+      .svd-axis-word.time {
+        top: -30px;
+        left: 50%;
+        transform: translateX(-50%);
+      }
+
+      .svd-u {
+        display: grid;
+        grid-template-columns: repeat(5, 42px);
+        gap: 9px;
+        padding: 10px;
+      }
+
+      .svd-u-col {
+        position: relative;
+        display: grid;
+        place-items: center;
+        height: 146px;
+        --svd-u-vector-line: rgba(25, 62, 135, 0.72);
+        font-size: 23px;
+        font-weight: 820;
+      }
+
+      .svd-u-col::before,
+      .svd-u-col::after {
+        content: "";
+        position: absolute;
+        left: 50%;
+        width: 0;
+        height: 54px;
+        border-left: 1.6px solid var(--svd-u-vector-line);
+        transform: translateX(-50%);
+        pointer-events: none;
+      }
+
+      .svd-u-col::before {
+        top: 0;
+      }
+
+      .svd-u-col::after {
+        bottom: 0;
+      }
+
+      .svd-u-col.primary,
+      .svd-d-cell.primary,
+      .svd-vt-row.primary {
+        background: #ff9aa3;
+        color: #b32635;
+        font-weight: 900;
+      }
+
+      .svd-u-col.primary {
+        --svd-u-vector-line: #b32635;
+      }
+
+      .svd-d {
+        position: relative;
+        width: 190px;
+        height: 170px;
+      }
+
+      .svd-d-cell {
+        position: absolute;
+        display: grid;
+        place-items: center;
+        width: 42px;
+        height: 34px;
+        font-size: 25px;
+        font-weight: 820;
+      }
+
+      .svd-d-cell:nth-child(2) { left: 10px; top: 4px; }
+      .svd-d-cell:nth-child(3) { left: 42px; top: 36px; }
+      .svd-d-cell:nth-child(4) { left: 74px; top: 68px; }
+      .svd-d-cell:nth-child(5) { left: 106px; top: 100px; }
+      .svd-d-cell:nth-child(6) { left: 138px; top: 132px; }
+
+      .svd-vt {
+        display: grid;
+        gap: 7px;
+        width: 250px;
+        padding: 10px 12px;
+      }
+
+      .svd-vt-row {
+        display: grid;
+        grid-template-columns: 1fr auto 1fr;
+        align-items: center;
+        gap: 8px;
+        height: 23px;
+        font-size: 23px;
+        font-weight: 820;
+      }
+
+      .svd-vt-row::before,
+      .svd-vt-row::after {
+        content: "";
+        height: 1.4px;
+        background: rgb(25, 62, 135);
+      }
+
+      .svd-bottom {
+        display: grid;
+        grid-template-columns: 920px 1fr;
+        gap: 28px;
+        align-items: center;
+        margin-top: -8px;
+      }
+
+      .mode1-demo {
+        display: grid;
+        grid-template-columns: 225px 35px 225px 100px 300px;
+        gap: 12px;
+        align-items: center;
+        transform: translate(0px, -10px);
+      }
+
+      .mode1-panel {
+        position: relative;
+      }
+
+      .mode1-canvas {
+        display: block;
+        width: 225px;
+        height: 225px;
+        border: 1.5px solid rgba(25, 62, 135, 0.38);
+        background: #ffffff;
+      }
+
+      .mode1-wave {
+        display: block;
+        width: 300px;
+        height: 200px;
+        border: 1.5px solid rgba(25, 62, 135, 0.38);
+        background: #ffffff;
+        transform: translateY(5px);
+      }
+
+      .mode1-caption {
+        position: absolute;
+        left: 9px;
+        bottom: 9px;
+        margin: 0;
+        font-size: 18px;
+        font-weight: 820;
+      }
+
+      .svd-small-op {
+        font-size: 30px;
+        font-weight: 820;
+        text-align: center;
+      }
+
+      .matrix-review {
+        display: grid;
+        gap: 12px;
+        justify-items: center;
+        padding: 18px 10px;
+        background: #eaf6ff;
+        width: 430px;
+        transform: translate(50px, -10px);
+      }
+
+      .matrix-review-equation {
+        display: grid;
+        grid-template-columns: auto 32px auto 32px auto;
+        gap: 14px;
+        align-items: center;
+      }
+
+      .mini-matrix {
+        display: grid;
+        gap: 4px;
+        padding: 6px;
+        background: #b3dae9;
+      }
+
+      .mini-matrix.result {
+        grid-template-columns: repeat(4, 24px);
+      }
+
+      .mini-matrix.pattern {
+        grid-template-columns: 24px;
+      }
+
+      .mini-matrix.time {
+        grid-template-columns: repeat(4, 24px);
+      }
+
+      .mini-cell {
+        display: grid;
+        place-items: center;
+        width: 24px;
+        height: 24px;
+        border-radius: 0;
+        border: 3px solid transparent;
+        background: transparent;
+        transition: box-shadow 160ms ease, transform 160ms ease, background 160ms ease;
+      }
+
+      .mini-cell::after {
+        display: none;
+      }
+
+      .mini-cell.red {
+        border-color: #e62718;
+      }
+
+      .mini-cell.orange {
+        border-color: #ff9500;
+      }
+
+      .mini-cell.green {
+        border-color: #19a700;
+      }
+
+      .mini-cell.blue {
+        border-color: #0a6ecb;
+      }
+
+      .mini-cell.pattern-cell {
+        border-color: transparent;
+      }
+
+      .mini-cell.pattern-cell.row-0,
+      .mini-cell.result-fill.row-0 {
+        background: #ffd1d6;
+      }
+
+      .mini-cell.pattern-cell.row-1,
+      .mini-cell.result-fill.row-1 {
+        background: #ffe2b8;
+      }
+
+      .mini-cell.pattern-cell.row-2,
+      .mini-cell.result-fill.row-2 {
+        background: #c9f0c2;
+      }
+
+      .mini-cell.pattern-cell.row-3,
+      .mini-cell.result-fill.row-3 {
+        background: #cfe5ff;
+      }
+
+      .mini-cell.pattern-cell.row-4,
+      .mini-cell.result-fill.row-4 {
+        background: #e7d3ff;
+      }
+
+      .mini-cell.time-cell {
+        background: transparent;
+      }
+
+      .mini-cell.result-fill {
+        background-clip: padding-box;
+      }
+
+      .mini-cell.hovered,
+      .mini-cell.linked {
+        box-shadow: 0 0 0 4px rgba(203, 20, 112, 0.34);
+        transform: scale(1.06);
+      }
+
+      .matrix-review-caption {
+        min-height: 25px;
+        margin: 0;
+        color: #cb1470;
+        font-size: 17px;
+        font-weight: 120;
+        text-align: center;
+      }
+
+      .pca-together {
+        display: grid;
+        grid-template-columns: 280px 52px 1fr;
+        column-gap: 28px;
+        align-items: start;
+        align-self: start;
+        padding-top: 28px;
+      }
+
+      .pca-together-left {
+        display: grid;
+        gap: 26px;
+      }
+
+      .pca-stack-row {
+        display: grid;
+        grid-template-columns: 44px 210px;
+        align-items: center;
+        gap: 12px;
+      }
+
+      .pca-stack-label {
+        margin: 0;
+        color: ;
+        font-size: 19px;
+        font-weight: 820;
+        text-align: center;
+        transform: rotate(-90deg);
+        white-space: nowrap;
+      }
+
+      .pca-together-field,
+      .pca-together-pattern {
+        display: block;
+        width: 210px;
+        height: 210px;
+        border: 1.4px solid rgba(25, 62, 135, 0.35);
+        background: #ffffff;
+      }
+
+      .pca-together-bracket {
+        position: relative;
+        width: 52px;
+        height: 390px;
+        margin-top: 164px;
+      }
+
+      .pca-together-bracket::before {
+        content: "";
+        position: absolute;
+        left: 28px;
+        top: 0;
+        width: 52px;
+        height: 330px;
+        border-left: 3px solid ;
+        border-top: 3px solid ;
+        border-bottom: 3px solid;
+      }
+
+      .pca-together-plus {
+        position: absolute;
+        left: 12px;
+        top: 168px;
+        display: grid;
+        place-items: center;
+        width: 34px;
+        height: 34px;
+        border: 2px solid;
+        border-radius: 50%;
+        background: #ffffff;
+        font-size: 22px;
+        font-weight: 820;
+      }
+
+      .pca-together-right {
+        display: grid;
+        gap: 26px;
+        padding-top: 72px;
+      }
+
+      .pca-mode-equation {
+        display: grid;
+        grid-template-columns: 230px 42px 230px 112px 250px;
+        gap: 16px;
+        align-items: center;
+      }
+
+      .pca-mode-panel {
+        display: grid;
+        gap: 8px;
+        justify-items: center;
+      }
+
+      .pca-mode-title {
+        margin: 0;
+        font-size: 19px;
+        font-weight: 820;
+        line-height: 1;
+        text-align: center;
+      }
+
+      .pca-together-pattern {
+        width: 230px;
+        height: 230px;
+      }
+
+      .pca-together-wave {
+        display: block;
+        width: 250px;
+        height: 170px;
+        border: 1.4px solid rgba(0, 0, 0, 0.38);
+        background: #ffffff;
+      }
+
+      .pca-together-op {
+        font-size: 30px;
+        font-weight: 820;
+        text-align: center;
+      }
+
+      .pca-together-d {
+        font-size: 24px;
+        font-weight: 760;
+        text-align: center;
+        white-space: nowrap;
+      }
+
+      .pca-together-caption {
+        grid-column: 3;
+        width: 1170px;
+        margin: 2px 0 0;
+        font-size: 25px;
+        line-height: 1.36;
+        transform: translate(-50px, -80px);
+      }
+
+      .pca-together-caption strong {
+        font-weight: 820;
+      }
+
+      .pca-together-caption .under {
+        text-decoration: underline;
+        text-underline-offset: 4px;
+      }
+
+      .pca-math-link {
+        --pca-math-link-x: 0px;
+        --pca-math-link-y: 0px;
+        position: absolute;
+        z-index: 20;
+        pointer-events: auto;
+        top: 104px;
+        right: 92px;
+        width: 460px;
+        transform: translate(var(--pca-math-link-x), -70px);
+        color: var(--site-blue-dark);
+        font-size: 18px;
+        font-weight: 100;
+        line-height: 1.3;
+        text-align: right;
+      }
+
+      .pca-math-link a {
+        color: #e75480;
+        font-weight: 120;
+        text-decoration: underline;
+        text-underline-offset: 5px;
+        pointer-events: auto;
+      }
+
+      .pca-together-page .content-layout {
+        position: relative;
+      }
+
+      .pca-plus-arrow {
+        position: absolute;
+        left: -165px;
+        top: 162px;
+        width: 100px;
+        height: 44px;
+        overflow: visible;
+        pointer-events: none;
+        transform: translate(113px, -3px);
+      }
+
+      .pca-plus-arrow line {
+        stroke: #1d419d;
+        stroke-width: 3;
+      }
+
+      .pca-characteristics {
+        display: grid;
+        gap: 24px;
+        align-self: start;
+        padding-top: 28px;
+      }
+
+      .pca-characteristics-page .content-layout,
+      .pca-variance-page .content-layout,
+      .pca-sign-flip-page .content-layout {
+        gap: 18px;
+      }
+
+      .pca-characteristic-lead {
+        grid-column: 1 / -1;
+        width: 1280px;
+        margin: 0;
+        font-size: 30px;
+        line-height: 1.34;d
+      }
+
+      .pca-characteristics-text strong {
+        font-weight: 820;
+      }
+
+      .pca-characteristics-red {
+        display: block;
+        margin-left: 38px;
+        color: #ef2b16;
+        font-weight: 200;
+        font-size: 24px;
+        transform: translateY(-10px);
+      }
+
+      .pca-characteristic-subnote {
+        display: block;
+        grid-column: 1 / -1;
+        margin-left: 38px;
+        font-size: 24px;
+        line-height: 1.28;
+        transform: translateY(-10px);
+      }
+
+      .pca-characteristics-plots {
+        display: grid;
+        grid-template-columns: 320px 320px 320px;
+        gap: 92px;
+        align-items: start;
+        justify-content: center;
+      }
+
+      .pca-characteristics-panel {
+        display: grid;
+        gap: 10px;
+        justify-items: center;
+      }
+
+      .pca-characteristics-title {
+        margin: 0;
+        font-size: 22px;
+        font-weight: 820;
+        line-height: 1;
+        text-align: center;
+      }
+
+      .pca-characteristics-wave,
+      .pca-characteristics-scatter {
+        display: block;
+        width: 320px;
+        height: 255px;
+        background: #ffffff;
+      }
+
+      .pca-characteristics-scatter-wrap {
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 260ms ease;
+      }
+
+      .pca-characteristics-page[data-step="1"] .pca-characteristics-scatter-wrap {
+        opacity: 1;
+        pointer-events: auto;
+      }
+
+      .pca-char-step-marker {
+        display: none;
+      }
+
+      .pca-variance {
+        display: grid;
+        grid-template-columns: 360px 380px 530px;
+        column-gap: 70px;
+        align-items: center;
+        align-self: start;
+        padding-top: 28px;
+      }
+
+      .pca-variance-note {
+        grid-column: 1 / -1;
+        width: 980px;
+        margin: 38px 0 0;
+        color: #1d419d;
+        font-size: 26px;
+        line-height: 1.28;
+        left: 70px;
+        position: relative;
+      }
+
+      .pca-variance-lead {
+        margin: 0 0 6px;
+      }
+
+      .pca-variance-blue {
+        color: #299bff;
+        font-weight: 820;
+      }
+
+      .pca-d-diagram {
+        position: relative;
+        width: 250px;
+        height: 260px;
+        margin: 8px auto 0;
+      }
+
+      .pca-d-diagram .svd-d {
+        transform: translate(35px, 18px) scale(1.25);
+      }
+
+      .pca-d-label {
+        position: absolute;
+        left: 110px;
+        bottom: 0;
+        margin: 0;
+        font-size: 34px;
+        font-weight: 820;
+      }
+
+      .pca-fc-block {
+        display: grid;
+        gap: 30px;
+        align-items: center;
+      }
+
+      .pca-fc-formula {
+        margin: 0;
+        font-family: Georgia, "Times New Roman", serif;
+        font-size: 38px;
+        font-style: italic;
+        line-height: 1.15;
+        text-align: center;
+      }
+
+      .pca-fc-text {
+        margin: 0;
+        font-size: 26px;
+        line-height: 1.35;
+      }
+
+      .pca-fc-text strong {
+        color: #299bff;
+        font-weight: 820;
+      }
+
+      .pca-variance-chart {
+        display: block;
+        width: 530px;
+        height: 360px;
+        background: #ffffff;
+      }
+
+      .slp-animation {
+        --slp-video-x: -30px;
+        --slp-video-y: -8px;
+        --slp-video-width: 1460px;
+        --slp-video-height: 530px;
+        --slp-crop-top: 30px;
+        --slp-crop-right: 46px;
+        --slp-crop-bottom: 40px;
+        --slp-crop-left: 46px;
+        display: grid;
+        width: 100%;
+        gap: 18px;
+        justify-items: center;
+        align-self: start;
+        padding-top: 18px;
+        transform: translate(var(--slp-video-x), var(--slp-video-y));
+      }
+
+      .slp-video-crop {
+        position: relative;
+        width: var(--slp-video-width);
+        height: var(--slp-video-height);
+        overflow: hidden;
+        background: #ffffff;
+      }
+
+      .slp-video-crop canvas {
+        position: absolute;
+        left: calc(-1 * var(--slp-crop-left));
+        top: calc(-1 * var(--slp-crop-top));
+        width: calc(100% + var(--slp-crop-left) + var(--slp-crop-right));
+        height: calc(100% + var(--slp-crop-top) + var(--slp-crop-bottom));
+        object-fit: fill;
+        display: block;
+      }
+
+      .slp-video-controls {
+        display: grid;
+        grid-template-columns: auto auto 520px 310px;
+        gap: 14px;
+        align-items: center;
+        transform: translateY(-4px);
+      }
+
+      .slp-video-button {
+        border: 2px solid var(--site-blue-dark);
+        border-radius: 999px;
+        background: rgba(255, 255, 255, 0.96);
+        color: var(--site-blue-dark);
+        cursor: pointer;
+        font-family: var(--font-body);
+        font-size: 16px;
+        font-weight: 760;
+        padding: 8px 20px;
+      }
+
+      .slp-video-button:hover {
+        background: var(--site-blue-pale);
+      }
+
+      .slp-frame-progress,
+      .slp-frame-duration {
+        accent-color: var(--site-blue-dark);
+      }
+
+      .slp-frame-progress {
+        width: 520px;
+      }
+
+      .slp-speed-control {
+        display: grid;
+        grid-template-columns: auto 160px;
+        gap: 10px;
+        align-items: center;
+        color: var(--site-blue-dark);
+        font-size: 16px;
+        font-weight: 760;
+        white-space: nowrap;
+      }
+
+      .slp-frame-duration {
+        width: 160px;
+      }
+
+      .pca-sign-flip {
+        --sign-flip-equations-x: 0px;
+        --sign-flip-equations-y: -10px;
+        --sign-flip-bottom-x: 0px;
+        --sign-flip-bottom-y: 0px;
+        display: grid;
+        grid-template-columns: 250px 48px 250px 52px 44px 52px 250px 360px;
+        gap: 14px;
+        align-items: center;
+        align-self: start;
+        padding-top: 28px;
+      }
+
+      .pca-sign-flip-lead {
+        margin: 0 0 6px;
+      }
+
+      .pca-sign-flip-equations {
+        grid-column: 1 / 8;
+        grid-row: 3 / span 2;
+        display: grid;
+        grid-template-columns: 250px 48px 250px 52px 44px 52px 250px;
+        gap: 14px;
+        align-items: center;
+        transform: translate(var(--sign-flip-equations-x), var(--sign-flip-equations-y));
+      }
+
+      .pca-sign-flip-bottom {
+        transform: translate(var(--sign-flip-bottom-x), var(--sign-flip-bottom-y));
+      }
+
+      .pca-sign-flip-lead strong {
+        color: #ef2b16;
+        font-weight: 820;
+      }
+
+      .pca-sign-flip-note {
+        grid-column: 8;
+        grid-row: 4;
+        margin: 0;
+        font-size: 22px;
+        line-height: 1.32;
+        transform: translate(50px, -45px);
+        width: 320px;
+      }
+
+      .pca-sign-flip-panel {
+        display: grid;
+        gap: 8px;
+        justify-items: center;
+      }
+
+      .pca-sign-flip-title {
+        margin: 0;
+        min-height: 24px;
+        font-size: 20px;
+        font-weight: 820;
+        line-height: 1;
+        text-align: center;
+      }
+
+      .pca-sign-flip-field {
+        display: block;
+        width: 210px;
+        height: 210px;
+        border: 1.4px solid rgba(0, 0, 0, 0.38);
+        background: #ffffff;
+      }
+
+      .pca-sign-flip-wave {
+        display: block;
+        width: 250px;
+        height: 160px;
+        border: 1.4px solid rgba(0, 0, 0, 0.38);
+        background: #ffffff;
+      }
+
+      .pca-sign-flip-equals,
+      .pca-sign-flip-times,
+      .pca-sign-flip-d {
+        font-size: 24px;
+        font-weight: 820;
+        text-align: center;
+      }
+
+      .pca-sign-flip-d {
+        font-weight: 760;
+      }
+
+      .eof-weight {
+        display: grid;
+        grid-template-columns: 610px 1fr;
+        column-gap: 82px;
+        align-items: center;
+        align-self: start;
+        padding-top: 34px;
+      }
+
+      .eof-weight-globe {
+        display: block;
+        width: 560px;
+        height: 560px;
+        object-fit: contain;
+        justify-self: center;
+      }
+
+      .eof-weight-text {
+        display: grid;
+        gap: 44px;
+        align-content: center;
+        max-width: 680px;
+        font-size: 30px;
+        font-weight: 820;
+        line-height: 1.24;
+      }
+
+      .eof-weight-formula,
+      .eof-weight-text p {
+        margin: 0;
+      }
+
+      .eof-weight-formula {
+        font-size: 29px;
+        white-space: nowrap;
+      }
+
+      .eof-weight-red {
+        color: #ef2b16;
+        text-decoration: underline;
+        text-decoration-thickness: 2px;
+        text-underline-offset: 4px;
+      }
+
+      .eof-weight-emphasis {
+        display: block;
+        margin-top: 18px;
+        text-align: center;
+      }
+
+      .eof-practical {
+        position: relative;
+        align-self: start;
+        min-height: 680px;
+        padding-top: 16px;
+      }
+
+      .eof-practical .svd-decomposition {
+        opacity: 1;
+        pointer-events: auto;
+        transform: translate(8px, 18px) scale(0.88);
+      }
+
+      .eof-practical .svd-piece-title {
+        color: #299bff;
+        font-weight: 820;
+      }
+
+      .eof-practical-step-marker {
+        display: none;
+      }
+
+      .eof-practical-step {
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 220ms ease;
+      }
+
+      .eof-practical-page[data-step="1"] .eof-practical-step.missing,
+      .eof-practical-page[data-step="2"] .eof-practical-step.missing,
+      .eof-practical-page[data-step="2"] .eof-practical-step.regression {
+        opacity: 1;
+        pointer-events: auto;
+      }
+
+      .eof-practical-note {
+        position: absolute;
+        margin: 0;
+        color: #1b4bab;
+        font-size: 24px;
+        font-weight: 250;
+        line-height: 1.28;
+      }
+
+      .eof-practical-note strong,
+      .eof-practical-note .under {
+        font-weight: 820;
+        text-decoration: underline;
+        text-decoration-thickness: 2px;
+        text-underline-offset: 4px;
+      }
+
+      .eof-practical-note.missing {
+        left: 38px;
+        top: 330px;
+        width: 600px;
+      }
+
+      .eof-practical-note.regression {
+        right: 90px;
+        top: 416px;
+        width: 510px;
+      }
+
+      .eof-practical-patterns {
+        position: absolute;
+        left: 360px;
+        bottom: 40px;
+        display: flex;
+        gap: 48px;
+        align-items: flex-end;
+      }
+
+      .eof-practical-pattern {
+        display: grid;
+        gap: 12px;
+        justify-items: center;
+        font-size: 26px;
+        font-weight: 650;
+      }
+
+      .eof-practical-swatch {
+        width: 130px;
+        height: 38px;
+        transform: skewX(-38deg);
+      }
+
+      .eof-practical-swatch.pattern-1 {
+        background: #eeb0af;
+      }
+
+      .eof-practical-swatch.pattern-2 {
+        background: #eee293;
+      }
+
+      .eof-practical-swatch.pattern-3 {
+        background: #97d4f0;
+      }
+
+      .eof-practical-ellipsis {
+        align-self: center;
+        margin: 0 4px 38px -20px;
+        font-size: 34px;
+        font-weight: 820;
+      }
+
+      .eof-practical-arrow {
+        position: absolute;
+        right: 415px;
+        bottom: 94px;
+        width: 100px;
+        height: 28px;
+      }
+
+      .eof-practical-arrow line {
+        stroke: #000000;
+        stroke-width: 4;
+      }
+
+      .eof-practical-drop-arrow {
+        position: absolute;
+        right: 176px;
+        top: 202px;
+        width: 90px;
+        height: 210px;
+      }
+
+      .eof-practical-drop-arrow path {
+        fill: none;
+        stroke: #000000;
+        stroke-width: 4;
+      }
+
+    </style>
+  </head>
+  <body class="deck-page">
+    <template id="deckHeaderTemplate">
+      <span class="slide-section">
+        <a class="deck-home" href="../index.html" aria-label="Back to course home">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M3 11.5L12 4l9 7.5"></path>
+            <path d="M6.5 10.5V20h11v-9.5"></path>
+            <path d="M10 20v-5h4v5"></path>
+          </svg>
+        </a>
+        <span>SOES3042/6025 · Statistics</span>
+      </span>
+      <span class="slide-lecture-nav">
+        <span>Week 5 · Lecture 9</span>
+        <span class="lecture-jump" aria-label="Lecture navigation">
+          <a class="lecture-jump-link lecture-jump-prev" href="week3-l8.html" aria-label="Previous lecture" title="Previous lecture"></a>
+          <a class="lecture-jump-link lecture-jump-next" href="week3-l10.html" aria-label="Next lecture" title="Next lecture"></a>
+          <a class="lecture-jump-link lecture-jump-home" href="week3-l9.html?slide=1" aria-label="Restart this lecture" title="Restart this lecture"></a>
+        </span>
+      </span>
+    </template>
+
+    <div class="deck-viewport">
+      <main class="deck-stage" aria-live="polite">
+        <section class="slide active">
+          <header class="slide-kicker"></header>
+          <div class="slide-body title-layout">
+            <div class="title-lockup">
+              <h1>Lecture 9</h1>
+              <h2>Principal Component Analysis</h2>
+            </div>
+            <aside class="title-meta">
+              <p>1. <b>What are PCA/EOF for?</b></p>
+              <p>2. <b>How to implement PCA/EOF?</b></p>
+              <p>3. <b>What are the characteristics of PCA/EOF?</b></p>
+              <p>4. <b>Practical notes when analysing earth science data.</b></p>
+            </aside>
+          </div>
+        </section>
+
+        <section class="slide pca-patterns-page">
+          <header class="slide-kicker"></header>
+          <div class="slide-body content-layout">
+            <h2 class="slide-title">What are the major patterns?</h2>
+            <div class="slide-content pca-patterns">
+              <div class="pca-equation-wrap">
+                <div class="pca-controls" aria-label="PCA animation controls">
+                  <button class="pca-control-button" id="pcaPatternPlay" type="button">Pause</button>
+                  <button class="pca-control-button" id="pcaPatternReset" type="button">Reset</button>
+                </div>
+                <div class="pca-equation">
+                  <article class="pca-term">
+                    <h3 class="pca-term-title">Spatial-temporal Data</h3>
+                    <canvas class="pca-term-canvas" id="pcaDataCanvas" width="120" height="120" aria-label="Synthetic data field"></canvas>
+                  </article>
+                  <div class="pca-operator pca-equation-rest">=</div>
+                  <article class="pca-term pca-equation-rest">
+                    <h3 class="pca-term-title">Sea-Saw</h3>
+                    <canvas class="pca-term-canvas" id="pcaMode1Canvas" width="120" height="120" aria-label="PCA mode 1 spatial pattern"></canvas>
+                  </article>
+                  <div class="pca-operator pca-equation-rest">+</div>
+                  <article class="pca-term pca-equation-rest">
+                    <h3 class="pca-term-title">Central Pulse</h3>
+                    <canvas class="pca-term-canvas" id="pcaMode2Canvas" width="120" height="120" aria-label="PCA mode 2 spatial pattern"></canvas>
+                  </article>
+                  <div class="pca-operator pca-equation-rest">+</div>
+                  <article class="pca-term pca-equation-rest">
+                    <h3 class="pca-term-title">Small-Scale Noise</h3>
+                    <canvas class="pca-term-canvas" id="pcaNoiseCanvas" width="120" height="120" aria-label="Noise field"></canvas>
+                  </article>
+                </div>
+              </div>
+              <p class="pca-explanation">
+                <strong>Principal Component Analysis (PCA)</strong>, also called <strong>Empirical Orthogonal Functions (EOF)</strong>,
+                helps reveal <strong class="emphasis">major patterns</strong> by decomposing varying data into fixed spatial patterns
+                multiplied by their time-varying amplitudes.
+              </p>
+
+              <p class="pca-top-use">
+                TOP3 methods used methods to reveal modes of variability in ocean & earth sciences!
+              </p>
+              <span class="fragment pca-step-marker" aria-hidden="true"></span>
+              <span class="fragment pca-step-marker" aria-hidden="true"></span>
+              <span class="fragment pca-step-marker" aria-hidden="true"></span>
+            </div>
+          </div>
+        </section>
+
+        <section class="slide pca-preprocess-page">
+          <header class="slide-kicker"></header>
+          <div class="slide-body content-layout">
+            <h2 class="slide-title">Preprocessing Data for PCA/EOF</h2>
+            <div class="slide-content pca-preprocess">
+              <div class="pca-preprocess-figures">
+                <figure class="pca-tensor-figure" aria-label="Three-dimensional time latitude longitude data">
+                  <p class="pca-tensor-title" style="transform: translate(30px, -20px)">Data</p>
+                  <svg class="pca-tensor-svg" viewBox="0 0 330 205" role="img">
+                    <g transform="translate(-35,-30) scale(1.3)">
+                      <polygon class="pca-layer" points="72,138 228,138 270,96 114,96"></polygon>
+                      <polygon class="pca-layer" points="72,116 228,116 270,74 114,74"></polygon>
+                      <polygon class="pca-layer" points="72,94 228,94 270,52 114,52"></polygon>
+                      <polygon class="pca-layer front" points="72,72 228,72 270,30 114,30"></polygon>
+                      <path class="pca-layer-grid" d="M139 30L97 72M165 30L123 72M191 30L149 72M217 30L175 72M243 30L201 72M107 38H259M100 45H252M93 52H245M86 59H238M79 66H231"></path>
+                      <g transform="translate(2,-8)">
+                        <path class="pca-axis-line" d="M58 84V154M72 166H214M232 158L278 112"></path>
+                        <polygon class="pca-axis-arrow" points="54,146 58,157 64,146"></polygon>
+                        <polygon class="pca-axis-arrow" points="205,161 218,166 205,171"></polygon>
+                        <polygon class="pca-axis-arrow" points="267,119 280,110 276,124"></polygon>
+                        <text class="pca-axis-label" x="142" y="190">lat</text>
+                        <text class="pca-axis-label" x="278" y="150" transform="rotate(-42 278 150)">lon</text>
+                        <text class="pca-axis-label" x="30" y="120" transform="rotate(-90 30 120)">time</text>
+                      </g>
+                    </g>
+                  </svg>
+                </figure>
+
+                <figure class="pca-matrix-figure" aria-label="Two-dimensional space by time matrix", style="transform: translate(10px, -30px)">
+                  <span class="pca-bracket left" aria-hidden="true"></span>
+                  <div class="pca-matrix-card" style="transform: translate(40px, 0px)">
+                    <div class="pca-matrix-row">a₁</div>
+                    <div class="pca-matrix-row">a₂</div>
+                    <div class="pca-matrix-row">a₃</div>
+                    <div class="pca-matrix-row">...</div>
+                    <div class="pca-matrix-row">aₙ</div>
+                  </div>
+                  <span class="pca-bracket right" aria-hidden="true"></span>
+                  <span class="pca-matrix-axis-y">lon × lat</span>
+                  <span class="pca-matrix-axis-x">time</span>
+                </figure>
+              </div>
+
+              <div class="pca-preprocess-text">
+                <section class="pca-preprocess-block">
+                  <h3>1. Remove the mean to retain only variations:</h3>
+                  <p>Depending on your purpose, this step could include removing 
+                    <a class="pca-demean-link" href="week3-l5.html?slide=8&amp;step=11" target="_blank" rel="noopener">seasonal cycles</a> 
+                    or a <a class="pca-demean-link" href="week3-l8.html?slide=5" target="_blank" rel="noopener">long-term trend</a> 
+                    <b style="color:#698cc5; font-weight: 100; font-size: 20px">(fit a line using OLS and calculate anomalies relative to the fitted line at each location)</b>.</p>
+                  <p>Because PCA/EOF finds the strongest mode first, retaining seasonal cycles will often make the first mode describe how your data varies seasonally.</p>
+                </section>
+
+                <section class="pca-preprocess-block" style="transform: translateY(-28px)">
+                  <h3>2. Reshape data into a 2D matrix:</h3>
+                  <p>Anomalies are reshaped into a matrix with dimension <strong>space × time</strong>.</p>
+                  <p>You typically need <code>.reshape()</code> and <code>.transpose()</code>.</p>
+                  <a class="pca-preprocess-link" href="week3-l5.html?slide=5&amp;step=5" target="_blank" rel="noopener">Review reshape and transpose from Lecture 5</a>
+                </section>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="slide svd-page">
+          <header class="slide-kicker"></header>
+          <div class="slide-body content-layout">
+            <h2 class="slide-title">Apply Singular Value Decomposition (SVD)</h2>
+            <div class="slide-content svd-slide">
+              <code class="svd-code" style="transform: translate(-30px, 0px)">
+                U, D, V<sup>T</sup> = <a href="https://numpy.org/doc/stable/reference/generated/numpy.linalg.svd.html" target="_blank" rel="noopener">np.linalg.<span class="svd-code-red">svd</span></a>(A)</code>
+
+              <div class="svd-decomposition" aria-label="SVD decomposition diagram">
+                <article class="svd-piece">
+                  <p class="svd-piece-title"></p>
+                  <div class="svd-matrix" style="transform: translate(0px, -15px)">
+                    <span class="svd-axis-word time" style="transform: translate(10, 0px)">time</span>
+                    <span class="svd-axis-word space" style="transform: rotate(-90deg) translate(-20px, -15px)">space</span>
+                    <span class="svd-bracket left" aria-hidden="true"></span>
+                    <div class="svd-row">a₁</div>
+                    <div class="svd-row">a₂</div>
+                    <div class="svd-row">a₃</div>
+                    <div class="svd-row">...</div>
+                    <div class="svd-row">aₙ</div>
+                    <span class="svd-bracket right" aria-hidden="true"></span>
+                  </div>
+                </article>
+                <div class="svd-op" style="transform: translate(-15px, 0px)">=</div>
+                <article class="svd-piece">
+                  <p class="svd-piece-title">Spatial Pattern</p>
+                  <div class="svd-u" style="transform: translate(0px, 8px)">
+                    <span class="svd-u-bracket left" aria-hidden="true"></span>
+                    <div class="svd-u-col primary mode1-target">u₁</div>
+                    <div class="svd-u-col mode2-target">u₂</div>
+                    <div class="svd-u-col">u₃</div>
+                    <div class="svd-u-col">...</div>
+                    <div class="svd-u-col">uₖ</div>
+                    <span class="svd-u-bracket right" aria-hidden="true"></span>
+                  </div>
+                  <p class="svd-piece-label">U</p>
+                </article>
+                <div class="svd-op" style="transform: translate(15px, 0px)">×</div>
+                <article class="svd-piece">
+                  <p class="svd-piece-title">Magnitude of variability</p>
+                  <div class="svd-d" style="transform: translate(0px, 8px)">
+                    <span class="svd-d-bracket left" aria-hidden="true"></span>
+                    <div class="svd-d-cell primary mode1-target">d₁</div>
+                    <div class="svd-d-cell mode2-target">d₂</div>
+                    <div class="svd-d-cell">d₃</div>
+                    <div class="svd-d-cell">...</div>
+                    <div class="svd-d-cell">dₖ</div>
+                    <span class="svd-d-bracket right" aria-hidden="true"></span>
+                  </div>
+                  <p class="svd-piece-label">D</p>
+                </article>
+                <div class="svd-op" style="transform: translate(-15px, 0px)">×</div>
+                <article class="svd-piece" style="transform: translate(-40px, 0px)">
+                  <p class="svd-piece-title">Temporal Evolution<br>Principal Component (PC)</p>
+                  <div class="svd-vt" style="transform: translate(0px, 0px)">
+                    <span class="svd-vt-bracket left" aria-hidden="true"></span>
+                    <div class="svd-vt-row primary mode1-target">v₁ᵀ</div>
+                    <div class="svd-vt-row mode2-target">v₂ᵀ</div>
+                    <div class="svd-vt-row">v₃ᵀ</div>
+                    <div class="svd-vt-row">...</div>
+                    <div class="svd-vt-row">vₖᵀ</div>
+                    <span class="svd-vt-bracket right" aria-hidden="true"></span>
+                  </div>
+                  <p class="svd-piece-label">V<sup>T</sup></p>
+                </article>
+              </div>
+
+              <div class="svd-bottom">
+                <div class="mode1-demo" aria-label="Mode 1 constructed from a fixed spatial pattern and a time-varying principal component">
+                  <div class="mode1-panel">
+                    <canvas class="mode1-canvas" id="svdMode1Canvas" width="120" height="120"></canvas>
+                    <p class="mode1-caption" id="svdModeCaption">Mode 1</p>
+                  </div>
+                  <div class="svd-small-op">=</div>
+                  <div class="mode1-panel">
+                    <canvas class="mode1-canvas" id="svdU1Canvas" width="120" height="120"></canvas>
+                    <p class="mode1-caption" id="svdPatternCaption">U1</p>
+                  </div>
+                  <div class="svd-small-op" id="svdDTerm">× d₁ ×</div>
+                  <div class="mode1-panel">
+                    <canvas class="mode1-wave" id="svdV1Canvas" width="320" height="240" aria-label="Animated principal component time series"></canvas>
+                    <p class="mode1-caption" id="svdWaveCaption">V1</p>
+                  </div>
+                </div>
+
+                <div class="matrix-review" aria-label="Matrix multiplication review">
+                  <div class="matrix-review-equation">
+                    <div class="mini-matrix result" id="miniResultMatrix" aria-label="Five by four result matrix">
+                    <span class="mini-cell result-fill row-0 red" data-row="0" data-col="0"></span>
+                    <span class="mini-cell result-fill row-0 orange" data-row="0" data-col="1"></span>
+                    <span class="mini-cell result-fill row-0 green" data-row="0" data-col="2"></span>
+                    <span class="mini-cell result-fill row-0 blue" data-row="0" data-col="3"></span>
+
+                    <span class="mini-cell result-fill row-1 red" data-row="1" data-col="0"></span>
+                    <span class="mini-cell result-fill row-1 orange" data-row="1" data-col="1"></span>
+                    <span class="mini-cell result-fill row-1 green" data-row="1" data-col="2"></span>
+                    <span class="mini-cell result-fill row-1 blue" data-row="1" data-col="3"></span>
+
+                    <span class="mini-cell result-fill row-2 red" data-row="2" data-col="0"></span>
+                    <span class="mini-cell result-fill row-2 orange" data-row="2" data-col="1"></span>
+                    <span class="mini-cell result-fill row-2 green" data-row="2" data-col="2"></span>
+                    <span class="mini-cell result-fill row-2 blue" data-row="2" data-col="3"></span>
+
+                    <span class="mini-cell result-fill row-3 red" data-row="3" data-col="0"></span>
+                    <span class="mini-cell result-fill row-3 orange" data-row="3" data-col="1"></span>
+                    <span class="mini-cell result-fill row-3 green" data-row="3" data-col="2"></span>
+                    <span class="mini-cell result-fill row-3 blue" data-row="3" data-col="3"></span>
+
+                    <span class="mini-cell result-fill row-4 red" data-row="4" data-col="0"></span>
+                    <span class="mini-cell result-fill row-4 orange" data-row="4" data-col="1"></span>
+                    <span class="mini-cell result-fill row-4 green" data-row="4" data-col="2"></span>
+                    <span class="mini-cell result-fill row-4 blue" data-row="4" data-col="3"></span>
+                  </div>
+
+                  <span class="svd-small-op">=</span>
+
+                  <div class="mini-matrix pattern" id="miniPatternMatrix" aria-label="Five by one spatial pattern matrix">
+                    <span class="mini-cell pattern-cell row-0" data-row="0"></span>
+                    <span class="mini-cell pattern-cell row-1" data-row="1"></span>
+                    <span class="mini-cell pattern-cell row-2" data-row="2"></span>
+                    <span class="mini-cell pattern-cell row-3" data-row="3"></span>
+                    <span class="mini-cell pattern-cell row-4" data-row="4"></span>
+                  </div>
+
+                  <span class="svd-small-op">×</span>
+
+                  <div class="mini-matrix time" id="miniTimeMatrix" aria-label="One by four temporal coefficients">
+                    <span class="mini-cell time-cell red" data-col="0"></span>
+                    <span class="mini-cell time-cell orange" data-col="1"></span>
+                    <span class="mini-cell time-cell green" data-col="2"></span>
+                    <span class="mini-cell time-cell blue" data-col="3"></span>
+                  </div>
+                  </div>
+                  <p class="matrix-review-caption" id="miniMatrixCaption" style="transform: translateY(10px);">Review matrix multiplication</p>
+                </div>
+              </div>
+            </div>
+              <span class="fragment svd-step-marker" aria-hidden="true"></span>
+              <span class="fragment svd-step-marker" aria-hidden="true"></span>
+              <span class="fragment svd-step-marker" aria-hidden="true"></span>
+          </div>
+        </section>
+
+        <section class="slide pca-together-page">
+          <header class="slide-kicker"></header>
+          <div class="slide-body content-layout">
+            <h2 class="slide-title">Put Everything Together</h2>
+            <p class="pca-math-link">
+              Interested in the <a href="https://staff.fnwi.uva.nl/r.vandenboomgaard/MachineLearning/LectureNotes/DimensionalityReduction/pca.html?utm_source=chatgpt.com" target="_blank" rel="noopener">Math behind PCA/EOF</a>？<br>
+            </p>
+            <div class="slide-content pca-together" style="transform: translate(0px, -70px) scale(0.9)">
+              <div class="pca-together-left">
+                <div class="pca-stack-row">
+                  <p class="pca-stack-label">Data</p>
+                  <canvas class="pca-together-field" id="pcaTogetherData" width="160" height="160" aria-label="Synthetic data field"></canvas>
+                </div>
+                <div class="pca-stack-row">
+                  <p class="pca-stack-label" style="transform: translate(0px, 40px) rotate(-90deg)">First 2 modes</p>
+                  <canvas class="pca-together-field" id="pcaTogetherFirstTwo" width="160" height="160" aria-label="First two modes combined"></canvas>
+                </div>
+                <div class="pca-stack-row">
+                  <p class="pca-stack-label">Error</p>
+                  <canvas class="pca-together-field" id="pcaTogetherError" width="160" height="160" aria-label="Noise and residual error"></canvas>
+                </div>
+              </div>
+
+              <div class="pca-together-bracket" aria-hidden="true">
+                <svg class="pca-plus-arrow" viewBox="0 0 175 44">
+                  <defs>
+                    <marker id="pca-plus-arrow-head" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto">
+                      <path d="M 0 0 L 10 5 L 0 10 z" fill="#1d419d"></path>
+                    </marker>
+                  </defs>
+                  <line x1="132" y1="22" x2="020" y2="22" marker-end="url(#pca-plus-arrow-head)"></line>
+                </svg>
+
+                <span class="pca-together-plus" style="transform: translate(0px, -5px)">+</span>
+              </div>
+
+              <div style="transform: translate(40px, -40px) scale(1.05)">
+                <div class="pca-together-right">
+                  <div class="pca-mode-equation">
+                    <div class="pca-mode-panel">
+                      <h3 class="pca-mode-title">Mode 1</h3>
+                      <canvas class="pca-together-pattern" id="pcaTogetherMode1" width="160" height="160" aria-label="Mode 1 reconstruction"></canvas>
+                    </div>
+                    <div class="pca-together-op">=</div>
+                    <div class="pca-mode-panel">
+                      <h3 class="pca-mode-title">U1</h3>
+                      <canvas class="pca-together-pattern" id="pcaTogetherU1" width="160" height="160" aria-label="Mode 1 spatial pattern"></canvas>
+                    </div>
+                    <div class="pca-together-d">x d<sub>1</sub> x</div>
+                    <div class="pca-mode-panel">
+                      <h3 class="pca-mode-title">V1 / PC1</h3>
+                      <canvas class="pca-together-wave" id="pcaTogetherPC1" width="240" height="160" aria-label="Mode 1 principal component"></canvas>
+                    </div>
+                  </div>
+
+                  <div class="pca-mode-equation">
+                    <div class="pca-mode-panel">
+                      <h3 class="pca-mode-title">Mode 2</h3>
+                      <canvas class="pca-together-pattern" id="pcaTogetherMode2" width="160" height="160" aria-label="Mode 2 reconstruction"></canvas>
+                    </div>
+                    <div class="pca-together-op">=</div>
+                    <div class="pca-mode-panel">
+                      <h3 class="pca-mode-title">U2</h3>
+                      <canvas class="pca-together-pattern" id="pcaTogetherU2" width="160" height="160" aria-label="Mode 2 spatial pattern"></canvas>
+                    </div>
+                    <div class="pca-together-d">x d<sub>2</sub> x</div>
+                    <div class="pca-mode-panel">
+                      <h3 class="pca-mode-title">V2 / PC2</h3>
+                      <canvas class="pca-together-wave" id="pcaTogetherPC2" width="240" height="160" aria-label="Mode 2 principal component"></canvas>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <p class="pca-together-caption">
+                <strong>PCA/EOF reveals the <span class="under">major patterns</span></strong> of data variability, by decomposing spatial-temporally
+                varying data into combinations of different modes of variability that each has a fixed pattern.
+              </p>
+            </div>
+          </div>
+        </section>
+
+        <section class="slide pca-characteristics-page">
+          <header class="slide-kicker"></header>
+          <div class="slide-body content-layout">
+            <h2 class="slide-title">Characteristics of PCA/EOF</h2>
+            <div class="slide-content pca-characteristics">
+              <p class="pca-characteristics-text pca-characteristic-lead">
+                (1) Individual columns of <strong>V</strong> are <strong>orthogonal</strong>.
+              </p>
+                <span class="pca-characteristics-red">Pearson's correlations between pairs of PCs is exactily zero when using all the time steps.</span>
+
+              <div class="pca-characteristics-plots" style="transform: translate(-10px, 20px) scale(1.15)">
+                <div class="pca-characteristics-panel">
+                  <h3 class="pca-characteristics-title">V1 / PC1</h3>
+                  <canvas class="pca-characteristics-wave" id="pcaCharPC1" width="320" height="255" aria-label="First principal component time series"></canvas>
+                </div>
+
+                <div class="pca-characteristics-panel">
+                  <h3 class="pca-characteristics-title">V2 / PC2</h3>
+                  <canvas class="pca-characteristics-wave" id="pcaCharPC2" width="320" height="255" aria-label="Second principal component time series"></canvas>
+                </div>
+
+                <div class="pca-characteristics-panel pca-characteristics-scatter-wrap">
+                  <h3 class="pca-characteristics-title">&nbsp;</h3>
+                  <canvas class="pca-characteristics-scatter" id="pcaCharScatter" width="320" height="255" aria-label="PC1 plotted against PC2"></canvas>
+                </div>
+              </div>
+              <span class="fragment pca-char-step-marker" aria-hidden="true"></span>
+            </div>
+          </div>
+        </section>
+
+        <section class="slide pca-variance-page">
+          <header class="slide-kicker"></header>
+          <div class="slide-body content-layout">
+            <h2 class="slide-title">Characteristics of PCA/EOF</h2>
+            <div class="slide-content pca-variance">
+              <p class="pca-variance-lead pca-characteristic-lead">
+                (2) D<sub>ii</sub> is ranked in a <span class="pca-variance-blue">descending order</span>.
+              </p>
+              <span class="pca-characteristic-subnote pca-characteristics-red">
+                The 1<sup>st</sup> mode always explains the most variance, and the 2<sup>nd</sup> mode the second most variance, and so on and so forth.</span>
+
+              <div style="transform:translate(0px,60px)">
+                <div class="pca-d-diagram" aria-label="Diagonal singular value matrix">
+                  <div class="svd-d">
+                    <span class="svd-d-bracket left" aria-hidden="true"></span>
+                    <div class="svd-d-cell">d₁</div>
+                    <div class="svd-d-cell">d₂</div>
+                    <div class="svd-d-cell">d₃</div>
+                    <div class="svd-d-cell">...</div>
+                    <div class="svd-d-cell">dₖ</div>
+                    <span class="svd-d-bracket right" aria-hidden="true"></span>
+                  </div>
+                  <p class="pca-d-label">D</p>
+                </div>
+              </div>
+
+              <div style="transform:translate(0px,40px)">
+                <div class="pca-fc-block">
+                  <p class="pca-fc-formula">
+                    FC(s) =
+                    <span style="display:inline-grid; grid-template-rows:auto auto; vertical-align:middle; gap:3px;">
+                      <span style="border-bottom:2px solid; padding:0 8px;">Σ<sup>s</sup><sub>i=1</sub> d<sub>i</sub><sup>2</sup></span>
+                      <span style="padding:0 8px;">Σ<sup>k</sup><sub>i=1</sub> d<sub>i</sub><sup>2</sup></span>
+                    </span>
+                  </p>
+                  <p class="pca-fc-text" style="transform: translate(40px, 0px)">
+                    Usually, the cut off is <br>
+                    <strong>50% - 90%</strong> depending <br>
+                    on your problem.
+                  </p>
+                </div>
+              </div>
+
+              <div style="transform:translate(0px,60px)">
+                <canvas class="pca-variance-chart" id="pcaExplainedVarianceChart" width="530" height="360" aria-label="Cumulative explained variance by number of PCA modes"></canvas>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="slide pca-sign-flip-page">
+          <header class="slide-kicker"></header>
+          <div class="slide-body content-layout">
+            <h2 class="slide-title">Characteristics of PCA/EOF</h2>
+            <div class="slide-content pca-sign-flip">
+              <p class="pca-sign-flip-lead pca-characteristic-lead">
+                (3) <b>U, V, and D are empirical from data rather than pre-defined.</b>
+              </p>
+              <span class="pca-characteristic-subnote pca-characteristics-red">
+                Different data will get different patterns and time series. Sometimes the same data can patterns with opposite signs.</span>
+              <div class="pca-sign-flip-equations">
+                <div class="pca-sign-flip-panel" style="grid-column: 1; grid-row: 1 / span 2;">
+                  <div style="transform: translate(0px, -20px)">
+                    <h3 class="pca-sign-flip-title" style="transform: translateY(-3px);">Mode 1</h3>
+                    <canvas class="pca-sign-flip-field" id="pcaSignModeTop" width="210" height="210" aria-label="Mode 1 reconstruction"></canvas>
+                  </div>
+                </div>
+                <div class="pca-sign-flip-equals" style="grid-column: 2; grid-row: 1 / span 2;">=</div>
+
+                <div class="pca-sign-flip-panel" style="grid-column: 3; grid-row: 1;">
+                  <h3 class="pca-sign-flip-title">U1</h3>
+                  <canvas class="pca-sign-flip-field" id="pcaSignUTop" width="210" height="210" aria-label="Positive U1 spatial pattern"></canvas>
+                </div>
+                <div class="pca-sign-flip-times" style="grid-column: 4; grid-row: 1;">x</div>
+                <div class="pca-sign-flip-d" style="grid-column: 5; grid-row: 1;">d<sub>1</sub></div>
+                <div class="pca-sign-flip-times" style="grid-column: 6; grid-row: 1;">x</div>
+                <div class="pca-sign-flip-panel" style="grid-column: 7; grid-row: 1;">
+                  <h3 class="pca-sign-flip-title">V1 / PC1</h3>
+                  <canvas class="pca-sign-flip-wave" id="pcaSignVTop" width="250" height="160" aria-label="Positive V1 principal component"></canvas>
+                </div>
+
+                <div class="pca-sign-flip-panel pca-sign-flip-bottom" style="grid-column: 3; grid-row: 2;">
+                  <h3 class="pca-sign-flip-title">-U1</h3>
+                  <canvas class="pca-sign-flip-field" id="pcaSignUBottom" width="210" height="210" aria-label="Negative U1 spatial pattern"></canvas>
+                </div>
+                <div class="pca-sign-flip-times pca-sign-flip-bottom" style="grid-column: 4; grid-row: 2;">x</div>
+                <div class="pca-sign-flip-d pca-sign-flip-bottom" style="grid-column: 5; grid-row: 2;">d<sub>1</sub></div>
+                <div class="pca-sign-flip-times pca-sign-flip-bottom" style="grid-column: 6; grid-row: 2;">x</div>
+                <div class="pca-sign-flip-panel pca-sign-flip-bottom" style="grid-column: 7; grid-row: 2;">
+                  <h3 class="pca-sign-flip-title">-V1 / -PC1</h3>
+                  <canvas class="pca-sign-flip-wave" id="pcaSignVBottom" width="250" height="160" aria-label="Negative V1 principal component"></canvas>
+                </div>
+              </div>
+
+              <p class="pca-sign-flip-note">
+                Sometimes, you will get a spatial pattern opposite to what you would expect, but as long as the sign of PC is also flipped, that is correct.
+              </p>
+            </div>
+          </div>
+        </section>
+
+        <section class="slide eof-weight-page">
+          <header class="slide-kicker"></header>
+          <div class="slide-body content-layout">
+            <h2 class="slide-title">Weight of data on long-lat grids before EOF analysis</h2>
+            <div class="slide-content eof-weight">
+              <img class="eof-weight-globe" src="../figures/eof_longlat_globe.png" alt="Globe" style="transform: translate(30px, -30px) scale(0.9)">
+
+              <div class="eof-weight-text" style="transform: translate(20px, -70px)">
+                <p class="eof-weight-formula">
+                  Area of a grid cell <b style="font-size:2em">∝</b> &Delta;lon x &Delta;lat x cos(lat)
+                </p>
+
+                <p style="font-weight:100">
+                  EOF analyses the variance of data. So the variance of data should be weighted by cos(lat) to ensure unit area has equal weight.
+                </p>
+
+                <p>
+                  <b style="font-weight:100">Essentially, this is to weigh data by the</b>
+                  <span class="eof-weight-emphasis eof-weight-red">square root of cosine latitude.</span>
+                </p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="slide eof-practical-page">
+          <header class="slide-kicker"></header>
+          <div class="slide-body content-layout">
+            <h2 class="slide-title">Other Practical Notes</h2>
+            <div class="slide-content eof-practical" style="transform: translate(0px, -40px)">
+              <div class="svd-decomposition" aria-label="SVD decomposition diagram">
+                <article class="svd-piece">
+                  <p class="svd-piece-title"></p>
+                  <div class="svd-matrix" style="transform: translate(0px, -15px)">
+                    <span class="svd-axis-word time" style="transform: translate(10, 0px)">time</span>
+                    <span class="svd-axis-word space" style="transform: rotate(-90deg) translate(-20px, -15px)">space</span>
+                    <span class="svd-bracket left" aria-hidden="true"></span>
+                    <div class="svd-row">a₁</div>
+                    <div class="svd-row">a₂</div>
+                    <div class="svd-row">a₃</div>
+                    <div class="svd-row">...</div>
+                    <div class="svd-row">aₙ</div>
+                    <span class="svd-bracket right" aria-hidden="true"></span>
+                  </div>
+                </article>
+                <div class="svd-op" style="transform: translate(-15px, 0px)">=</div>
+                <article class="svd-piece">
+                  <p class="svd-piece-title">Spatial Pattern</p>
+                  <div class="svd-u" style="transform: translate(0px, 8px)">
+                    <span class="svd-u-bracket left" aria-hidden="true"></span>
+                    <div class="svd-u-col">u₁</div>
+                    <div class="svd-u-col">u₂</div>
+                    <div class="svd-u-col">u₃</div>
+                    <div class="svd-u-col">...</div>
+                    <div class="svd-u-col">uₖ</div>
+                    <span class="svd-u-bracket right" aria-hidden="true"></span>
+                  </div>
+                  <p class="svd-piece-label">U</p>
+                </article>
+                <div class="svd-op" style="transform: translate(15px, 0px)">×</div>
+                <article class="svd-piece">
+                  <p class="svd-piece-title">Magnitude of variability</p>
+                  <div class="svd-d" style="transform: translate(0px, 8px)">
+                    <span class="svd-d-bracket left" aria-hidden="true"></span>
+                    <div class="svd-d-cell">d₁</div>
+                    <div class="svd-d-cell">d₂</div>
+                    <div class="svd-d-cell">d₃</div>
+                    <div class="svd-d-cell">...</div>
+                    <div class="svd-d-cell">dₖ</div>
+                    <span class="svd-d-bracket right" aria-hidden="true"></span>
+                  </div>
+                  <p class="svd-piece-label">D</p>
+                </article>
+                <div class="svd-op" style="transform: translate(-15px, 0px)">×</div>
+                <article class="svd-piece" style="transform: translate(-40px, 0px)">
+                  <p class="svd-piece-title">Temporal Evolution<br>Principal Component (PC)</p>
+                  <div class="svd-vt" style="transform: translate(0px, 0px)">
+                    <span class="svd-vt-bracket left" aria-hidden="true"></span>
+                    <div class="svd-vt-row">v₁ᵀ</div>
+                    <div class="svd-vt-row">v₂ᵀ</div>
+                    <div class="svd-vt-row">v₃ᵀ</div>
+                    <div class="svd-vt-row">...</div>
+                    <div class="svd-vt-row">vₖᵀ</div>
+                    <span class="svd-vt-bracket right" aria-hidden="true"></span>
+                  </div>
+                  <p class="svd-piece-label">V<sup>T</sup></p>
+                </article>
+              </div>
+
+              <p class="eof-practical-note missing eof-practical-step" style="transform: translate(0px, -10px)">
+                When data (<b>aₙ</b>) contain <strong>missing values</strong>, usually we replace them with <strong>zero</strong> after removing algorithmic mean, seasonal cycle, and/or long-term trend.
+              </p>
+
+              <p class="eof-practical-note regression eof-practical-step" style="transform: translate(0px, -90px)">
+                <span class="under">Practically</span>, we standardise v<sub>n</sub> as the time series, and perform a linear regression of data against the standardised v<sub>n</sub> at each location, and plot the regression slope as a map to get the pattern.
+              </p>
+
+              <div class="eof-practical-patterns eof-practical-step regression" aria-label="Pattern maps" style="transform: translate(500px, -30px)">
+                <div class="eof-practical-pattern">
+                  <span class="eof-practical-swatch pattern-1"></span>
+                  <span>pattern 1</span>
+                </div>
+                <div class="eof-practical-pattern">
+                  <span class="eof-practical-swatch pattern-2"></span>
+                  <span>pattern 2</span>
+                </div>
+                <div class="eof-practical-pattern">
+                  <span class="eof-practical-swatch pattern-3"></span>
+                  <span>pattern 3</span>
+                </div>
+                <p class="eof-practical-ellipsis">...</p>
+              </div>
+
+              <span class="fragment eof-practical-step-marker" aria-hidden="true"></span>
+              <span class="fragment eof-practical-step-marker" aria-hidden="true"></span>
+            </div>
+          </div>
+        </section>
+
+        <section class="slide slp-animation-page">
+          <header class="slide-kicker"></header>
+          <div class="slide-body content-layout">
+            <h2 class="slide-title">Sea-Level Pressure (SLP) over the Equatorial Pacific</h2>
+              <div class="slide-content slp-animation">
+                <div class="slp-video-crop">
+                  <canvas id="slpFrameCanvas" aria-label="Animated sea-level pressure over the Equatorial Pacific"></canvas>
+              </div>
+              <div class="slp-video-controls" aria-label="SLP animation controls">
+                <button class="slp-video-button" id="slpFramePlay" type="button">Pause</button>
+                <button class="slp-video-button" id="slpFrameRestart" type="button">Restart</button>
+                <input class="slp-frame-progress" id="slpFrameProgress" type="range" min="0" max="179" value="0" step="1" aria-label="Animation frame">
+                <label class="slp-speed-control">
+                  <span id="slpFrameDurationLabel">1000 ms / frame</span>
+                  <input class="slp-frame-duration" id="slpFrameDuration" type="range" min="100" max="3000" value="1000" step="50" aria-label="Milliseconds per frame">
+                </label>
+              </div>
+            </div>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <nav class="deck-controls" aria-label="Slide controls">
+      <button class="nav-button" id="prevSlide" type="button" aria-label="Previous slide">‹</button>
+      <div class="dot-rail" aria-label="Slide map"></div>
+      <button class="nav-button" id="skipSteps" type="button" aria-label="Reveal all steps on this slide">»</button>
+      <button class="nav-button" id="nextSlide" type="button" aria-label="Next slide">›</button>
+    </nav>
+    <div class="deck-status" aria-live="polite"></div>
+
+    <script src="../assets/js/deck.js"></script>
+    <script>
+      window.addEventListener("DOMContentLoaded", () => {
+        const canvases = {
+          data: document.getElementById("pcaDataCanvas"),
+          mode1: document.getElementById("pcaMode1Canvas"),
+          mode2: document.getElementById("pcaMode2Canvas"),
+          noise: document.getElementById("pcaNoiseCanvas"),
+        };
+        const playButton = document.getElementById("pcaPatternPlay");
+        const resetButton = document.getElementById("pcaPatternReset");
+        if (!canvases.data || !canvases.mode1 || !canvases.mode2 || !canvases.noise || !playButton || !resetButton) return;
+
+        const settings = {
+          gridSize: 40,
+          mode1Magnitude: 1.95,
+          mode1Speed: 0.55,
+          mode2Magnitude: 0.85,
+          mode2Speed: 1.10,
+          noiseMagnitude: 0.25,
+          noiseSpeed: 0.65,
+          colourLimit: 2,
+        };
+
+        const size = settings.gridSize;
+        const cell = canvases.data.width / size;
+        const contexts = Object.fromEntries(Object.entries(canvases).map(([key, canvas]) => [key, canvas.getContext("2d")]));
+        let running = true;
+        let startTime = performance.now();
+        let pauseTime = 0;
+
+        const hashNoise = (x, y, seed) => {
+          const value = Math.sin(x * 12.9898 + y * 78.233 + seed * 37.719) * 43758.5453;
+          return (value - Math.floor(value)) * 2 - 1;
+        };
+
+        const patternAt = (x, y, time) => {
+          const nx = (x / (size - 1)) * 2 - 1;
+          const ny = (y / (size - 1)) * 2 - 1;
+          const radius2 = nx * nx + ny * ny;
+          const pc1 = Math.sin(time * settings.mode1Speed);
+          const pc2 = Math.sin(time * settings.mode2Speed);
+          const mode1Spatial = -ny;
+          const sigma = 0.45;
+          const mode2Spatial = 2 * Math.exp(-radius2 / (2 * sigma * sigma));
+          const noise = hashNoise(x, y, Math.floor(time * settings.noiseSpeed * 16)) * settings.noiseMagnitude;
+          const mode1 = settings.mode1Magnitude * pc1 * mode1Spatial;
+          const mode2 = settings.mode2Magnitude * pc2 * mode2Spatial;
+          return { data: mode1 + mode2 + noise, mode1, mode2, noise };
+        };
+
+        const colourFor = (value) => {
+          const scaled = Math.max(-1, Math.min(1, value / settings.colourLimit));
+          if (scaled >= 0) {
+            const light = 255 - Math.round(scaled * 120);
+            return `rgb(255, ${light}, ${light})`;
+          }
+          const light = 255 - Math.round(Math.abs(scaled) * 120);
+          return `rgb(${light}, ${light}, 255)`;
+        };
+
+        const drawField = (context, field, time) => {
+          context.clearRect(0, 0, context.canvas.width, context.canvas.height);
+          for (let y = 0; y < size; y += 1) {
+            for (let x = 0; x < size; x += 1) {
+              context.fillStyle = colourFor(patternAt(x, y, time)[field]);
+              context.fillRect(x * cell, y * cell, cell + 0.4, cell + 0.4);
+            }
+          }
+        };
+
+        const draw = (now) => {
+          if (running) {
+            const time = (now - startTime) / 1000;
+            drawField(contexts.data, "data", time);
+            drawField(contexts.mode1, "mode1", time);
+            drawField(contexts.mode2, "mode2", time);
+            drawField(contexts.noise, "noise", time);
+          }
+          requestAnimationFrame(draw);
+        };
+
+        playButton.addEventListener("click", () => {
+          running = !running;
+          if (running) {
+            startTime += performance.now() - pauseTime;
+            playButton.textContent = "Pause";
+          } else {
+            pauseTime = performance.now();
+            playButton.textContent = "Play";
+          }
+        });
+
+        resetButton.addEventListener("click", () => {
+          startTime = performance.now();
+          pauseTime = 0;
+          if (!running) {
+            running = true;
+            playButton.textContent = "Pause";
+          }
+        });
+
+        requestAnimationFrame(draw);
+      });
+    </script>
+    <script>
+      window.addEventListener("DOMContentLoaded", () => {
+        const modeCanvas = document.getElementById("svdMode1Canvas");
+        const uCanvas = document.getElementById("svdU1Canvas");
+        const vCanvas = document.getElementById("svdV1Canvas");
+        if (!modeCanvas || !uCanvas || !vCanvas) return;
+
+        const settings = {
+          gridSize: 42,
+          mode1Magnitude: 1.25,
+          mode1Speed: 0.55,
+          mode2Magnitude: 0.85,
+          mode2Speed: 1.10,
+          colourLimit: 1.25,
+        };
+        const svdPage = modeCanvas.closest(".svd-page");
+        const modeCaption = document.getElementById("svdModeCaption");
+        const patternCaption = document.getElementById("svdPatternCaption");
+        const waveCaption = document.getElementById("svdWaveCaption");
+        const dTerm = document.getElementById("svdDTerm");
+
+        const setupHiDpiCanvas = (canvas) => {
+          const rect = canvas.getBoundingClientRect();
+          const ratio = window.devicePixelRatio || 1;
+          canvas.width = Math.round(rect.width * ratio);
+          canvas.height = Math.round(rect.height * ratio);
+          const ctx = canvas.getContext("2d");
+          ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
+          return { ctx, width: rect.width, height: rect.height };
+        };
+
+        const colourFor = (value) => {
+          const scaled = Math.max(-1, Math.min(1, value / settings.colourLimit));
+          if (scaled >= 0) {
+            const light = 255 - Math.round(scaled * 120);
+            return `rgb(255, ${light}, ${light})`;
+          }
+          const light = 255 - Math.round(Math.abs(scaled) * 120);
+          return `rgb(${light}, ${light}, 255)`;
+        };
+
+        const spatialValue = (x, y, mode) => {
+          const nx = (x / (settings.gridSize - 1)) * 2 - 1;
+          const ny = (y / (settings.gridSize - 1)) * 2 - 1;
+          if (mode === 2) {
+            const radius2 = nx * nx + ny * ny;
+            const sigma = 0.45;
+            return 2 * Math.exp(-radius2 / (2 * sigma * sigma));
+          }
+          return -ny;
+        };
+
+        const drawPattern = (canvas, amplitude, mode) => {
+          const { ctx, width, height } = setupHiDpiCanvas(canvas);
+          const size = settings.gridSize;
+          const cell = width / size;
+          ctx.clearRect(0, 0, width, height);
+          for (let y = 0; y < size; y += 1) {
+            for (let x = 0; x < size; x += 1) {
+              ctx.fillStyle = colourFor(amplitude * spatialValue(x, y, mode));
+              ctx.fillRect(x * cell, y * cell, cell + 0.4, cell + 0.4);
+            }
+          }
+        };
+
+        const drawWave = (canvas, phase, mode) => {
+          const { ctx, width, height } = setupHiDpiCanvas(canvas);
+          const margin = { top: 12, right: 0, bottom: 10, left: 0 };
+          const plotWidth = width - margin.left - margin.right;
+          const plotHeight = height - margin.top - margin.bottom;
+          const xScale = (x) => margin.left + x * plotWidth;
+          const yScale = (y) => margin.top + plotHeight / 2 - y * plotHeight * 0.42;
+          const cycles = mode === 2 ? 6 : 3;
+          const fullPhase = Math.PI * 2 * cycles;
+          ctx.clearRect(0, 0, width, height);
+          ctx.strokeStyle = "rgba(25, 62, 135, 0.22)";
+          ctx.lineWidth = 1;
+          ctx.beginPath();
+          ctx.moveTo(margin.left, yScale(0));
+          ctx.lineTo(width - margin.right, yScale(0));
+          ctx.stroke();
+          ctx.strokeStyle = "#6caad4";
+          ctx.lineWidth = 1.7;
+          ctx.beginPath();
+          for (let i = 0; i <= 720; i += 1) {
+            const x = i / 720;
+            const y = Math.sin(x * fullPhase);
+            if (i === 0) ctx.moveTo(xScale(x), yScale(y));
+            else ctx.lineTo(xScale(x), yScale(y));
+          }
+          ctx.stroke();
+          const markerPhase = ((phase % fullPhase) + fullPhase) % fullPhase;
+          const markerX = markerPhase / fullPhase;
+          const markerY = Math.sin(markerPhase);
+          ctx.fillStyle = "#ef2b16";
+          ctx.beginPath();
+          ctx.arc(xScale(markerX), yScale(markerY), 4.2, 0, Math.PI * 2);
+          ctx.fill();
+        };
+
+        const draw = (now) => {
+          const time = now / 1000;
+          const mode = Number(svdPage?.dataset.step || 0) >= 3 ? 2 : 1;
+          const speed = mode === 2 ? settings.mode2Speed : settings.mode1Speed;
+          const magnitude = mode === 2 ? settings.mode2Magnitude : settings.mode1Magnitude;
+          const phase = time * speed;
+          const pc = Math.sin(phase);
+          drawPattern(uCanvas, magnitude, mode);
+          drawPattern(modeCanvas, magnitude * pc, mode);
+          drawWave(vCanvas, phase, mode);
+          if (modeCaption) modeCaption.textContent = `Mode ${mode}`;
+          if (patternCaption) patternCaption.textContent = `U${mode}`;
+          if (waveCaption) waveCaption.textContent = `V${mode}`;
+          if (dTerm) dTerm.innerHTML = `× d${mode === 1 ? "₁" : "₂"} ×`;
+          requestAnimationFrame(draw);
+        };
+
+        const resultCells = Array.from(document.querySelectorAll("#miniResultMatrix .mini-cell"));
+        const patternCells = Array.from(document.querySelectorAll("#miniPatternMatrix .mini-cell"));
+        const timeCells = Array.from(document.querySelectorAll("#miniTimeMatrix .mini-cell"));
+        const caption = document.getElementById("miniMatrixCaption");
+        const clear = () => {
+          [...resultCells, ...patternCells, ...timeCells].forEach((cell) => cell.classList.remove("hovered", "linked"));
+          if (caption) caption.textContent = "Matrix multiplication recap";
+        };
+        resultCells.forEach((cell) => {
+          cell.addEventListener("pointerenter", () => {
+            clear();
+            const { row, col } = cell.dataset;
+            cell.classList.add("hovered");
+            patternCells.find((target) => target.dataset.row === row)?.classList.add("linked");
+            timeCells.find((target) => target.dataset.col === col)?.classList.add("linked");
+            if (caption) caption.textContent = `A(${Number(row) + 1}, ${Number(col) + 1}) = U1(${Number(row) + 1}) × V1(${Number(col) + 1})`;
+          });
+        });
+        document.getElementById("miniResultMatrix")?.addEventListener("pointerleave", clear);
+
+        requestAnimationFrame(draw);
+      });
+    </script>
+    <script>
+      window.addEventListener("DOMContentLoaded", () => {
+        const canvases = {
+          data: document.getElementById("pcaTogetherData"),
+          firstTwo: document.getElementById("pcaTogetherFirstTwo"),
+          error: document.getElementById("pcaTogetherError"),
+          mode1: document.getElementById("pcaTogetherMode1"),
+          mode2: document.getElementById("pcaTogetherMode2"),
+          u1: document.getElementById("pcaTogetherU1"),
+          u2: document.getElementById("pcaTogetherU2"),
+          pc1: document.getElementById("pcaTogetherPC1"),
+          pc2: document.getElementById("pcaTogetherPC2"),
+        };
+        if (Object.values(canvases).some((canvas) => !canvas)) return;
+
+        const settings = {
+          gridSize: 42,
+          mode1Magnitude: 1.95,
+          mode1Speed: 0.55,
+          mode2Magnitude: 0.85,
+          mode2Speed: 1.10,
+          noiseMagnitude: 0.25,
+          noiseSpeed: 0.65,
+          colourLimit: 2.15,
+        };
+
+        const setupHiDpiCanvas = (canvas) => {
+          const rect = canvas.getBoundingClientRect();
+          const ratio = window.devicePixelRatio || 1;
+          canvas.width = Math.round(rect.width * ratio);
+          canvas.height = Math.round(rect.height * ratio);
+          const ctx = canvas.getContext("2d");
+          ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
+          return { ctx, width: rect.width, height: rect.height };
+        };
+
+        const colourFor = (value) => {
+          const scaled = Math.max(-1, Math.min(1, value / settings.colourLimit));
+          if (scaled >= 0) {
+            const light = 255 - Math.round(scaled * 124);
+            return `rgb(255, ${light}, ${light})`;
+          }
+          const light = 255 - Math.round(Math.abs(scaled) * 124);
+          return `rgb(${light}, ${light}, 255)`;
+        };
+
+        const hashNoise = (x, y, seed) => {
+          const value = Math.sin(x * 12.9898 + y * 78.233 + seed * 37.719) * 43758.5453;
+          return (value - Math.floor(value)) * 2 - 1;
+        };
+
+        const spatialValue = (x, y, mode) => {
+          const nx = (x / (settings.gridSize - 1)) * 2 - 1;
+          const ny = (y / (settings.gridSize - 1)) * 2 - 1;
+          if (mode === 2) {
+            const radius2 = nx * nx + ny * ny;
+            const sigma = 0.45;
+            return 2 * Math.exp(-radius2 / (2 * sigma * sigma));
+          }
+          return -ny;
+        };
+
+        const componentsAt = (x, y, time) => {
+          const pc1 = Math.sin(time * settings.mode1Speed);
+          const pc2 = Math.sin(time * settings.mode2Speed);
+          const mode1 = settings.mode1Magnitude * pc1 * spatialValue(x, y, 1);
+          const mode2 = settings.mode2Magnitude * pc2 * spatialValue(x, y, 2);
+          const noise = settings.noiseMagnitude * hashNoise(x, y, Math.floor(time * settings.noiseSpeed * 16));
+          return { data: mode1 + mode2 + noise, firstTwo: mode1 + mode2, error: noise, mode1, mode2 };
+        };
+
+        const drawField = (canvas, field, time) => {
+          const { ctx, width, height } = setupHiDpiCanvas(canvas);
+          const size = settings.gridSize;
+          const cell = width / size;
+          ctx.clearRect(0, 0, width, height);
+          for (let y = 0; y < size; y += 1) {
+            for (let x = 0; x < size; x += 1) {
+              ctx.fillStyle = colourFor(componentsAt(x, y, time)[field]);
+              ctx.fillRect(x * cell, y * cell, cell + 0.4, cell + 0.4);
+            }
+          }
+        };
+
+        const drawSpatialPattern = (canvas, mode, sign = 1) => {
+          const { ctx, width, height } = setupHiDpiCanvas(canvas);
+          const size = settings.gridSize;
+          const cell = width / size;
+          ctx.clearRect(0, 0, width, height);
+          for (let y = 0; y < size; y += 1) {
+            for (let x = 0; x < size; x += 1) {
+              const magnitude = mode === 1 ? settings.mode1Magnitude : settings.mode2Magnitude;
+              ctx.fillStyle = colourFor(sign * magnitude * spatialValue(x, y, mode));
+              ctx.fillRect(x * cell, y * cell, cell + 0.4, cell + 0.4);
+            }
+          }
+        };
+
+        const drawWave = (canvas, phase, cycles) => {
+          const { ctx, width, height } = setupHiDpiCanvas(canvas);
+          const margin = { top: 10, right: 8, bottom: 20, left: 8 };
+          const plotWidth = width - margin.left - margin.right;
+          const plotHeight = height - margin.top - margin.bottom;
+          const fullPhase = Math.PI * 2 * cycles;
+          const xScale = (x) => margin.left + x * plotWidth;
+          const yScale = (y) => margin.top + plotHeight / 2 - y * plotHeight * 0.42;
+          ctx.clearRect(0, 0, width, height);
+          ctx.strokeStyle = "rgba(0, 0, 0, 0.55)";
+          ctx.lineWidth = 1;
+          ctx.setLineDash([2, 3]);
+          ctx.beginPath();
+          ctx.moveTo(margin.left, yScale(0));
+          ctx.lineTo(width - margin.right, yScale(0));
+          ctx.stroke();
+          ctx.setLineDash([]);
+          ctx.strokeStyle = "#6caad4";
+          ctx.lineWidth = 1.6;
+          ctx.beginPath();
+          for (let i = 0; i <= 900; i += 1) {
+            const x = i / 900;
+            const y = Math.sin(x * fullPhase);
+            if (i === 0) ctx.moveTo(xScale(x), yScale(y));
+            else ctx.lineTo(xScale(x), yScale(y));
+          }
+          ctx.stroke();
+          const markerPhase = ((phase % fullPhase) + fullPhase) % fullPhase;
+          const markerX = markerPhase / fullPhase;
+          const markerY = Math.sin(markerPhase);
+          ctx.fillStyle = "#ff0044";
+          ctx.beginPath();
+          ctx.arc(xScale(markerX), yScale(markerY), 4.4, 0, Math.PI * 2);
+          ctx.fill();
+        };
+
+        const draw = (now) => {
+          const time = now / 1000;
+          const phase1 = time * settings.mode1Speed;
+          const phase2 = time * settings.mode2Speed;
+          drawField(canvases.data, "data", time);
+          drawField(canvases.firstTwo, "firstTwo", time);
+          drawField(canvases.error, "error", time);
+          drawField(canvases.mode1, "mode1", time);
+          drawField(canvases.mode2, "mode2", time);
+          drawSpatialPattern(canvases.u1, 1, 1);
+          drawSpatialPattern(canvases.u2, 2, 1);
+          drawWave(canvases.pc1, phase1, 3);
+          drawWave(canvases.pc2, phase2, 6);
+          requestAnimationFrame(draw);
+        };
+
+        requestAnimationFrame(draw);
+      });
+    </script>
+    <script>
+      window.addEventListener("DOMContentLoaded", () => {
+        const pc1Canvas = document.getElementById("pcaCharPC1");
+        const pc2Canvas = document.getElementById("pcaCharPC2");
+        const scatterCanvas = document.getElementById("pcaCharScatter");
+        if (!pc1Canvas || !pc2Canvas || !scatterCanvas) return;
+
+        const settings = {
+          mode1Speed: 0.55,
+          mode2Speed: 1.10,
+          phase2Offset: 0,
+          markerColour: "#ff0044",
+          lineColour: "#1f77b4",
+        };
+
+        const setupHiDpiCanvas = (canvas) => {
+          const rect = canvas.getBoundingClientRect();
+          const ratio = window.devicePixelRatio || 1;
+          canvas.width = Math.round(rect.width * ratio);
+          canvas.height = Math.round(rect.height * ratio);
+          const ctx = canvas.getContext("2d");
+          ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
+          return { ctx, width: rect.width, height: rect.height };
+        };
+
+        const drawAxes = (ctx, width, height, margin, yMin, yMax, xLabel, yLabel) => {
+          const plotWidth = width - margin.left - margin.right;
+          const plotHeight = height - margin.top - margin.bottom;
+          const xScale = (x) => margin.left + x * plotWidth;
+          const yScale = (y) => margin.top + (yMax - y) / (yMax - yMin) * plotHeight;
+          ctx.strokeStyle = "rgba(0, 0, 0, 0.35)";
+          ctx.lineWidth = 1;
+          ctx.beginPath();
+          ctx.moveTo(margin.left, margin.top);
+          ctx.lineTo(margin.left, height - margin.bottom);
+          ctx.lineTo(width - margin.right, height - margin.bottom);
+          ctx.stroke();
+          ctx.fillStyle = "#000000";
+          ctx.font = "13px Inter, sans-serif";
+          ctx.textAlign = "center";
+          ctx.fillText(xLabel, margin.left + plotWidth / 2, height - 6);
+          ctx.save();
+          ctx.translate(14, margin.top + plotHeight / 2);
+          ctx.rotate(-Math.PI / 2);
+          ctx.fillText(yLabel, 0, 0);
+          ctx.restore();
+          return { xScale, yScale };
+        };
+
+        const drawWave = (canvas, phase, cycles) => {
+          const { ctx, width, height } = setupHiDpiCanvas(canvas);
+          const margin = { top: 14, right: 12, bottom: 30, left: 38 };
+          const { xScale, yScale } = drawAxes(ctx, width, height, margin, -1.55, 1.55, "", "");
+          const fullPhase = Math.PI * 2 * cycles;
+          ctx.strokeStyle = settings.lineColour;
+          ctx.lineWidth = 1.6;
+          ctx.beginPath();
+          for (let i = 0; i <= 900; i += 1) {
+            const x = i / 900;
+            const y = Math.sin(x * fullPhase);
+            if (i === 0) ctx.moveTo(xScale(x), yScale(y));
+            else ctx.lineTo(xScale(x), yScale(y));
+          }
+          ctx.stroke();
+          const markerPhase = ((phase % fullPhase) + fullPhase) % fullPhase;
+          const markerX = markerPhase / fullPhase;
+          const markerY = Math.sin(markerPhase);
+          ctx.fillStyle = settings.markerColour;
+          ctx.beginPath();
+          ctx.arc(xScale(markerX), yScale(markerY), 6.2, 0, Math.PI * 2);
+          ctx.fill();
+        };
+
+        const drawScatter = (canvas, phase1, phase2) => {
+          const { ctx, width, height } = setupHiDpiCanvas(canvas);
+          const margin = { top: 12, right: 14, bottom: 34, left: 46 };
+          const { xScale, yScale } = drawAxes(ctx, width, height, margin, -1.25, 1.25, "V2 / PC2", "V1 / PC1");
+          ctx.strokeStyle = settings.lineColour;
+          ctx.lineWidth = 2.2;
+          ctx.beginPath();
+          for (let i = 0; i <= 720; i += 1) {
+            const t = i / 720;
+            const x = Math.sin(t * Math.PI * 12 + settings.phase2Offset);
+            const y = Math.sin(t * Math.PI * 6);
+            if (i === 0) ctx.moveTo(xScale((x + 1.25) / 2.5), yScale(y));
+            else ctx.lineTo(xScale((x + 1.25) / 2.5), yScale(y));
+          }
+          ctx.stroke();
+          const currentX = Math.sin(phase2);
+          const currentY = Math.sin(phase1);
+          ctx.fillStyle = settings.markerColour;
+          ctx.beginPath();
+          ctx.arc(xScale((currentX + 1.25) / 2.5), yScale(currentY), 5.2, 0, Math.PI * 2);
+          ctx.fill();
+        };
+
+        const draw = (now) => {
+          const time = now / 1000;
+          const phase1 = time * settings.mode1Speed;
+          const phase2 = time * settings.mode2Speed + settings.phase2Offset;
+          drawWave(pc1Canvas, phase1, 3);
+          drawWave(pc2Canvas, phase2, 6);
+          drawScatter(scatterCanvas, phase1, phase2);
+          requestAnimationFrame(draw);
+        };
+
+        requestAnimationFrame(draw);
+      });
+    </script>
+    <script>
+      window.addEventListener("DOMContentLoaded", () => {
+        const canvas = document.getElementById("pcaExplainedVarianceChart");
+        if (!canvas) return;
+
+        const settings = {
+          gridSize: 42,
+          nTime: 720,
+          mode1Magnitude: 1.95,
+          mode1Speed: 0.55,
+          mode2Magnitude: 0.85,
+          mode2Speed: 1.10,
+          noiseMagnitude: 0.25,
+          noiseSpeed: 0.65,
+        };
+
+        const setupHiDpiCanvas = (target) => {
+          const rect = target.getBoundingClientRect();
+          const ratio = window.devicePixelRatio || 1;
+          target.width = Math.round(rect.width * ratio);
+          target.height = Math.round(rect.height * ratio);
+          const ctx = target.getContext("2d");
+          ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
+          return { ctx, width: rect.width, height: rect.height };
+        };
+
+        const spatialValue = (x, y, mode) => {
+          const nx = (x / (settings.gridSize - 1)) * 2 - 1;
+          const ny = (y / (settings.gridSize - 1)) * 2 - 1;
+          if (mode === 2) {
+            const radius2 = nx * nx + ny * ny;
+            const sigma = 0.45;
+            return 2 * Math.exp(-radius2 / (2 * sigma * sigma));
+          }
+          return -ny;
+        };
+
+        const hashNoise = (x, y, seed) => {
+          const value = Math.sin(x * 12.9898 + y * 78.233 + seed * 37.719) * 43758.5453;
+          return (value - Math.floor(value)) * 2 - 1;
+        };
+
+        const calculateEnergyFractions = () => {
+          let mode1Energy = 0;
+          let mode2Energy = 0;
+          let noiseEnergy = 0;
+          for (let ti = 0; ti < settings.nTime; ti += 1) {
+            const time = ti / 30;
+            const pc1 = Math.sin(time * settings.mode1Speed);
+            const pc2 = Math.sin(time * settings.mode2Speed);
+            const noiseSeed = Math.floor(time * settings.noiseSpeed * 16);
+            for (let y = 0; y < settings.gridSize; y += 1) {
+              for (let x = 0; x < settings.gridSize; x += 1) {
+                const mode1 = settings.mode1Magnitude * pc1 * spatialValue(x, y, 1);
+                const mode2 = settings.mode2Magnitude * pc2 * spatialValue(x, y, 2);
+                const noise = settings.noiseMagnitude * hashNoise(x, y, noiseSeed);
+                mode1Energy += mode1 * mode1;
+                mode2Energy += mode2 * mode2;
+                noiseEnergy += noise * noise;
+              }
+            }
+          }
+
+          const noisePieces = [0.34, 0.22, 0.15, 0.10, 0.08, 0.05, 0.04, 0.02].map((weight) => noiseEnergy * weight);
+          const energies = [mode1Energy, mode2Energy, ...noisePieces].sort((a, b) => b - a);
+          const total = energies.reduce((sum, value) => sum + value, 0);
+          let cumulative = 0;
+          return energies.map((value) => {
+            cumulative += value;
+            return cumulative / total;
+          });
+        };
+
+        const drawChart = () => {
+          const fractions = calculateEnergyFractions();
+          const { ctx, width, height } = setupHiDpiCanvas(canvas);
+          const margin = { top: 16, right: 18, bottom: 50, left: 70 };
+          const plotWidth = width - margin.left - margin.right;
+          const plotHeight = height - margin.top - margin.bottom;
+          const xMin = 0.5;
+          const xMax = 10.5;
+          const xScale = (value) => margin.left + ((value - xMin) / (xMax - xMin)) * plotWidth;
+          const yScale = (value) => margin.top + (1 - value) * plotHeight;
+
+          ctx.clearRect(0, 0, width, height);
+          ctx.strokeStyle = "rgba(25, 62, 135, 0.22)";
+          ctx.lineWidth = 1;
+          ctx.font = "15px Inter, sans-serif";
+          ctx.fillStyle = "#1d419d;";
+          ctx.textAlign = "right";
+          ctx.textBaseline = "middle";
+          for (let tick = 0; tick <= 5; tick += 1) {
+            const value = tick / 5;
+            const y = yScale(value);
+            ctx.beginPath();
+            ctx.moveTo(margin.left, y);
+            ctx.lineTo(width - margin.right, y);
+            ctx.stroke();
+            ctx.fillText(value.toFixed(1), margin.left - 8, y);
+          }
+
+          ctx.strokeStyle = "#1d419d;";
+          ctx.beginPath();
+          ctx.moveTo(margin.left, margin.top);
+          ctx.lineTo(margin.left, height - margin.bottom);
+          ctx.lineTo(width - margin.right, height - margin.bottom);
+          ctx.stroke();
+
+          const barWidth = plotWidth / (xMax - xMin) * 0.72;
+          ctx.fillStyle = "#2a7fb8";
+          fractions.forEach((fraction, index) => {
+            const center = xScale(index + 1);
+            const barTop = yScale(fraction);
+            ctx.fillRect(center - barWidth / 2, barTop, barWidth, height - margin.bottom - barTop);
+          });
+
+          ctx.strokeStyle = "#ff0055";
+          ctx.lineWidth = 6;
+          ctx.setLineDash([9, 7]);
+          ctx.beginPath();
+          ctx.moveTo(margin.left, yScale(0.9));
+          ctx.lineTo(width - margin.right, yScale(0.9));
+          ctx.stroke();
+          ctx.setLineDash([]);
+
+          ctx.fillStyle = "#1d419d;";
+          ctx.textAlign = "center";
+          ctx.textBaseline = "top";
+          for (let i = 0; i < fractions.length; i += 1) {
+            if ((i + 1) % 2 === 0 || i === 0) ctx.fillText(String(i + 1), xScale(i + 1), height - margin.bottom + 10);
+          }
+          ctx.font = "16px Inter, sans-serif";
+          ctx.fillText("Number of modes", margin.left + plotWidth / 2, height - 16);
+          ctx.save();
+          ctx.translate(18, margin.top + plotHeight / 2);
+          ctx.rotate(-Math.PI / 2);
+          ctx.fillText("Explained fraction of variance", 0, 0);
+          ctx.restore();
+        };
+
+        drawChart();
+        window.addEventListener("resize", drawChart);
+      });
+
+      window.addEventListener("DOMContentLoaded", () => {
+        const canvases = {
+          modeTop: document.getElementById("pcaSignModeTop"),
+          uTop: document.getElementById("pcaSignUTop"),
+          vTop: document.getElementById("pcaSignVTop"),
+          uBottom: document.getElementById("pcaSignUBottom"),
+          vBottom: document.getElementById("pcaSignVBottom"),
+        };
+        if (Object.values(canvases).some((canvas) => !canvas)) return;
+
+        const settings = {
+          gridSize: 28,
+          modeSpeed: 0.85,
+          markerColour: "#ff0044",
+          lineColour: "#6caad4",
+        };
+
+        const setupHiDpiCanvas = (canvas) => {
+          const rect = canvas.getBoundingClientRect();
+          const ratio = window.devicePixelRatio || 1;
+          canvas.width = Math.round(rect.width * ratio);
+          canvas.height = Math.round(rect.height * ratio);
+          const ctx = canvas.getContext("2d");
+          ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
+          return { ctx, width: rect.width, height: rect.height };
+        };
+
+        const spatialValue = (x, y) => {
+          const cy = (y + 0.5) / settings.gridSize - 0.5;
+          return Math.max(-1, Math.min(1, -cy * 2.2));
+        };
+
+        const colourFor = (value) => {
+          const clamped = Math.max(-1, Math.min(1, value));
+          const light = Math.round(245 - Math.abs(clamped) * 95);
+          if (clamped >= 0) return `rgb(255, ${light}, ${light})`;
+          return `rgb(${light}, ${light}, 255)`;
+        };
+
+        const drawField = (canvas, valueAt) => {
+          const { ctx, width, height } = setupHiDpiCanvas(canvas);
+          const cell = width / settings.gridSize;
+          ctx.clearRect(0, 0, width, height);
+          for (let y = 0; y < settings.gridSize; y += 1) {
+            for (let x = 0; x < settings.gridSize; x += 1) {
+              ctx.fillStyle = colourFor(valueAt(x, y));
+              ctx.fillRect(x * cell, y * cell, cell + 0.4, cell + 0.4);
+            }
+          }
+        };
+
+        const drawWave = (canvas, phase, sign) => {
+          const { ctx, width, height } = setupHiDpiCanvas(canvas);
+          const margin = { top: 8, right: 8, bottom: 20, left: 8 };
+          const plotWidth = width - margin.left - margin.right;
+          const plotHeight = height - margin.top - margin.bottom;
+          const fullPhase = Math.PI * 6;
+          const xScale = (x) => margin.left + x * plotWidth;
+          const yScale = (y) => margin.top + plotHeight / 2 - y * plotHeight * 0.43;
+          ctx.clearRect(0, 0, width, height);
+          ctx.strokeStyle = "rgba(0, 0, 0, 0.55)";
+          ctx.lineWidth = 1;
+          ctx.setLineDash([2, 3]);
+          ctx.beginPath();
+          ctx.moveTo(margin.left, yScale(0));
+          ctx.lineTo(width - margin.right, yScale(0));
+          ctx.stroke();
+          ctx.setLineDash([]);
+          ctx.strokeStyle = settings.lineColour;
+          ctx.lineWidth = 1.6;
+          ctx.beginPath();
+          for (let i = 0; i <= 900; i += 1) {
+            const x = i / 900;
+            const y = sign * Math.sin(x * fullPhase);
+            if (i === 0) ctx.moveTo(xScale(x), yScale(y));
+            else ctx.lineTo(xScale(x), yScale(y));
+          }
+          ctx.stroke();
+          const markerPhase = ((phase % fullPhase) + fullPhase) % fullPhase;
+          const markerX = markerPhase / fullPhase;
+          const markerY = sign * Math.sin(markerPhase);
+          ctx.fillStyle = settings.markerColour;
+          ctx.beginPath();
+          ctx.arc(xScale(markerX), yScale(markerY), 5.2, 0, Math.PI * 2);
+          ctx.fill();
+        };
+
+        const draw = (now) => {
+          const phase = now / 1000 * settings.modeSpeed;
+          const pc = Math.sin(phase);
+          drawField(canvases.modeTop, (x, y) => spatialValue(x, y) * pc);
+          drawField(canvases.uTop, (x, y) => spatialValue(x, y));
+          drawField(canvases.uBottom, (x, y) => -spatialValue(x, y));
+          drawWave(canvases.vTop, phase, 1);
+          drawWave(canvases.vBottom, phase, -1);
+          requestAnimationFrame(draw);
+        };
+
+        requestAnimationFrame(draw);
+      });
+    </script>
+    <script>
+      window.addEventListener("DOMContentLoaded", () => {
+        const canvas = document.getElementById("slpFrameCanvas");
+        const playButton = document.getElementById("slpFramePlay");
+        const restartButton = document.getElementById("slpFrameRestart");
+        const progress = document.getElementById("slpFrameProgress");
+        const durationSlider = document.getElementById("slpFrameDuration");
+        const durationLabel = document.getElementById("slpFrameDurationLabel");
+        if (!canvas || !playButton || !restartButton || !progress || !durationSlider || !durationLabel) return;
+
+        const frameCount = 180;
+        const frameFolder = "../figures/EOF_SLP_Demo_frames_jpg";
+        const frames = new Array(frameCount);
+        let currentFrame = 0;
+        let running = true;
+        let frameDurationMs = Number(durationSlider.value);
+        let lastFrameTime = 0;
+        let animationFrame = null;
+
+        progress.max = String(frameCount - 1);
+
+        const frameSrc = (index) => `${frameFolder}/frame_${String(index + 1).padStart(4, "0")}.jpg`;
+
+        const loadFrame = (index) => {
+          if (frames[index]) return frames[index];
+          const image = new Image();
+          image.src = frameSrc(index);
+          frames[index] = image;
+          return image;
+        };
+
+        const readPxVar = (element, name) => {
+          const value = getComputedStyle(element).getPropertyValue(name).trim();
+          return Number.parseFloat(value) || 0;
+        };
+
+        const drawFrame = (index) => {
+          const image = loadFrame(index);
+          if (!image.complete) {
+            image.addEventListener("load", () => drawFrame(index), { once: true });
+            return;
+          }
+          const crop = canvas.closest(".slp-video-crop");
+          if (!crop) return;
+          const settingsElement = crop.parentElement;
+          const cropLeft = readPxVar(settingsElement, "--slp-crop-left");
+          const cropRight = readPxVar(settingsElement, "--slp-crop-right");
+          const cropTop = readPxVar(settingsElement, "--slp-crop-top");
+          const cropBottom = readPxVar(settingsElement, "--slp-crop-bottom");
+          const drawWidth = readPxVar(settingsElement, "--slp-video-width") + cropLeft + cropRight;
+          const drawHeight = readPxVar(settingsElement, "--slp-video-height") + cropTop + cropBottom;
+          const ratio = window.devicePixelRatio || 1;
+          canvas.width = Math.round(drawWidth * ratio);
+          canvas.height = Math.round(drawHeight * ratio);
+          const ctx = canvas.getContext("2d");
+          ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
+          ctx.clearRect(0, 0, drawWidth, drawHeight);
+          ctx.drawImage(image, 0, 0, drawWidth, drawHeight);
+          progress.value = String(index);
+        };
+
+        const preloadNearbyFrames = (index) => {
+          for (let offset = 1; offset <= 8; offset += 1) {
+            loadFrame((index + offset) % frameCount);
+          }
+        };
+
+        const step = (now) => {
+          if (!running) return;
+          if (!lastFrameTime || now - lastFrameTime >= frameDurationMs) {
+            currentFrame = (currentFrame + 1) % frameCount;
+            drawFrame(currentFrame);
+            preloadNearbyFrames(currentFrame);
+            lastFrameTime = now;
+          }
+          animationFrame = requestAnimationFrame(step);
+        };
+
+        playButton.addEventListener("click", () => {
+          running = !running;
+          playButton.textContent = running ? "Pause" : "Start";
+          if (running) {
+            lastFrameTime = 0;
+            if (animationFrame) cancelAnimationFrame(animationFrame);
+            animationFrame = requestAnimationFrame(step);
+          }
+        });
+
+        restartButton.addEventListener("click", () => {
+          currentFrame = 0;
+          drawFrame(currentFrame);
+          preloadNearbyFrames(currentFrame);
+          lastFrameTime = 0;
+          running = true;
+          playButton.textContent = "Pause";
+          if (animationFrame) cancelAnimationFrame(animationFrame);
+          animationFrame = requestAnimationFrame(step);
+        });
+
+        progress.addEventListener("input", () => {
+          currentFrame = Number(progress.value);
+          drawFrame(currentFrame);
+          preloadNearbyFrames(currentFrame);
+          lastFrameTime = 0;
+        });
+
+        durationSlider.addEventListener("input", () => {
+          frameDurationMs = Number(durationSlider.value);
+          durationLabel.textContent = `${frameDurationMs} ms / frame`;
+        });
+
+        drawFrame(currentFrame);
+        preloadNearbyFrames(currentFrame);
+        animationFrame = requestAnimationFrame(step);
+      });
+    </script>
+  </body>
+</html>

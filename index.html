@@ -1,0 +1,337 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SOES3042/6025 Statistics</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;520;650;720;820&display=swap" rel="stylesheet">
+    <link href="https://fonts.cdnfonts.com/css/intel-one-mono" rel="stylesheet">
+    <link rel="stylesheet" href="assets/css/course.css">
+  </head>
+  <body>
+    <div class="site-shell">
+      <header class="site-topbar">
+        <a class="brand-mark" href="index.html">
+          <img class="brand-sigil" src="UoS_logo.png" alt="" aria-hidden="true">
+          <span class="brand-text">
+            <span class="brand-title">SOES3042/6025</span>
+            <span class="brand-subtitle">School of Ocean and Earth Science</span>
+          </span>
+        </a>
+        <span class="site-term" id="siteTerm">Autumn 2026</span>
+      </header>
+
+      <main class="site-main">
+        <section class="site-hero">
+          <div>
+            <span class="micro">Course Site</span>
+            <h2>Computational Data Analysis for Ocean and Earth Scientists</h2>
+            <h1>Part II: Statistics</h1>
+            <p><b>Lecturer</b>: <a href="https://duochanatharvard.github.io">Duo Chan</a>
+            <br><b>Lectures</b>: Tuesday 3-4 PM (Lab G), Thursday 3-4 PM (Lab T)
+            <br><b>Practical</b>: Tuesday 4-6 PM, Friday 10AM-12PM (121 Computer Lab)
+            <br><b>Office Hours</b>: Fridays 8-9 AM, 1-2 PM (NOC 564-17)</p>
+            <p>
+              Statistics helps us to uncover patterns from data, develop understandings, and inform decision making.
+              Yet it is not only about <b style="color: #cb0a2a;">extracting knowledge</b> from data; 
+              it is also about <b style="color: #cb0a2a;">understanding uncertainty</b>.
+              Both will be crucial for your future careers as ocean and earth scientists.
+            </p>
+          </div>
+          <aside class="hero-panel">
+            <span class="micro"><b>Learning by doing</b></span>
+              
+            <p class="approach-copy">
+              Each topic is paired with a case 
+              study using real ocean and climate data.
+              We will not dwell on mathematical details, but a basic level of 
+              mathematics is still required. 
+            </p>
+            
+            <p class="approach-copy">
+              <b style="color: #cb0a2a;">
+              In the AI era, the key skill is not only to obtain an answer, but
+              to recognise when an answer is wrong, where the assumptions
+              may fail, and what should be checked before trusting the result.
+              </b>
+            </p>
+
+          </aside>
+        </section>
+
+        <!-- ################################################################### -->
+
+        <section class="lecture-grid" aria-label="Lectures">
+          <article class="lecture-card">
+            <a class="lecture-card-main" href="lectures/week3-l5.html">
+              <span class="micro">Week 3 · Lecture 5</span>
+              <h2>Prepare your data & Math 101</h2>
+              <div class="card-figure figure-summary" aria-hidden="true">
+                <svg viewBox="0 0 420 150" role="img">
+                  <!-- compress all lines horizontally toward the center -->
+                  <g transform="translate(40,20) scale(1.2,0.8)"
+                    fill="none" stroke-linecap="round" stroke-linejoin="round">
+
+                    <!-- noisy light lines --> 
+                    <path d="M8 130 L28 82 L48 112 L68 72 L88 98 L108 50 L128 24 L148 4 L168 34 L188 16 L208 70 L228 118 L248 146" stroke="#7BBBEE" stroke-width="2.6" opacity="0.72"></path>
+                    <path d="M8 88 L28 128 L48 120 L68 90 L88 64 L108 84 L128 42 L148 14 L168 6 L188 40 L208 82 L228 88 L248 116" stroke="#7BBBEE" stroke-width="2.6" opacity="0.68"></path>
+                    <path d="M8 142 L28 100 L48 78 L68 112 L88 78 L108 42 L128 18 L148 10 L168 30 L188 14 L208 44 L228 124 L248 136" stroke="#7BBBEE" stroke-width="2.6" opacity="0.70"></path>
+                    <path d="M8 110 L28 126 L48 86 L68 104 L88 74 L108 56 L128 32 L148 12 L168 18 L188 36 L208 64 L228 98 L248 148" stroke="#7BBBEE" stroke-width="2.6" opacity="0.66"></path>
+                    <path d="M8 124 L28 144 L48 96 L68 84 L88 92 L108 76 L128 26 L148 6 L168 32 L188 20 L208 74 L228 114 L248 126" stroke="#7BBBEE" stroke-width="2.6" opacity="0.65"></path>
+                    <path d="M8 100 L28 118 L48 110 L68 92 L88 70 L108 64 L128 38 L148 14 L168 12 L188 24 L208 58 L228 92 L248 120" stroke="#7BBBEE" stroke-width="2.6" opacity="0.64"></path>
+                    <path d="M8 146 L28 88 L48 124 L68 80 L88 100 L108 54 L128 34 L148 2 L168 14 L188 38 L208 78 L228 106 L248 140" stroke="#7BBBEE" stroke-width="2.6" opacity="0.62"></path>
+                    <path class="axis" d="M8 115 C11.3 115.5, 21.3 120.3, 28 118 C34.7 115.7, 41.3 104.8, 48 101 C54.7 97.2, 61.3 98.2, 68 95 C74.7 91.8, 81.3 86.8, 88 82 C94.7 77.2, 101.3 73.2, 108 66 C114.7 58.8, 121.3 47.2, 128 39 C134.7 30.8, 141.3 20.2, 148 17 C154.7 13.8, 161.3 18.3, 168 20 C174.7 21.7, 181.3 20.2, 188 27 C194.7 33.8, 201.3 48.3, 208 61 C214.7 73.7, 221.3 91.3, 228 103 C234.7 114.7, 244.7 126.3, 248 131" stroke="#3F51F5" stroke-width="4"></path>
+                  </g>
+                </svg>
+              </div>
+              <p>Review material from the first two weeks commonly applied to ocean and Earth datasets; and recap the essential mathematics needed for this part of the module.</p>
+            </a>
+
+            <div class="card-downloads">
+              <a class="practical-download" href="practical/Practical_5.zip" download>
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M12 3v11"></path>
+                  <path d="M7 10l5 5 5-5"></path>
+                  <path d="M5 21h14"></path>
+                </svg>
+                <span>Download Practical 5</span>
+              </a>
+              <a class="answer-key-download" href="practical/Answer_Key_5.zip" download aria-label="Download Practical 5 answer key" title="Download answer key">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <circle cx="7.5" cy="15.5" r="3.5"></circle>
+                  <path d="m10 13 8.5-8.5"></path>
+                  <path d="m15 8 3 3"></path>
+                  <path d="m17 6 2 2"></path>
+                </svg>
+              </a>
+            </div>
+          </article>
+
+          <article class="lecture-card">
+            <a class="lecture-card-main" href="lectures/week3-l6.html">
+              <span class="micro">Week 3 · Lecture 6</span>
+              <h2>Summary Stats & Hypothesis Testing</h2>
+              <div class="card-figure figure-summary" aria-hidden="true">
+                <svg viewBox="0 0 420 150" role="img">
+                  <rect class="bar" x="52" y="74" width="22" height="44" rx="2"></rect>
+                  <rect class="bar" x="80" y="54" width="22" height="64" rx="2"></rect>
+                  <rect class="bar" x="108" y="38" width="22" height="80" rx="2"></rect>
+                  <rect class="bar" x="136" y="65" width="22" height="53" rx="2"></rect>
+                  <path class="axis" d="M38 118H175"></path>
+                  <path class="axis" d="M220 118H400"></path>
+                  <path class="curve-fill" d="M234 118C238.1 116.4 250.4 115.1 258.7 107.3C266.9 99.5 275.1 81.5 283.3 70.1C291.6 58.7 299.8 39 308 39C316.2 39 324.4 58.7 332.7 70.1C340.9 81.5 349.1 99.5 357.3 107.3C365.6 115.1 377.9 116.4 382 118"></path>
+                  <path class="curve" d="M234 118C238.1 116.4 250.4 115.1 258.7 107.3C266.9 99.5 275.1 81.5 283.3 70.1C291.6 58.7 299.8 39 308 39C316.2 39 324.4 58.7 332.7 70.1C340.9 81.5 349.1 99.5 357.3 107.3C365.6 115.1 377.9 116.4 382 118"></path>
+                  <path class="axis" d="M308 40V118"></path>
+                </svg>
+              </div>
+              <p>Start with one dataset: describe its distribution, ask whether it resembles a Gaussian distribution, and learn how to test distributional assumptions in practice.</p>
+            </a>
+
+            <div class="card-downloads">
+              <a class="practical-download" href="practical/Practical_6.zip" download>
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M12 3v11"></path>
+                  <path d="M7 10l5 5 5-5"></path>
+                  <path d="M5 21h14"></path>
+                </svg>
+                <span>Download Practical 6</span>
+              </a>
+              <a class="answer-key-download" href="practical/Answer_Key_6.zip" download aria-label="Download Practical 6 answer key" title="Download answer key">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <circle cx="7.5" cy="15.5" r="3.5"></circle>
+                  <path d="m10 13 8.5-8.5"></path>
+                  <path d="m15 8 3 3"></path>
+                  <path d="m17 6 2 2"></path>
+                </svg>
+              </a>
+            </div>
+          </article>
+
+          <article class="lecture-card">
+            <a class="lecture-card-main" href="lectures/week3-l7.html">
+              <span class="micro">Week 4 · Lecture 7</span>
+              <h2>Covariance & Correlation</h2>
+              <div class="card-figure figure-correlation" aria-hidden="true">
+                <svg viewBox="0 0 420 150" role="img">
+                  <rect class="panel" x="36" y="35" width="190" height="84" rx="4"></rect>
+                  <path class="wave light" d="M53 72C71 54 87 54 106 72S141 90 159 72S194 54 211 72"></path>
+                  <path class="wave" d="M53 94C71 76 87 76 106 94S141 112 159 94S194 76 211 94"></path>
+                  <rect class="panel" x="270" y="35" width="112" height="84" rx="4"></rect>
+                  <circle class="dot" cx="290" cy="100" r="4"></circle>
+                  <circle class="dot" cx="310" cy="82" r="4"></circle>
+                  <circle class="dot" cx="320" cy="92" r="4"></circle>
+                  <circle class="dot" cx="335" cy="69" r="4"></circle>
+                  <circle class="dot" cx="350" cy="57" r="4"></circle>
+                  <circle class="dot" cx="365" cy="75" r="4"></circle>
+                </svg>
+              </div>
+              <p>Move from one dataset to two: quantify how variables vary together, interpret the strength and direction of their relationship, and recognise what correlation cannot tell us.</p>
+            </a>
+            <div class="card-downloads">
+              <a class="practical-download" href="practical/Practical_7.zip" download>
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M12 3v11"></path>
+                  <path d="M7 10l5 5 5-5"></path>
+                  <path d="M5 21h14"></path>
+                </svg>
+                <span>Download Practical 7</span>
+              </a>
+              <a class="answer-key-download" href="practical/Answer_Key_7.zip" download aria-label="Download Practical 7 answer key" title="Download answer key">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <circle cx="7.5" cy="15.5" r="3.5"></circle>
+                  <path d="m10 13 8.5-8.5"></path>
+                  <path d="m15 8 3 3"></path>
+                  <path d="m17 6 2 2"></path>
+                </svg>
+              </a>
+            </div>
+          </article>
+
+          <article class="lecture-card">
+            <a class="lecture-card-main" href="lectures/week3-l8.html">
+              <span class="micro">Week 4 · Lecture 8</span>
+              <h2>Regression & Model Selection</h2>
+              <div class="card-figure figure-regression" aria-hidden="true">
+                <svg viewBox="0 0 420 150" role="img">
+                  <path class="axis" d="M48 118H378M58 128V28"></path>
+                  <path class="band" d="M72 98C126 85 170 76 220 60C270 44 323 30 366 15L366 48C323 57 270 69 220 81C170 92 126 101 72 126Z"></path>
+                  <path class="fit" d="M72 112L366 31"></path>
+                  <circle class="dot" cx="88" cy="102" r="6"></circle>
+                  <circle class="dot" cx="130" cy="83" r="6"></circle>
+                  <circle class="dot" cx="174" cy="90" r="6"></circle>
+                  <circle class="dot" cx="220" cy="66" r="6"></circle>
+                  <circle class="dot" cx="268" cy="73" r="6"></circle>
+                  <circle class="dot" cx="315" cy="45" r="6"></circle>
+                  <circle class="dot" cx="356" cy="37" r="6"></circle>
+                </svg>
+              </div>
+              <p>Turn relationships into models: estimate how one variable changes with another, evaluate uncertainty in the fitted relationship, and choose models that explain without overfitting.</p>
+            </a>
+            <div class="card-downloads">
+              <a class="practical-download" href="practical/Practical_8.zip" download>
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M12 3v11"></path>
+                  <path d="M7 10l5 5 5-5"></path>
+                  <path d="M5 21h14"></path>
+                </svg>
+                <span>Download Practical 8</span>
+              </a>
+              <a class="answer-key-download" href="practical/Answer_Key_8.zip" download aria-label="Download Practical 8 answer key" title="Download answer key">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <circle cx="7.5" cy="15.5" r="3.5"></circle>
+                  <path d="m10 13 8.5-8.5"></path>
+                  <path d="m15 8 3 3"></path>
+                  <path d="m17 6 2 2"></path>
+                </svg>
+              </a>
+            </div>
+          </article>
+
+          <article class="lecture-card">
+            <a class="lecture-card-main" href="lectures/week3-l9.html">
+              <span class="micro">Week 5 · Lecture 9</span>
+              <h2>Principal Component Analysis</h2>
+                <div class="card-figure figure-pca" aria-hidden="true">
+                  <svg viewBox="0 0 420 150" role="img">
+                    <rect class="panel" x="38" y="32" width="178" height="92" rx="4"></rect>
+
+                    <!-- EOF spatial pattern: smooth two-layer contours, no coastline -->
+                    <!-- red: move slightly right and up -->
+                    <g transform="translate(10,-10)">
+                      <path class="warm warm-outer" d="M98 68 C104 54 122 49 141 53 C154 56 162 63 173 66 C186 69 195 76 194 85 C193 95 181 101 166 99 C150 97 137 92 124 88 C110 84 94 80 98 68Z"></path>
+                      <path class="warm warm-inner" d="M113 68 C119 60 132 58 145 61 C156 63 163 68 171 71 C180 74 185 79 184 85 C183 92 173 95 162 94 C149 92 139 88 129 85 C118 82 109 78 113 68Z"></path>
+                    </g>
+
+                    <!-- blue: move slightly left and up -->
+                    <g transform="translate(-20,-10)">
+                      <path class="cool cool-outer" d="M76 97 C86 87 103 85 120 88 C136 91 148 96 160 100 C174 104 184 111 181 118 C177 126 162 128 146 125 C129 122 114 118 99 114 C85 110 70 106 76 97Z"></path>
+                      <path class="cool cool-inner" d="M94 98 C103 92 115 91 127 94 C139 97 148 101 158 104 C168 107 174 112 172 117 C169 123 158 123 146 121 C133 119 121 115 110 112 C99 109 89 105 94 98Z"></path>
+                    </g>
+
+                    <path class="divider" d="M260 32V124"></path>
+                    <path class="axis" d="M260 95H382"></path>
+                    <path class="series"
+                      d="M260 95C269 68 291 68 290 95S310 122 315 95S340 68 350 95S370 68 380 60"></path>
+                  </svg>
+                </div>
+              <p>Scale up to many variables at once: use PCA to reduce dimensionality, identify dominant patterns of variability, and summarise complex ocean and climate datasets.</p>
+            </a>
+
+            <div class="card-downloads">
+              <a class="practical-download" href="practical/Practical_9.zip" download>
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M12 3v11"></path>
+                  <path d="M7 10l5 5 5-5"></path>
+                  <path d="M5 21h14"></path>
+                </svg>
+                <span>Download Practical 9</span>
+              </a>
+              <a class="answer-key-download" href="practical/Answer_Key_9.zip" download aria-label="Download Practical 9 answer key" title="Download answer key">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <circle cx="7.5" cy="15.5" r="3.5"></circle>
+                  <path d="m10 13 8.5-8.5"></path>
+                  <path d="m15 8 3 3"></path>
+                  <path d="m17 6 2 2"></path>
+                </svg>
+              </a>
+            </div>
+          </article>
+
+          <article class="lecture-card">
+            <a class="lecture-card-main" href="lectures/week3-l10.html">
+              <span class="micro">Week 5 · Lecture 10</span>
+              <h2>Review</h2>
+              <div class="card-figure figure-review" aria-hidden="true">
+                <svg viewBox="0 0 420 150" role="img">
+                  <path class="flow" d="M103 60H146"></path>
+                  <path class="flow" d="M193 60H236"></path>
+                  <path class="flow" d="M286 60H326"></path>
+                  <circle class="node" cx="80" cy="60" r="22"></circle>
+                  <circle class="node" cx="170" cy="60" r="22"></circle>
+                  <circle class="node" cx="260" cy="60" r="22"></circle>
+                  <circle class="node" cx="350" cy="60" r="22"></circle>
+                  <path class="check" d="M70 63l7 7 15-17"></path>
+                  <path class="check" d="M160 63l7 7 15-17"></path>
+                  <path class="check" d="M250 63l7 7 15-17"></path>
+                  <path class="check" d="M340 63l7 7 15-17"></path>
+                </svg>
+              </div>
+              <p>Review the workflow for each type of analysis: clarify the question, check the assumptions, choose an appropriate method, and diagnose whether the result can be trusted.</p>
+            </a>
+          </article>
+        </section>
+
+        <div class="section-divider" aria-hidden="true"></div>
+
+        <!-- ################################################################### -->
+
+        <section class="assessment-section" aria-label="Assessment">
+          <div class="section-heading">
+            <span class="micro">Assessment</span>
+            <h2 style="color:#2456a7">Assignment 1 </h2> 
+            <h3 style="color:#2456a7">El Niño - Southern Oscillation</h3>
+          </div>
+          <div class="assessment-panel">
+            <p>
+              Instead of writing a standard report from scratch, 
+              you are provided with a "Draft Short Report" generated by a GenAI model. 
+              Your task is to act as an expert reviewer to grade this report 
+              and provide a detailed critique.
+            </p>
+            <div class="assessment-points">
+              <a href="assignment/SOES3042_6025%20-%20Assignment%201%20Problem%20Set.pdf" target="_blank" rel="noopener">Instructions</a>
+              <a href="assignment/SOES3042_6025%20-%20Assignment%201%20Problem%20Set.zip" download>Problem Set</a>
+              <a href="assignment/SOES3042_6025%20-%20Assignment%201%20Marking%20Criteria.pdf" download>Marking Criteria</a>
+              <a href="assignment/SOES3042_6025%20-%20Assignment%201%20Answer%20Template.docx" download>Answer Template</a>
+            </div>
+          </div>
+        </section>
+      </main>
+    </div>
+    <script>
+      document.getElementById("siteTerm").textContent = `Autumn ${new Date().getFullYear()}`;
+    </script>
+  </body>
+</html>
