@@ -9,6 +9,55 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;520;650;720;820&display=swap" rel="stylesheet">
     <link href="https://fonts.cdnfonts.com/css/intel-one-mono" rel="stylesheet">
     <link rel="stylesheet" href="../assets/css/course.css">
+    <style>
+      .map-check-slide {
+        align-self: start;
+        display: grid;
+        justify-items: center;
+        transform: translateY(-18px);
+      }
+
+      .map-check-figure {
+        width: 980px;
+        margin: 0;
+      }
+
+      .map-check-figure img {
+        display: block;
+        width: 100%;
+        height: auto;
+        transform: translateY(40px);
+      }
+
+      .map-check-figure figcaption {
+        margin-top: 12px;
+        color: var(--site-blue-dark);
+        font-size: 22px;
+        font-weight: 100;
+        line-height: 1.24;
+        text-align: center;
+        transform: translateY(50px);
+      }
+
+      .map-check-result {
+        width: 1080px;
+        margin: 28px 10px 0;
+        color: #cb0a2a;
+        font-size: 24px;
+        font-weight: 500;
+        line-height: 1.22;
+        text-align: left;
+      }
+
+      .map-check-result p {
+        margin: 20px 0 8px;
+        transform: translateY(40px);
+      }
+
+      .map-check-result p:last-child {
+        margin-bottom: 0;
+      }
+    </style>
   </head>
   <body class="deck-page">
     <template id="deckHeaderTemplate">
@@ -918,6 +967,24 @@ ax.gridlines(draw_labels=True, dms=True, x_inline=False, y_inline=False)</span><
               <span class="step-marker fragment" aria-hidden="true"></span>
               <span class="step-marker fragment" aria-hidden="true"></span>
               <span class="step-marker fragment" aria-hidden="true"></span>
+            </div>
+          </div>
+        </section>
+
+        <section class="slide">
+          <header class="slide-kicker"></header>
+          <div class="slide-body content-layout">
+            <h2 class="slide-title">Is This Map Looking Right?</h2>
+            <div class="slide-content map-check-slide">
+              <figure class="map-check-figure">
+                <img src="../figures/SST_map.png" alt="Seasonal difference map of sea-surface temperature">
+                <figcaption><b>Fig.1</b>.  Seasonal difference of sea-surface temperature,<br>plotted as the mean July temperature minus the mean January temperatures.</figcaption>
+              </figure>
+              <div class="map-check-result fragment">
+                <p>(1) It seems that latitude is reversed in the plot such that July becomes cooler than January in the Northern Hemisphere.
+                Also, there should not be values for sea-surface temperatures over land.</p>
+                <p>(2) The colourbar label is missing the unit for SST seasonal difference.</p>
+              </div>
             </div>
           </div>
         </section>

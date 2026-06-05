@@ -873,6 +873,272 @@
         font-weight: 820;
       }
 
+      .correlation-guess-slide {
+        --correlation-guess-chart-x: 0px;
+        --correlation-guess-chart-y: -8px;
+        --correlation-guess-panel-width: 520px;
+        --correlation-guess-gap: 42px;
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) var(--correlation-guess-panel-width);
+        gap: var(--correlation-guess-gap);
+        align-items: start;
+      }
+
+      .correlation-guess-visual {
+        display: grid;
+        gap: 14px;
+        transform: translate(var(--correlation-guess-chart-x), var(--correlation-guess-chart-y));
+      }
+
+      .correlation-guess-chart {
+        display: block;
+        width: 100%;
+        height: 560px;
+      }
+
+      .correlation-guess-panel {
+        display: grid;
+        gap: 18px;
+        padding: 18px 0 20px 28px;
+        border-left: 1px solid var(--site-blue-dark);
+      }
+
+      .correlation-guess-panel p {
+        margin: 0;
+        color: var(--body);
+        font-size: 21px;
+        line-height: 1.42;
+      }
+
+      .correlation-guess-question {
+        color: #cb0a2a !important;
+        font-size: 28px !important;
+        font-weight: 820;
+        line-height: 1.18 !important;
+      }
+
+      .correlation-guess-control {
+        display: grid;
+        gap: 12px;
+        margin-top: 12px;
+      }
+
+      .correlation-guess-control label {
+        color: var(--site-blue-dark);
+        font-size: 17px;
+        font-weight: 760;
+      }
+
+      .correlation-guess-control input {
+        width: 100%;
+        accent-color: #0a6ecb;
+        cursor: grab;
+      }
+
+      .correlation-range-wrap {
+        position: relative;
+        margin-top: 16px;
+        margin-bottom: 16px;
+      }
+
+      .correlation-range-wrap input {
+        display: block;
+      }
+
+      .correlation-guess-control output {
+        color: #cb0a2a;
+        font-family: var(--font-code);
+        font-size: 17px;
+        font-weight: 820;
+      }
+
+      .correlation-answer-scale {
+        position: absolute;
+        inset: -4px 0 0;
+        height: 32px;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 180ms ease;
+      }
+
+      .correlation-answer-scale.visible {
+        opacity: 1;
+      }
+
+      .correlation-answer-track {
+        display: none;
+      }
+
+      .correlation-answer-marker {
+        position: absolute;
+        top: 0;
+        width: 2px;
+        height: 24px;
+        transform: translateX(-1px);
+      }
+
+      .correlation-answer-marker::before {
+        content: "";
+        position: absolute;
+        top: 9px;
+        left: -5px;
+        width: 12px;
+        height: 12px;
+        border-radius: 999px;
+        background: currentColor;
+      }
+
+      .correlation-answer-marker span {
+        position: absolute;
+        left: 50%;
+        transform: translateX(-50%);
+        color: currentColor;
+        font-family: var(--font-code);
+        font-size: 14px;
+        font-weight: 820;
+        white-space: nowrap;
+      }
+
+      .correlation-answer-true span {
+        top: -19px;
+      }
+
+      .correlation-answer-sample span {
+        top: 31px;
+      }
+
+      .correlation-answer-true {
+        color: #193e87;
+      }
+
+      .correlation-answer-sample {
+        color: #cb0a2a;
+      }
+
+      .correlation-guess-controls {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin-top: 8px;
+      }
+
+      .correlation-guess-button {
+        border: 1px solid var(--line-strong);
+        border-radius: 999px;
+        padding: 10px 17px;
+        background: #ffffff;
+        color: #0a6ecb;
+        font-family: var(--font-body);
+        font-size: 16px;
+        font-weight: 820;
+        cursor: pointer;
+      }
+
+      .correlation-guess-button:hover {
+        background: var(--site-blue-pale);
+      }
+
+      .correlation-view-controls {
+        display: flex;
+        justify-content: center;
+        gap: 10px;
+        transform: translateY(-4px);
+      }
+
+      .correlation-view-button {
+        border: 1px solid var(--line-strong);
+        border-radius: 999px;
+        padding: 9px 15px;
+        background: #ffffff;
+        color: #0a6ecb;
+        font-family: var(--font-body);
+        font-size: 15px;
+        font-weight: 820;
+        cursor: pointer;
+      }
+
+      .correlation-view-button:hover,
+      .correlation-view-button.active {
+        background: var(--site-blue-pale);
+      }
+
+      .correlation-guess-answer {
+        display: grid;
+        gap: 8px;
+        min-height: 152px;
+        padding: 14px 16px;
+        border: 2px solid #bfd1f8;
+        background: #f7faff;
+        opacity: 0;
+        transition: opacity 180ms ease;
+      }
+
+      .correlation-guess-answer.visible {
+        opacity: 1;
+      }
+
+      .correlation-guess-answer p {
+        font-size: 18px;
+        line-height: 1.35;
+      }
+
+      .correlation-guess-answer .answer-stats {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 10px;
+      }
+
+      .correlation-guess-answer .answer-stats span {
+        display: grid;
+        gap: 4px;
+        padding: 10px 9px;
+        border-radius: 8px;
+        background: #ffffff;
+        color: var(--site-blue-dark);
+        font-size: 14px;
+        font-weight: 760;
+        text-align: center;
+      }
+
+      .correlation-guess-answer .answer-stats strong {
+        color: #cb0a2a;
+        font-family: var(--font-code);
+        font-size: 21px;
+        font-weight: 820;
+      }
+
+      .correlation-guess-answer .answer-label {
+        color: #cb0a2a;
+        font-size: 24px;
+        font-weight: 820;
+      }
+
+      .correlation-guess-point {
+        fill: #0a6ecb;
+        opacity: 0.58;
+      }
+
+      .correlation-guess-line-x {
+        fill: none;
+        stroke: #0a6ecb;
+        stroke-width: 3;
+        stroke-linejoin: round;
+      }
+
+      .correlation-guess-line-y {
+        fill: none;
+        stroke: #cb0a2a;
+        stroke-width: 3;
+        stroke-linejoin: round;
+      }
+
+      .correlation-guess-caption {
+        fill: var(--site-blue-dark);
+        font-family: var(--font-body);
+        font-size: 18px;
+        font-weight: 820;
+      }
+
       .bootstrap-intro {
         /* Manual controls for the bootstrap group counter. Positive X moves right; positive Y moves down. */
         --bootstrap-more-link-x: 0px;
@@ -1407,6 +1673,44 @@
                 <p>One outlier can weaken an otherwise strong correlation.</p>
                 <p>One outlier can create a misleading correlation.</p>
               </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="slide correlation-guess-page">
+          <header class="slide-kicker"></header>
+          <div class="slide-body content-layout">
+            <h2 class="slide-title">Guess the Correlation</h2>
+            <div class="slide-content correlation-guess-slide">
+              <div class="correlation-guess-visual">
+                <svg class="correlation-guess-chart" id="correlationGuessView" viewBox="0 0 720 560" role="img" aria-label="Random paired data shown as time series or scatter plot"></svg>
+                <div class="correlation-view-controls" aria-label="Correlation view controls">
+                  <button class="correlation-view-button active" id="correlationViewStacked" type="button" data-view="stacked">Stacked time series</button>
+                  <button class="correlation-view-button" id="correlationViewOverlay" type="button" data-view="overlay">Overlay time series</button>
+                  <button class="correlation-view-button" id="correlationViewScatter" type="button" data-view="scatter">Scatter plot</button>
+                </div>
+              </div>
+              <aside class="correlation-guess-panel">
+                <p class="correlation-guess-question">How large is Pearson's ρ?</p>
+                <p>Use different views of the same data. Which one gives the clearest view of linear association?</p>
+                <div class="correlation-guess-control">
+                  <label for="correlationGuessInput">Your estimate</label>
+                  <div class="correlation-range-wrap">
+                    <input id="correlationGuessInput" type="range" min="-1" max="1" step="0.05" value="0">
+                    <div class="correlation-answer-scale" id="correlationAnswerScale" aria-hidden="true">
+                      <div class="correlation-answer-track"></div>
+                      <div class="correlation-answer-marker correlation-answer-true" id="correlationTrueMarker"><span>true ρ</span></div>
+                      <div class="correlation-answer-marker correlation-answer-sample" id="correlationSampleMarker"><span>sample ρ</span></div>
+                    </div>
+                  </div>
+                  <output id="correlationGuessOutput">ρ = 0.00</output>
+                </div>
+                <div class="correlation-guess-controls">
+                  <button class="correlation-guess-button" id="correlationGuessReveal" type="button">Reveal answer</button>
+                  <button class="correlation-guess-button" id="correlationGuessNew" type="button">New data</button>
+                </div>
+                <div class="correlation-guess-answer" id="correlationGuessAnswer" aria-live="polite"></div>
+              </aside>
             </div>
           </div>
         </section>
@@ -2044,6 +2348,270 @@ Evaluate the confidence interval of statistics</code></pre>
           xMin: -2.5, xMax: 8.8, yMin: -2.5, yMax: 8.8,
           xTicks: [-2, 0, 2, 4, 6, 8], yTicks: [-2, 0, 2, 4, 6, 8],
         });
+      });
+    </script>
+    <script>
+      window.addEventListener("DOMContentLoaded", () => {
+        const ns = "http://www.w3.org/2000/svg";
+        const make = (name, attributes = {}, text = "") => {
+          const node = document.createElementNS(ns, name);
+          Object.entries(attributes).forEach(([key, value]) => node.setAttribute(key, value));
+          node.textContent = text;
+          return node;
+        };
+        const mean = (values) => values.reduce((sum, value) => sum + value, 0) / values.length;
+        const std = (values) => {
+          const average = mean(values);
+          return Math.sqrt(mean(values.map((value) => (value - average) ** 2))) || 1;
+        };
+        const pearson = (pairs) => {
+          const xs = pairs.map(([x]) => x);
+          const ys = pairs.map(([, y]) => y);
+          const meanX = mean(xs);
+          const meanY = mean(ys);
+          return mean(pairs.map(([x, y]) => (x - meanX) * (y - meanY))) / (std(xs) * std(ys));
+        };
+        const randomNormal = () => {
+          const u = Math.max(Number.EPSILON, Math.random());
+          const v = Math.random();
+          return Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * v);
+        };
+        const standardise = (values) => {
+          const average = mean(values);
+          const spread = std(values);
+          return values.map((value) => (value - average) / spread);
+        };
+        const ticks = (min, max, count = 5) => Array.from({ length: count }, (_, index) => min + index * (max - min) / (count - 1));
+        const paddedDomain = (values) => {
+          const min = Math.min(...values);
+          const max = Math.max(...values);
+          const padding = Math.max(0.4, (max - min) * 0.12);
+          return [min - padding, max + padding];
+        };
+
+        const drawAxes = (svg, geometry, xScale, yScale, xTicks, yTicks, xLabel, yLabel, title = "") => {
+          const { width, height, margin } = geometry;
+          const plotWidth = width - margin.left - margin.right;
+          const plotHeight = height - margin.top - margin.bottom;
+          const yLabelX = geometry.yLabelX ?? 18;
+          xTicks.forEach((tick) => {
+            svg.append(
+              make("line", { x1: xScale(tick), y1: margin.top, x2: xScale(tick), y2: height - margin.bottom, class: "covariance-gridline" }),
+              make("text", { x: xScale(tick), y: height - margin.bottom + 24, class: "covariance-tick" }, tick.toFixed(1)),
+            );
+          });
+          yTicks.forEach((tick) => {
+            svg.append(
+              make("line", { x1: margin.left, y1: yScale(tick), x2: width - margin.right, y2: yScale(tick), class: "covariance-gridline" }),
+              make("text", { x: margin.left - 24, y: yScale(tick) + 5, class: "covariance-tick" }, tick.toFixed(1)),
+            );
+          });
+          svg.append(
+            make("line", { x1: margin.left, y1: height - margin.bottom, x2: width - margin.right, y2: height - margin.bottom, class: "covariance-axis" }),
+            make("line", { x1: margin.left, y1: margin.top, x2: margin.left, y2: height - margin.bottom, class: "covariance-axis" }),
+            make("text", { x: margin.left + plotWidth / 2, y: height - 12, class: "covariance-label" }, xLabel),
+            make("text", { x: yLabelX, y: margin.top + plotHeight / 2, class: "covariance-label", transform: `rotate(-90 ${yLabelX} ${margin.top + plotHeight / 2})` }, yLabel),
+          );
+          if (title) svg.append(make("text", { x: margin.left + plotWidth / 2, y: 29, class: "correlation-guess-caption", "text-anchor": "middle" }, title));
+        };
+
+        const makeQuestion = () => {
+          const length = 10 + Math.floor(Math.random() * 51);
+          const hasTrueCorrelation = Math.random() < 0.5;
+          const sign = Math.random() < 0.5 ? -1 : 1;
+          const trueRho = hasTrueCorrelation ? sign * (0.25 + Math.random() * 0.65) : 0;
+          const phi = Math.random() * 0.75;
+          let previousX = 0;
+          let previousY = 0;
+          const rawX = [];
+          const rawY = [];
+
+          Array.from({ length }, () => {
+            const innovationX = randomNormal();
+            const innovationY = trueRho * innovationX + Math.sqrt(Math.max(0, 1 - trueRho ** 2)) * randomNormal();
+            previousX = phi * previousX + innovationX;
+            previousY = phi * previousY + innovationY;
+            rawX.push(previousX);
+            rawY.push(previousY);
+          });
+
+          const x = standardise(rawX);
+          const y = standardise(rawY);
+          const pairs = x.map((value, index) => [value, y[index]]);
+          return {
+            x,
+            y,
+            pairs,
+            trueRho,
+            hasTrueCorrelation,
+            sampleRho: pearson(pairs),
+            n: pairs.length,
+            phi,
+          };
+        };
+
+        const drawPath = (values, xScale, yScale) => values.map((value, index) => `${index ? "L" : "M"} ${xScale(index).toFixed(2)} ${yScale(value).toFixed(2)}`).join(" ");
+
+        const drawStacked = (svg, question) => {
+          const width = 720;
+          const height = 560;
+          const panels = [
+            { values: question.x, top: 42, label: "X", pathClass: "correlation-guess-line-x", labelStyle: "fill: #0a6ecb;" },
+            { values: question.y, top: 292, label: "Y", pathClass: "correlation-guess-line-y", labelStyle: "fill: #cb0a2a;" },
+          ];
+          const margin = { left: 66, right: 26, bottom: 48 };
+          const panelHeight = 185;
+          const plotWidth = width - margin.left - margin.right;
+          const xScale = (index) => margin.left + index / (question.x.length - 1) * plotWidth;
+          svg.replaceChildren();
+          panels.forEach((panel) => {
+            const [yMin, yMax] = paddedDomain(panel.values);
+            const yScale = (value) => panel.top + panelHeight - (value - yMin) / (yMax - yMin) * panelHeight;
+            ticks(0, question.x.length - 1, 4).forEach((tick) => {
+              svg.append(make("line", { x1: xScale(tick), y1: panel.top, x2: xScale(tick), y2: panel.top + panelHeight, class: "covariance-gridline" }));
+            });
+            ticks(yMin, yMax).forEach((tick) => {
+              svg.append(
+                make("line", { x1: margin.left, y1: yScale(tick), x2: width - margin.right, y2: yScale(tick), class: "covariance-gridline" }),
+                make("text", { x: margin.left - 24, y: yScale(tick) + 5, class: "covariance-tick" }, tick.toFixed(1)),
+              );
+            });
+            svg.append(
+              make("line", { x1: margin.left, y1: panel.top + panelHeight, x2: width - margin.right, y2: panel.top + panelHeight, class: "covariance-axis" }),
+              make("line", { x1: margin.left, y1: panel.top, x2: margin.left, y2: panel.top + panelHeight, class: "covariance-axis" }),
+              make("text", { x: 18, y: panel.top + panelHeight / 2, class: "covariance-label", transform: `rotate(-90 18 ${panel.top + panelHeight / 2})`, style: panel.labelStyle }, panel.label),
+              make("path", { d: drawPath(panel.values, xScale, yScale), class: panel.pathClass }),
+            );
+          });
+          svg.append(make("text", { x: margin.left + plotWidth / 2, y: height - 52, class: "covariance-label" }, "time index"));
+        };
+
+        const drawOverlay = (svg, question) => {
+          const geometry = { width: 720, height: 560, margin: { top: 46, right: 94, bottom: 58, left: 66 } };
+          const allValues = [...question.x, ...question.y];
+          const [yMin, yMax] = paddedDomain(allValues);
+          const xScale = (index) => geometry.margin.left + index / (question.x.length - 1) * (geometry.width - geometry.margin.left - geometry.margin.right);
+          const yScale = (value) => geometry.height - geometry.margin.bottom - (value - yMin) / (yMax - yMin) * (geometry.height - geometry.margin.top - geometry.margin.bottom);
+          const xTickValues = ticks(0, question.x.length - 1, 5);
+          const yTickValues = ticks(yMin, yMax);
+          const plotWidth = geometry.width - geometry.margin.left - geometry.margin.right;
+          const plotHeight = geometry.height - geometry.margin.top - geometry.margin.bottom;
+          svg.replaceChildren();
+          xTickValues.forEach((tick) => {
+            svg.append(
+              make("line", { x1: xScale(tick), y1: geometry.margin.top, x2: xScale(tick), y2: geometry.height - geometry.margin.bottom, class: "covariance-gridline" }),
+              make("text", { x: xScale(tick), y: geometry.height - geometry.margin.bottom + 24, class: "covariance-tick" }, tick.toFixed(1)),
+            );
+          });
+          yTickValues.forEach((tick) => {
+            svg.append(
+              make("line", { x1: geometry.margin.left, y1: yScale(tick), x2: geometry.width - geometry.margin.right, y2: yScale(tick), class: "covariance-gridline" }),
+              make("text", { x: geometry.margin.left - 24, y: yScale(tick) + 5, class: "covariance-tick", style: "fill: #0a6ecb;" }, tick.toFixed(1)),
+              make("text", { x: geometry.width - geometry.margin.right + 24, y: yScale(tick) + 5, class: "covariance-tick", style: "fill: #cb0a2a;" }, tick.toFixed(1)),
+            );
+          });
+          svg.append(
+            make("line", { x1: geometry.margin.left, y1: geometry.height - geometry.margin.bottom, x2: geometry.width - geometry.margin.right, y2: geometry.height - geometry.margin.bottom, class: "covariance-axis" }),
+            make("line", { x1: geometry.margin.left, y1: geometry.margin.top, x2: geometry.margin.left, y2: geometry.height - geometry.margin.bottom, class: "covariance-axis", style: "stroke: #0a6ecb;" }),
+            make("line", { x1: geometry.width - geometry.margin.right, y1: geometry.margin.top, x2: geometry.width - geometry.margin.right, y2: geometry.height - geometry.margin.bottom, class: "covariance-axis", style: "stroke: #cb0a2a;" }),
+            make("text", { x: geometry.margin.left + plotWidth / 2, y: geometry.height - 12, class: "covariance-label" }, "time index"),
+            make("text", { x: 18, y: geometry.margin.top + plotHeight / 2, class: "covariance-label", transform: `rotate(-90 18 ${geometry.margin.top + plotHeight / 2})`, style: "fill: #0a6ecb;" }, "X"),
+            make("text", { x: geometry.width - 8, y: geometry.margin.top + plotHeight / 2, class: "covariance-label", transform: `rotate(90 ${geometry.width - 8} ${geometry.margin.top + plotHeight / 2})`, style: "fill: #cb0a2a;" }, "Y"),
+          );
+          svg.append(
+            make("path", { d: drawPath(question.x, xScale, yScale), class: "correlation-guess-line-x" }),
+            make("path", { d: drawPath(question.y, xScale, yScale), class: "correlation-guess-line-y" }),
+          );
+        };
+
+        const drawScatter = (svg, question) => {
+          const geometry = { width: 720, height: 560, margin: { top: 42, right: 114, bottom: 58, left: 146 }, yLabelX: 98 };
+          const xs = question.pairs.map(([x]) => x);
+          const ys = question.pairs.map(([, y]) => y);
+          const [xMin, xMax] = paddedDomain(xs);
+          const [yMin, yMax] = paddedDomain(ys);
+          const xScale = (value) => geometry.margin.left + (value - xMin) / (xMax - xMin) * (geometry.width - geometry.margin.left - geometry.margin.right);
+          const yScale = (value) => geometry.height - geometry.margin.bottom - (value - yMin) / (yMax - yMin) * (geometry.height - geometry.margin.top - geometry.margin.bottom);
+          svg.replaceChildren();
+          drawAxes(svg, geometry, xScale, yScale, ticks(xMin, xMax), ticks(yMin, yMax), "X", "Y", "");
+          question.pairs.forEach(([x, y]) => svg.append(make("circle", { cx: xScale(x), cy: yScale(y), r: 5, class: "correlation-guess-point" })));
+        };
+
+        const svg = document.getElementById("correlationGuessView");
+        const input = document.getElementById("correlationGuessInput");
+        const output = document.getElementById("correlationGuessOutput");
+        const reveal = document.getElementById("correlationGuessReveal");
+        const newButton = document.getElementById("correlationGuessNew");
+        const answer = document.getElementById("correlationGuessAnswer");
+        const answerScale = document.getElementById("correlationAnswerScale");
+        const trueMarker = document.getElementById("correlationTrueMarker");
+        const sampleMarker = document.getElementById("correlationSampleMarker");
+        const viewButtons = Array.from(document.querySelectorAll(".correlation-view-button"));
+        if (!svg || !input || !output || !reveal || !newButton || !answer || !answerScale || !trueMarker || !sampleMarker || !viewButtons.length) return;
+
+        let question = null;
+        const searchParams = new URLSearchParams(window.location.search);
+        const initialView = searchParams.get("view");
+        let activeView = ["stacked", "overlay", "scatter"].includes(initialView) ? initialView : "stacked";
+        viewButtons.forEach((button) => button.classList.toggle("active", button.dataset.view === activeView));
+        const drawCurrentView = () => {
+          if (activeView === "overlay") drawOverlay(svg, question);
+          else if (activeView === "scatter") drawScatter(svg, question);
+          else drawStacked(svg, question);
+        };
+        const syncOutput = () => {
+          output.textContent = `ρ = ${Number(input.value).toFixed(2)}`;
+        };
+        const setAnswerVisible = (visible) => {
+          answer.classList.toggle("visible", visible);
+          answerScale.classList.toggle("visible", visible);
+          reveal.textContent = visible ? "Hide answer" : "Reveal answer";
+          if (!visible) {
+            answer.replaceChildren();
+            return;
+          }
+          const guess = Number(input.value);
+          const toPercent = (rho) => `${Math.max(0, Math.min(100, (rho + 1) * 50)).toFixed(1)}%`;
+          trueMarker.style.left = toPercent(question.trueRho);
+          sampleMarker.style.left = toPercent(question.sampleRho);
+          const stats = document.createElement("p");
+          stats.className = "answer-stats";
+          [
+            ["n", String(question.n)],
+            ["true ρ", question.trueRho.toFixed(2)],
+            ["sample ρ", question.sampleRho.toFixed(2)],
+          ].forEach(([label, value]) => {
+            const item = document.createElement("span");
+            const labelNode = document.createTextNode(label);
+            const valueNode = document.createElement("strong");
+            valueNode.textContent = value;
+            item.append(labelNode, valueNode);
+            stats.append(item);
+          });
+          answer.replaceChildren(document.createElement("p"), stats);
+          answer.children[0].className = "answer-label";
+          answer.children[0].textContent = `Your estimate: ρ = ${guess.toFixed(2)}`;
+        };
+        const newQuestion = () => {
+          question = makeQuestion();
+          input.value = "0";
+          syncOutput();
+          drawCurrentView();
+          setAnswerVisible(false);
+        };
+
+        input.addEventListener("input", syncOutput);
+        reveal.addEventListener("click", () => setAnswerVisible(!answer.classList.contains("visible")));
+        newButton.addEventListener("click", newQuestion);
+        viewButtons.forEach((button) => {
+          button.addEventListener("click", () => {
+            activeView = button.dataset.view;
+            viewButtons.forEach((candidate) => candidate.classList.toggle("active", candidate === button));
+            drawCurrentView();
+          });
+        });
+        newQuestion();
+        if (searchParams.get("answer") === "1") setAnswerVisible(true);
       });
     </script>
     <script>

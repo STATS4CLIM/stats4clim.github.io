@@ -1555,6 +1555,201 @@
         stroke-width: 4;
       }
 
+      .preprocess-match {
+        --preprocess-match-y: 40px;
+        --preprocess-match-height: 430px;
+        --preprocess-chart-row-y: 10px;
+        --preprocess-target-row-y: 390px;
+        --preprocess-buttons-row-y: 462px;
+        --preprocess-note-row-y: 520px;
+        --preprocess-chart-height: 210px;
+        --preprocess-column-gap: 18px;
+        --preprocess-target-width: 250px;
+        position: relative;
+        display: block;
+        height: var(--preprocess-match-height);
+        align-self: start;
+        transform: translateY(var(--preprocess-match-y));
+      }
+
+      .preprocess-match-row {
+        position: absolute;
+        top: var(--preprocess-chart-row-y);
+        left: 0;
+        right: 0;
+        display: grid;
+        grid-template-columns: repeat(5, 250px);
+        justify-content: center;
+        gap: var(--preprocess-column-gap);
+      }
+
+      .preprocess-match-card,
+      .preprocess-match-target {
+        display: block;
+        border: 3px solid transparent;
+        border-radius: 9px;
+        background: #ffffff;
+        color: var(--site-blue-dark);
+        cursor: pointer;
+        font-family: var(--font-body);
+      }
+
+      .preprocess-match-card {
+        padding: 0;
+      }
+
+      .preprocess-match-card.selected,
+      .preprocess-match-target.selected {
+        border-color: #2149cf;
+      }
+
+      .preprocess-match-card.correct,
+      .preprocess-match-target.correct {
+        border-color: #0a6ecb;
+      }
+
+      .preprocess-match-card.incorrect,
+      .preprocess-match-target.incorrect {
+        border-color: #cb0a2a;
+      }
+
+      .preprocess-match-chart {
+        display: block;
+        width: 250px;
+        height: var(--preprocess-chart-height);
+        overflow: visible;
+      }
+
+      .preprocess-match-lines {
+        position: absolute;
+        inset: 0;
+        z-index: 2;
+        pointer-events: none;
+      }
+
+      .preprocess-match-line-connection {
+        fill: none;
+        stroke: #0a6ecb;
+        stroke-width: 2.4;
+      }
+
+      .preprocess-match-line-connection.incorrect {
+        stroke: #cb0a2a;
+        stroke-dasharray: 8 6;
+      }
+
+      .preprocess-match-target-row {
+        position: absolute;
+        top: var(--preprocess-target-row-y);
+        left: 0;
+        right: 0;
+        display: grid;
+        grid-template-columns: repeat(5, var(--preprocess-target-width));
+        justify-content: center;
+        gap: var(--preprocess-column-gap);
+        z-index: 3;
+      }
+
+      .preprocess-match-target {
+        min-height: 42px;
+        padding: 8px 10px;
+        border-color: var(--line-strong);
+        font-size: 15px;
+        font-weight: 820;
+        line-height: 1.12;
+      }
+
+      .preprocess-match-buttons {
+        position: absolute;
+        top: var(--preprocess-buttons-row-y);
+        left: 0;
+        right: 0;
+        display: flex;
+        justify-content: center;
+        gap: 12px;
+      }
+
+      .preprocess-match-button {
+        border: 2px solid var(--site-blue-dark);
+        border-radius: 999px;
+        background: #ffffff;
+        color: var(--site-blue-dark);
+        cursor: pointer;
+        font-family: var(--font-body);
+        font-size: 16px;
+        font-weight: 820;
+        padding: 8px 20px;
+      }
+
+      .preprocess-match-button:hover {
+        background: var(--site-blue-pale);
+      }
+
+      .preprocess-match-note {
+        position: absolute;
+        top: var(--preprocess-note-row-y);
+        left: 0;
+        right: 0;
+        margin: 0 auto;
+        color: #cb0a2a;
+        font-size: 21px;
+        font-weight: 720;
+        line-height: 1.3;
+        opacity: 0;
+        text-align: center;
+        transition: opacity 180ms ease;
+      }
+
+      .preprocess-match-note.visible {
+        opacity: 1;
+      }
+
+      .preprocess-match-line {
+        fill: none;
+        stroke: #0a6ecb;
+        stroke-width: 2.4;
+        stroke-linejoin: round;
+      }
+
+      .preprocess-match-zero {
+        stroke: #cb0a2a;
+        stroke-dasharray: 6 5;
+        stroke-width: 1.4;
+      }
+
+      .preprocess-match-axis {
+        stroke: rgba(25, 62, 135, 0.72);
+        stroke-width: 1.3;
+      }
+
+      .preprocess-match-grid {
+        stroke: rgba(25, 62, 135, 0.13);
+        stroke-width: 1;
+      }
+
+      .preprocess-match-label,
+      .preprocess-match-tick,
+      .preprocess-match-title {
+        fill: var(--site-blue-dark);
+        font-family: var(--font-body);
+        text-anchor: middle;
+      }
+
+      .preprocess-match-title {
+        font-size: 18px;
+        font-weight: 820;
+      }
+
+      .preprocess-match-label {
+        font-size: 12px;
+        font-weight: 760;
+      }
+
+      .preprocess-match-tick {
+        font-size: 11px;
+        font-weight: 650;
+      }
+
     </style>
   </head>
   <body class="deck-page">
@@ -2202,6 +2397,45 @@
                   <input class="slp-frame-duration" id="slpFrameDuration" type="range" min="100" max="3000" value="1000" step="50" aria-label="Milliseconds per frame">
                 </label>
               </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="slide preprocess-match-page">
+          <header class="slide-kicker"></header>
+          <div class="slide-body content-layout">
+            <h2 class="slide-title">Match the Preprocessing Step</h2>
+            <div class="slide-content preprocess-match">
+              <div class="preprocess-match-row">
+                <button class="preprocess-match-card" id="preprocessMatchCard0" type="button" aria-label="Time series A">
+                  <svg class="preprocess-match-chart" id="preprocessMatchChart0" viewBox="0 0 250 210" role="img" aria-label="Preprocessed time series A"></svg>
+                </button>
+                <button class="preprocess-match-card" id="preprocessMatchCard1" type="button" aria-label="Time series B">
+                  <svg class="preprocess-match-chart" id="preprocessMatchChart1" viewBox="0 0 250 210" role="img" aria-label="Preprocessed time series B"></svg>
+                </button>
+                <button class="preprocess-match-card" id="preprocessMatchCard2" type="button" aria-label="Time series C">
+                  <svg class="preprocess-match-chart" id="preprocessMatchChart2" viewBox="0 0 250 210" role="img" aria-label="Preprocessed time series C"></svg>
+                </button>
+                <button class="preprocess-match-card" id="preprocessMatchCard3" type="button" aria-label="Time series D">
+                  <svg class="preprocess-match-chart" id="preprocessMatchChart3" viewBox="0 0 250 210" role="img" aria-label="Preprocessed time series D"></svg>
+                </button>
+                <button class="preprocess-match-card" id="preprocessMatchCard4" type="button" aria-label="Time series E">
+                  <svg class="preprocess-match-chart" id="preprocessMatchChart4" viewBox="0 0 250 210" role="img" aria-label="Preprocessed time series E"></svg>
+                </button>
+              </div>
+              <svg class="preprocess-match-lines" id="preprocessMatchLines" aria-hidden="true"></svg>
+              <div class="preprocess-match-target-row">
+                <button class="preprocess-match-target" type="button" data-key="mean">mean removed</button>
+                <button class="preprocess-match-target" type="button" data-key="seasonal">seasonality removed</button>
+                <button class="preprocess-match-target" type="button" data-key="trend">trend removed</button>
+                <button class="preprocess-match-target" type="button" data-key="seasonal-trend">seasonality + trend removed</button>
+                <button class="preprocess-match-target" type="button" data-key="invalid">not a valid result</button>
+              </div>
+              <div class="preprocess-match-buttons">
+                <button class="preprocess-match-button" id="preprocessMatchReveal" type="button">Reveal answer</button>
+                <button class="preprocess-match-button" id="preprocessMatchShuffle" type="button">Shuffle examples</button>
+              </div>
+              <p class="preprocess-match-note" id="preprocessMatchNote">EOF finds the largest variance left in the data. Preprocessing decides what variance is left.</p>
             </div>
           </div>
         </section>
@@ -3082,6 +3316,241 @@
         drawFrame(currentFrame);
         preloadNearbyFrames(currentFrame);
         animationFrame = requestAnimationFrame(step);
+      });
+    </script>
+    <script>
+      window.addEventListener("DOMContentLoaded", () => {
+        const charts = Array.from({ length: 5 }, (_, index) => document.getElementById(`preprocessMatchChart${index}`));
+        const cards = Array.from({ length: 5 }, (_, index) => document.getElementById(`preprocessMatchCard${index}`));
+        const targets = Array.from(document.querySelectorAll(".preprocess-match-target"));
+        const lineSvg = document.getElementById("preprocessMatchLines");
+        const revealButton = document.getElementById("preprocessMatchReveal");
+        const shuffleButton = document.getElementById("preprocessMatchShuffle");
+        const note = document.getElementById("preprocessMatchNote");
+        if (charts.some((chart) => !chart) || cards.some((card) => !card) || !targets.length || !lineSvg || !revealButton || !shuffleButton || !note) return;
+
+        const ns = "http://www.w3.org/2000/svg";
+        const make = (name, attributes = {}, text = "") => {
+          const node = document.createElementNS(ns, name);
+          Object.entries(attributes).forEach(([key, value]) => node.setAttribute(key, value));
+          node.textContent = text;
+          return node;
+        };
+        const mean = (values) => values.reduce((sum, value) => sum + value, 0) / values.length;
+        const shuffle = (items) => {
+          const copy = [...items];
+          for (let index = copy.length - 1; index > 0; index -= 1) {
+            const swap = Math.floor(Math.random() * (index + 1));
+            [copy[index], copy[swap]] = [copy[swap], copy[index]];
+          }
+          return copy;
+        };
+
+        const randomBetween = (low, high) => low + Math.random() * (high - low);
+        const randomSign = () => (Math.random() < 0.5 ? -1 : 1);
+        const makeNoise = (length, scale = 1) => {
+          let noiseState = 0;
+          const noise = Array.from({ length }, () => {
+            noiseState = 0.48 * noiseState + (Math.random() - 0.5) * randomBetween(0.45, 0.72) * scale;
+            return noiseState;
+          });
+          return noise.map((value) => value - mean(noise));
+        };
+        const makeSeasonal = (length, amplitude = randomBetween(0.8, 1.55), phase = Math.random() * Math.PI * 2) => {
+          const harmonicAmplitude = amplitude * randomBetween(0.05, 0.18);
+          const harmonicPhase = Math.random() * Math.PI * 2;
+          return Array.from({ length }, (_, index) => (
+            amplitude * Math.sin(index / 12 * Math.PI * 2 + phase)
+            + harmonicAmplitude * Math.sin(index / 6 * Math.PI * 2 + harmonicPhase)
+          ));
+        };
+        const makeTrend = (length, slope = randomSign() * randomBetween(0.014, 0.035)) => (
+          Array.from({ length }, (_, index) => slope * (index - (length - 1) / 2))
+        );
+        const addSeries = (...series) => (
+          series[0].map((_, index) => series.reduce((sum, values) => sum + values[index], 0))
+        );
+        const zeros = (length) => Array(length).fill(0);
+
+        const makeSeries = () => {
+          const length = 72;
+          const makeMeanRemoved = () => addSeries(
+            makeSeasonal(length, randomBetween(0.45, 1.85)),
+            makeTrend(length, randomSign() * randomBetween(0.004, 0.04)),
+            makeNoise(length, randomBetween(0.25, 1.35)),
+          );
+          const makeSeasonalRemoved = () => addSeries(
+            makeTrend(length, randomSign() * randomBetween(0.003, 0.022)),
+            makeNoise(length, randomBetween(0.32, 1.45)),
+          );
+          const makeTrendRemoved = () => addSeries(
+            makeSeasonal(length, randomBetween(0.45, 2)),
+            makeNoise(length, randomBetween(0.22, 1.3)),
+          );
+          const makeFullyProcessed = () => makeNoise(length, randomBetween(0.18, 1.55));
+          const makeInvalid = () => {
+            const offset = randomSign() * randomBetween(0.75, 2.1);
+            const keepsSeasonal = Math.random() < 0.5;
+            const keepsTrend = Math.random() < 0.5;
+            const invalid = addSeries(
+              keepsSeasonal ? makeSeasonal(length, randomBetween(0.25, 1.8)) : zeros(length),
+              keepsTrend ? makeTrend(length, randomSign() * randomBetween(0.004, 0.045)) : zeros(length),
+              makeNoise(length, randomBetween(0.18, 1.35)),
+            );
+            return invalid.map((value) => value + offset);
+          };
+          return [
+            { key: "mean", values: makeMeanRemoved() },
+            { key: "seasonal", values: makeSeasonalRemoved() },
+            { key: "trend", values: makeTrendRemoved() },
+            { key: "seasonal-trend", values: makeFullyProcessed() },
+            { key: "invalid", values: makeInvalid() },
+          ];
+        };
+
+        const getYDomain = (values) => {
+          const minValue = Math.min(0, ...values);
+          const maxValue = Math.max(0, ...values);
+          const span = Math.max(maxValue - minValue, 0.8);
+          return {
+            low: minValue - span * 0.14,
+            high: maxValue + span * 0.14,
+          };
+        };
+        const chartLayout = {
+          width: 250,
+          height: 210,
+          marginTop: 18,
+          marginRight: 12,
+          marginBottom: 30,
+          marginLeft: 38,
+          timeLabelY: 7,
+        };
+
+        const drawChart = (svg, values) => {
+          const { width, height } = chartLayout;
+          const margin = {
+            top: chartLayout.marginTop,
+            right: chartLayout.marginRight,
+            bottom: chartLayout.marginBottom,
+            left: chartLayout.marginLeft,
+          };
+          const plotWidth = width - margin.left - margin.right;
+          const plotHeight = height - margin.top - margin.bottom;
+          const { low, high } = getYDomain(values);
+          const xScale = (index) => margin.left + index / (values.length - 1) * plotWidth;
+          const yScale = (value) => height - margin.bottom - (value - low) / (high - low) * plotHeight;
+          const yTicks = [low, 0, high];
+
+          svg.replaceChildren();
+          yTicks.forEach((tick) => {
+            const y = yScale(tick);
+            svg.append(
+              make("line", { x1: margin.left, y1: y, x2: width - margin.right, y2: y, class: "preprocess-match-grid" }),
+              make("text", { x: margin.left - 20, y: y + 4, class: "preprocess-match-tick" }, tick.toFixed(1)),
+            );
+          });
+          [0, 24, 48, 71].forEach((tick) => {
+            svg.append(make("line", { x1: xScale(tick), y1: margin.top, x2: xScale(tick), y2: height - margin.bottom, class: "preprocess-match-grid" }));
+          });
+          svg.append(
+            make("line", { x1: margin.left, y1: height - margin.bottom, x2: width - margin.right, y2: height - margin.bottom, class: "preprocess-match-axis" }),
+            make("line", { x1: margin.left, y1: margin.top, x2: margin.left, y2: height - margin.bottom, class: "preprocess-match-axis" }),
+            make("text", { x: margin.left + plotWidth / 2, y: height - chartLayout.timeLabelY, class: "preprocess-match-label" }, "time"),
+          );
+          const path = values.map((value, index) => `${index ? "L" : "M"} ${xScale(index).toFixed(2)} ${yScale(value).toFixed(2)}`).join(" ");
+          svg.append(make("path", { d: path, class: "preprocess-match-line" }));
+        };
+
+        let current = [];
+        let selectedCard = null;
+        let revealed = false;
+        const matches = new Map();
+
+        const drawConnections = () => {
+          const board = lineSvg.closest(".preprocess-match");
+          const boardRect = board.getBoundingClientRect();
+          lineSvg.setAttribute("viewBox", `0 0 ${boardRect.width} ${boardRect.height}`);
+          lineSvg.replaceChildren();
+          const drawConnection = (cardIndex, targetKey, incorrect = false) => {
+            const card = cards[cardIndex];
+            const target = targets.find((item) => item.dataset.key === targetKey);
+            if (!card || !target) return;
+            const cardRect = card.getBoundingClientRect();
+            const targetRect = target.getBoundingClientRect();
+            const x1 = cardRect.left + cardRect.width / 2 - boardRect.left;
+            const y1 = cardRect.bottom - boardRect.top;
+            const x2 = targetRect.left + targetRect.width / 2 - boardRect.left;
+            const y2 = targetRect.top - boardRect.top;
+            lineSvg.append(make("path", {
+              d: `M ${x1.toFixed(1)} ${y1.toFixed(1)} L ${x2.toFixed(1)} ${y2.toFixed(1)}`,
+              class: `preprocess-match-line-connection ${incorrect ? "incorrect" : ""}`,
+            }));
+          };
+          if (revealed) {
+            current.forEach((item, cardIndex) => drawConnection(cardIndex, item.key));
+            matches.forEach((targetKey, cardIndex) => {
+              if (current[cardIndex]?.key !== targetKey) drawConnection(cardIndex, targetKey, true);
+            });
+            return;
+          }
+          matches.forEach((targetKey, cardIndex) => {
+            drawConnection(cardIndex, targetKey);
+          });
+        };
+
+        const resetMatches = () => {
+          matches.clear();
+          selectedCard = null;
+          revealed = false;
+          cards.forEach((card) => card.classList.remove("selected", "correct", "incorrect"));
+          targets.forEach((target) => target.classList.remove("selected", "correct", "incorrect"));
+          note.classList.remove("visible");
+          revealButton.textContent = "Reveal answer";
+          drawConnections();
+        };
+
+        const newRound = () => {
+          current = shuffle(makeSeries());
+          current.forEach((item, index) => drawChart(charts[index], item.values));
+          resetMatches();
+        };
+
+        const reveal = () => {
+          current.forEach((item, index) => {
+            const matchedKey = matches.get(index);
+            const correct = matchedKey === item.key;
+            cards[index].classList.toggle("correct", correct);
+            cards[index].classList.toggle("incorrect", !correct);
+            const target = targets.find((candidate) => candidate.dataset.key === item.key);
+            if (target) target.classList.add("correct");
+          });
+          revealed = true;
+          drawConnections();
+          note.classList.add("visible");
+          revealButton.textContent = "Answers revealed";
+        };
+
+        cards.forEach((card, index) => {
+          card.addEventListener("click", () => {
+            if (revealed) return;
+            selectedCard = index;
+            cards.forEach((candidate, candidateIndex) => candidate.classList.toggle("selected", candidateIndex === index));
+          });
+        });
+        targets.forEach((target) => {
+          target.addEventListener("click", () => {
+            if (revealed || selectedCard === null) return;
+            matches.set(selectedCard, target.dataset.key);
+            cards[selectedCard].classList.remove("selected");
+            selectedCard = null;
+            drawConnections();
+          });
+        });
+        revealButton.addEventListener("click", reveal);
+        shuffleButton.addEventListener("click", newRound);
+        window.addEventListener("resize", drawConnections);
+        newRound();
       });
     </script>
   </body>

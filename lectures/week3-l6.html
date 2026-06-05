@@ -781,6 +781,157 @@
         background: var(--site-blue-pale);
       }
 
+      .standardise-quiz-slide {
+        --standardise-quiz-chart-x: 0px;
+        --standardise-quiz-chart-y: 30px;
+        --standardise-quiz-panel-width: 460px;
+        --standardise-quiz-column-gap: 42px;
+        --standardise-quiz-chart-border: none;
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) var(--standardise-quiz-panel-width);
+        gap: var(--standardise-quiz-column-gap);
+        align-items: start;
+        transform: translateY(-8px);
+      }
+
+      .standardise-quiz-chart-wrap {
+        display: grid;
+        gap: 14px;
+        transform: translate(var(--standardise-quiz-chart-x), var(--standardise-quiz-chart-y));
+      }
+
+      .standardise-quiz-chart {
+        margin: 0;
+        border: var(--standardise-quiz-chart-border);
+        background: #ffffff;
+      }
+
+      .standardise-quiz-chart svg {
+        display: block;
+        width: 100%;
+        height: 500px;
+      }
+
+      .standardise-quiz-axis {
+        stroke: rgba(25, 62, 135, 0.72);
+        stroke-width: 1.4;
+      }
+
+      .standardise-quiz-grid {
+        stroke: rgba(25, 62, 135, 0.13);
+        stroke-width: 1;
+      }
+
+      .standardise-quiz-line {
+        fill: none;
+        stroke: #193e87;
+        stroke-width: 3.1;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+      }
+
+      .standardise-quiz-title,
+      .standardise-quiz-label,
+      .standardise-quiz-tick {
+        fill: var(--site-blue-dark);
+        font-family: var(--font-body);
+      }
+
+      .standardise-quiz-title {
+        font-size: 22px;
+        font-weight: 820;
+      }
+
+      .standardise-quiz-label {
+        font-size: 17px;
+        font-weight: 760;
+      }
+
+      .standardise-quiz-tick {
+        font-size: 14px;
+        font-weight: 620;
+        text-anchor: middle;
+      }
+
+      .standardise-quiz-panel {
+        display: grid;
+        gap: 18px;
+        padding: 20px 0 20px 26px;
+        border-left: 1px solid var(--site-blue-dark);
+      }
+
+      .standardise-quiz-panel p {
+        margin: 0;
+        color: var(--body);
+        font-size: 21px;
+        line-height: 1.42;
+      }
+
+      .standardise-quiz-panel strong {
+        color: var(--site-blue-dark);
+      }
+
+      .standardise-quiz-question {
+        color: #cb0a2a !important;
+        font-size: 27px !important;
+        font-weight: 820;
+        line-height: 1.18 !important;
+      }
+
+      .standardise-quiz-controls {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+      }
+
+      .standardise-quiz-button {
+        border: 1px solid var(--line-strong);
+        border-radius: 999px;
+        padding: 10px 17px;
+        background: #ffffff;
+        color: #0a6ecb;
+        font-family: var(--font-body);
+        font-size: 16px;
+        font-weight: 820;
+        cursor: pointer;
+      }
+
+      .standardise-quiz-button:hover {
+        background: var(--site-blue-pale);
+      }
+
+      .standardise-quiz-answer {
+        display: grid;
+        gap: 9px;
+        min-height: 150px;
+        padding: 14px 16px;
+        border: 2px solid #bfd1f8;
+        background: #f7faff;
+        opacity: 0;
+        transition: opacity 180ms ease;
+      }
+
+      .standardise-quiz-answer.visible {
+        opacity: 1;
+      }
+
+      .standardise-quiz-answer p {
+        font-size: 18px;
+        line-height: 1.35;
+      }
+
+      .standardise-quiz-answer .answer-label {
+        color: #cb0a2a;
+        font-size: 24px;
+        font-weight: 820;
+      }
+
+      .standardise-quiz-meta {
+        color: var(--muted) !important;
+        font-size: 16px !important;
+        font-weight: 650;
+      }
+
       .clt-slide {
         display: grid;
         gap: 20px;
@@ -1788,6 +1939,29 @@
                 </figure>
                 <button class="standardise-button" id="standardiseButton" type="button">Standardise</button>
               </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="slide standardise-quiz-page">
+          <header class="slide-kicker"></header>
+          <div class="slide-body content-layout">
+            <h2 class="slide-title">Guess: Has This Time Series Been Standardised?</h2>
+            <div class="slide-content standardise-quiz-slide">
+              <div class="standardise-quiz-chart-wrap">
+                <figure class="standardise-quiz-chart">
+                  <svg id="standardiseQuizChart" viewBox="0 0 980 500" role="img" aria-label="Random time series for guessing whether it has been standardised"></svg>
+                </figure>
+              </div>
+              <aside class="standardise-quiz-panel">
+                <p class="standardise-quiz-question">Is this the original data, or the standardised data?</p>
+                <p><strong>Clue:</strong> standardisation changes the centre and spread, but it does notchange the shape of a time series or force the data to be Gaussian.</p>
+                <div class="standardise-quiz-controls">
+                  <button class="standardise-quiz-button" id="standardiseQuizReveal" type="button">Reveal answer</button>
+                  <button class="standardise-quiz-button" id="standardiseQuizNew" type="button">New series</button>
+                </div>
+                <div class="standardise-quiz-answer" id="standardiseQuizAnswer" aria-live="polite"></div>
+              </aside>
             </div>
           </div>
         </section>
@@ -2854,6 +3028,140 @@ D, p_value = lilliefors(data, dist="norm")</code></pre>
           animate(standardised);
           button.textContent = standardised ? "Reset" : "Standardise";
         });
+      });
+    </script>
+    <script>
+      window.addEventListener("DOMContentLoaded", () => {
+        const svg = document.getElementById("standardiseQuizChart");
+        const revealButton = document.getElementById("standardiseQuizReveal");
+        const newButton = document.getElementById("standardiseQuizNew");
+        const answerBox = document.getElementById("standardiseQuizAnswer");
+        if (!svg || !revealButton || !newButton || !answerBox) return;
+
+        const ns = "http://www.w3.org/2000/svg";
+        const make = (name, attributes = {}, text = "") => {
+          const node = document.createElementNS(ns, name);
+          Object.entries(attributes).forEach(([key, value]) => node.setAttribute(key, value));
+          node.textContent = text;
+          return node;
+        };
+        const mean = (values) => values.reduce((sum, value) => sum + value, 0) / values.length;
+        const std = (values) => {
+          const average = mean(values);
+          return Math.sqrt(mean(values.map((value) => (value - average) ** 2))) || 1;
+        };
+        const randomNormal = () => {
+          const u = Math.max(Number.EPSILON, Math.random());
+          const v = Math.random();
+          return Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * v);
+        };
+        const innovation = (kind) => {
+          if (kind === "skewed") return (randomNormal() ** 2 - 1) * 0.78;
+          if (kind === "heavy-tailed") return randomNormal() * (Math.random() < 0.08 ? 3.2 : 1);
+          return randomNormal();
+        };
+        let current = null;
+
+        const generateSeries = () => {
+          const length = 70 + Math.floor(Math.random() * 111);
+          const phi = 0.25 + Math.random() * 0.72;
+          const innovationKinds = ["Gaussian-ish", "skewed", "heavy-tailed"];
+          const innovationKind = innovationKinds[Math.floor(Math.random() * innovationKinds.length)];
+          const drift = (Math.random() - 0.5) * 0.035;
+          const originalMean = (Math.random() - 0.5) * 8;
+          const originalScale = 0.7 + Math.random() * 3.2;
+          let value = innovation(innovationKind);
+          const raw = Array.from({ length }, (_, index) => {
+            value = phi * value + innovation(innovationKind) + drift * index;
+            return originalMean + originalScale * value;
+          });
+          const rawMean = mean(raw);
+          const rawStd = std(raw);
+          const standardised = raw.map((point) => (point - rawMean) / rawStd);
+          const showingStandardised = Math.random() < 0.5;
+          return {
+            length,
+            phi,
+            innovationKind,
+            raw,
+            rawMean,
+            rawStd,
+            standardised,
+            showingStandardised,
+            shown: showingStandardised ? standardised : raw,
+          };
+        };
+
+        const drawSeries = () => {
+          const width = 980;
+          const height = 500;
+          const margin = { top: 42, right: 34, bottom: 58, left: 78 };
+          const plotWidth = width - margin.left - margin.right;
+          const plotHeight = height - margin.top - margin.bottom;
+          const values = current.shown;
+          const yPadding = Math.max(0.5, (Math.max(...values) - Math.min(...values)) * 0.12);
+          const yMin = Math.min(...values) - yPadding;
+          const yMax = Math.max(...values) + yPadding;
+          const xScale = (index) => margin.left + index / (values.length - 1) * plotWidth;
+          const yScale = (value) => height - margin.bottom - (value - yMin) / (yMax - yMin || 1) * plotHeight;
+          const yTicks = Array.from({ length: 5 }, (_, index) => yMin + index * (yMax - yMin) / 4);
+
+          svg.replaceChildren();
+          yTicks.forEach((tick) => {
+            const y = yScale(tick);
+            svg.append(
+              make("line", { x1: margin.left, y1: y, x2: width - margin.right, y2: y, class: "standardise-quiz-grid" }),
+              make("text", { x: margin.left - 34, y: y + 5, class: "standardise-quiz-tick" }, tick.toFixed(1)),
+            );
+          });
+          [0, Math.floor((values.length - 1) / 2), values.length - 1].forEach((tick) => {
+            const x = xScale(tick);
+            svg.append(
+              make("line", { x1: x, y1: margin.top, x2: x, y2: height - margin.bottom, class: "standardise-quiz-grid" }),
+              make("text", { x, y: height - 24, class: "standardise-quiz-tick" }, String(tick + 1)),
+            );
+          });
+          svg.append(
+            make("line", { x1: margin.left, y1: height - margin.bottom, x2: width - margin.right, y2: height - margin.bottom, class: "standardise-quiz-axis" }),
+            make("line", { x1: margin.left, y1: margin.top, x2: margin.left, y2: height - margin.bottom, class: "standardise-quiz-axis" }),
+            make("text", { x: margin.left + plotWidth / 2, y: height - 4, class: "standardise-quiz-label", "text-anchor": "middle" }, "time index"),
+            make("text", { x: 20, y: margin.top + plotHeight / 2, class: "standardise-quiz-label", transform: `rotate(-90 20 ${margin.top + plotHeight / 2})`, "text-anchor": "middle" }, "value"),
+          );
+          const path = values
+            .map((value, index) => `${index ? "L" : "M"} ${xScale(index).toFixed(2)} ${yScale(value).toFixed(2)}`)
+            .join(" ");
+          svg.append(make("path", { d: path, class: "standardise-quiz-line" }));
+        };
+
+        const setAnswerVisible = (visible) => {
+          answerBox.classList.toggle("visible", visible);
+          revealButton.textContent = visible ? "Hide answer" : "Reveal answer";
+          if (!visible) {
+            answerBox.replaceChildren();
+            return;
+          }
+          const shownMean = mean(current.shown);
+          const shownStd = std(current.shown);
+          answerBox.replaceChildren(
+            document.createElement("p"),
+            document.createElement("p"),
+            document.createElement("p"),
+          );
+          answerBox.children[0].className = "answer-label";
+          answerBox.children[0].textContent = current.showingStandardised ? "Answer: standardised data" : "Answer: original data";
+          answerBox.children[1].textContent = `Displayed mean = ${shownMean.toFixed(2)}, displayed std = ${shownStd.toFixed(2)}.`;
+          answerBox.children[2].textContent = `Original data had mean = ${current.rawMean.toFixed(2)} and std = ${current.rawStd.toFixed(2)}.`;
+        };
+
+        const newQuestion = () => {
+          current = generateSeries();
+          drawSeries();
+          setAnswerVisible(false);
+        };
+
+        revealButton.addEventListener("click", () => setAnswerVisible(!answerBox.classList.contains("visible")));
+        newButton.addEventListener("click", newQuestion);
+        newQuestion();
       });
     </script>
     <script>
