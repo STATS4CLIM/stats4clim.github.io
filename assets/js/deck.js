@@ -79,16 +79,19 @@ class CourseDeck {
         const step = event.altKey || event.metaKey ? this.fragmentsFor(index).length : 0;
         this.show(index, step);
       });
-      dot.addEventListener("mouseenter", () => this.queueSlidePreview(index, dot));
-      dot.addEventListener("mouseleave", () => this.hideSlidePreview());
-      dot.addEventListener("focus", () => this.queueSlidePreview(index, dot));
-      dot.addEventListener("blur", () => this.hideSlidePreview());
+      if (!this.isPreview) {
+        dot.addEventListener("mouseenter", () => this.queueSlidePreview(index, dot));
+        dot.addEventListener("mouseleave", () => this.hideSlidePreview());
+        dot.addEventListener("focus", () => this.queueSlidePreview(index, dot));
+        dot.addEventListener("blur", () => this.hideSlidePreview());
+      }
       rail.appendChild(dot);
       this.dots.push(dot);
     });
   }
 
   queueSlidePreview(index, dot) {
+    if (this.isPreview) return;
     this.hideSlidePreview();
     this.previewTimer = window.setTimeout(() => {
       this.showSlidePreview(index, dot);
@@ -107,6 +110,7 @@ class CourseDeck {
   }
 
   showSlidePreview(index, dot) {
+    if (this.isPreview) return;
     if (!this.slides[index] || !dot) return;
     const finalStep = this.fragmentsFor(index).length;
 
