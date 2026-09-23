@@ -1,3 +1,28 @@
+const deckPrintMode = new URLSearchParams(window.location.search).get("print") === "1";
+const deckStaticMode = deckPrintMode || new URLSearchParams(window.location.search).get("printPreview") === "1";
+const deckPrintResources = [];
+if (deckStaticMode) {
+  const fetchResource = window.fetch.bind(window);
+  window.fetch = (...args) => {
+    const request = fetchResource(...args).then(async (response) => {
+      if (!response.ok) throw new Error(`HTTP ${response.status}`);
+      await response.clone().arrayBuffer();
+      return response;
+    });
+    deckPrintResources.push(request.then(() => true, () => false));
+    return request;
+  };
+}
+
+// Continuous demonstrations render one still frame in a print copy.
+function startDeckAnimation(draw) {
+  if (deckStaticMode) {
+    window.addEventListener("deck:print-render", () => draw(performance.now() + 1000));
+  } else {
+    requestAnimationFrame(draw);
+  }
+}
+
 class CourseDeck {
   constructor() {
     this.stage = document.querySelector(".deck-stage");
@@ -24,6 +49,26 @@ class CourseDeck {
     this.bindEvents();
     const savedPosition = this.loadPosition();
     this.show(savedPosition.slide, savedPosition.step);
+    if (deckPrintMode) {
+      document.body.classList.add("deck-print-mode");
+      document.querySelectorAll("iframe").forEach((frame) => {
+        const url = new URL(frame.src);
+        url.searchParams.set("printPreview", "1");
+        frame.src = url.toString();
+        frame.loading = "eager";
+      });
+      window.addEventListener("load", () => this.preparePrint());
+    } else if (deckStaticMode) {
+      window.addEventListener("load", () => window.dispatchEvent(new Event("deck:print-render")));
+    } else if (!this.isPreview) {
+      window.addEventListener("load", () => {
+        if (window.requestIdleCallback) {
+          window.requestIdleCallback(() => this.ensurePrintCopy(), { timeout: 2000 });
+        } else {
+          window.setTimeout(() => this.ensurePrintCopy(), 1000);
+        }
+      });
+    }
   }
 
   applyPreviewMode() {
@@ -38,6 +83,7 @@ class CourseDeck {
   }
 
   scaleStage() {
+    if (deckPrintMode) return;
     const update = () => {
       const scale = Math.min(window.innerWidth / 1600, window.innerHeight / 900);
       const x = (window.innerWidth - 1600 * scale) / 2;
@@ -61,7 +107,134 @@ class CourseDeck {
         slide.prepend(header);
       }
       header.replaceChildren(template.content.cloneNode(true));
+      const restart = header.querySelector(".lecture-jump-home");
+      if (restart && !this.isPreview && !deckPrintMode) {
+        const download = document.createElement("button");
+        download.type = "button";
+        download.className = "lecture-jump-link lecture-jump-download";
+        download.title = "Download lecture as PDF";
+        download.setAttribute("aria-label", download.title);
+        download.innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12m-5-5 5 5 5-5M4 16v5h16v-5"/></svg>';
+        download.addEventListener("click", () => this.printLecture());
+        restart.after(download);
+      }
     });
+  }
+
+  ensurePrintCopy() {
+    if (this.printPreparation) return this.printPreparation;
+    const frame = document.createElement("iframe");
+    frame.className = "deck-print-frame";
+    frame.title = "Lecture PDF preparation";
+    frame.setAttribute("aria-hidden", "true");
+    frame.tabIndex = -1;
+    const url = new URL(window.location.href);
+    url.search = "?print=1";
+    url.hash = "";
+    frame.src = url.toString();
+    this.printFrame = frame;
+    this.printPreparation = new Promise((resolve) => {
+      const ready = (event) => {
+        if (event.source !== frame.contentWindow || event.data?.type !== "deck-print-ready") return;
+        window.removeEventListener("message", ready);
+        if (event.data.error) {
+          frame.remove();
+          this.printPreparation = null;
+        }
+        resolve(event.data);
+      };
+      window.addEventListener("message", ready);
+    });
+    document.body.append(frame);
+    return this.printPreparation;
+  }
+
+  async printLecture() {
+    if (this.printRequested) return;
+    this.printRequested = true;
+    this.hideSlidePreview();
+    let notice = document.querySelector(".deck-export-status");
+    if (!notice) {
+      notice = document.createElement("div");
+      notice.className = "deck-export-status";
+      notice.setAttribute("role", "status");
+      document.body.append(notice);
+    }
+    notice.textContent = "Preparing PDF…";
+    const result = await this.ensurePrintCopy();
+    this.printRequested = false;
+    if (result.error) {
+      notice.textContent = `${result.error} Click the download button to retry.`;
+      return;
+    }
+    notice.remove();
+    this.printFrame.contentWindow.postMessage({ type: "deck-print" }, "*");
+  }
+
+  async preparePrint() {
+    const waitForData = async () => {
+      while (deckPrintResources.length) {
+        const results = await Promise.all(deckPrintResources.splice(0));
+        if (results.includes(false)) throw new Error("Lecture data could not be loaded.");
+      }
+    };
+
+    try {
+      await document.fonts.ready;
+      await waitForData();
+      // Freeze embedded previews as isolated markup. Nested browsing contexts
+      // are clipped incorrectly by Chromium when printed inside a scaled slide.
+      for (const frame of document.querySelectorAll("iframe")) {
+        const source = frame.contentDocument;
+        await source.fonts.ready;
+        const preview = document.createElement("div");
+        preview.className = "deck-print-preview";
+        const shadow = preview.attachShadow({ mode: "open" });
+        const style = document.createElement("style");
+        style.textContent = Array.from(source.styleSheets, (sheet) => {
+          // External font declarations are already shared by the course page.
+          try { return Array.from(sheet.cssRules, (rule) => rule.cssText).join("\n"); }
+          catch { return ""; }
+        }).join("\n");
+        const stage = document.createElement("div");
+        stage.className = "deck-stage deck-preview-mode";
+        stage.style.transform = `scale(${frame.clientWidth / 1600})`;
+        stage.append(source.querySelector(".slide.active").cloneNode(true));
+        shadow.append(style, stage);
+        frame.replaceWith(preview);
+      }
+      let sheet;
+      for (const [index, slide] of this.slides.entries()) {
+        if (index % 2 === 0) {
+          sheet = document.createElement("div");
+          sheet.className = "deck-print-sheet";
+          this.stage.append(sheet);
+        }
+        const slot = document.createElement("div");
+        slot.className = "deck-print-slot";
+        sheet.append(slot);
+        slot.append(slide);
+        slide.classList.add("active");
+        slide.dataset.step = String(this.fragmentsFor(index).length);
+        this.fragmentsFor(index).forEach((fragment) => fragment.classList.add("visible"));
+        // Yield between slides, including the observers that draw their charts.
+        await new Promise((resolve) => window.setTimeout(resolve, 0));
+      }
+      await waitForData();
+      window.dispatchEvent(new Event("deck:print-render"));
+      await Promise.all(Array.from(document.images, (img) => img.decode()));
+      await new Promise((resolve) => window.setTimeout(resolve, 0));
+      document.getAnimations().forEach((animation) => {
+        if (animation.effect.getComputedTiming().iterations !== Infinity) animation.finish();
+      });
+      document.body.dataset.printReady = "true";
+      window.addEventListener("message", (event) => {
+        if (event.source === window.parent && event.data?.type === "deck-print") window.print();
+      });
+      window.parent.postMessage({ type: "deck-print-ready" }, "*");
+    } catch (error) {
+      window.parent.postMessage({ type: "deck-print-ready", error: error.message }, "*");
+    }
   }
 
   buildDots() {
@@ -140,6 +313,7 @@ class CourseDeck {
   }
 
   bindEvents() {
+    if (deckPrintMode) return;
     document.getElementById("nextSlide")?.addEventListener("click", () => this.next());
     document.getElementById("prevSlide")?.addEventListener("click", () => this.prev());
     document.getElementById("skipSteps")?.addEventListener("click", () => this.skipSteps());
@@ -1540,7 +1714,7 @@ class CourseDeck {
   }
 
   savePosition() {
-    if (this.isPreview) return;
+    if (this.isPreview || deckPrintMode) return;
     window.localStorage.setItem(
       this.storageKey,
       JSON.stringify({

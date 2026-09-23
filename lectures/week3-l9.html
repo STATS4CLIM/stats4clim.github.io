@@ -2529,7 +2529,7 @@
             drawField(contexts.mode2, "mode2", time);
             drawField(contexts.noise, "noise", time);
           }
-          requestAnimationFrame(draw);
+          if (!deckStaticMode) requestAnimationFrame(draw);
         };
 
         playButton.addEventListener("click", () => {
@@ -2552,7 +2552,7 @@
           }
         });
 
-        requestAnimationFrame(draw);
+        startDeckAnimation(draw);
       });
     </script>
     <script>
@@ -2577,7 +2577,7 @@
         const dTerm = document.getElementById("svdDTerm");
 
         const setupHiDpiCanvas = (canvas) => {
-          const rect = canvas.getBoundingClientRect();
+          const rect = deckStaticMode ? { width: canvas.clientWidth, height: canvas.clientHeight } : canvas.getBoundingClientRect();
           const ratio = window.devicePixelRatio || 1;
           canvas.width = Math.round(rect.width * ratio);
           canvas.height = Math.round(rect.height * ratio);
@@ -2669,7 +2669,7 @@
           if (patternCaption) patternCaption.textContent = `U${mode}`;
           if (waveCaption) waveCaption.textContent = `V${mode}`;
           if (dTerm) dTerm.innerHTML = `× d${mode === 1 ? "₁" : "₂"} ×`;
-          requestAnimationFrame(draw);
+          if (!deckStaticMode) requestAnimationFrame(draw);
         };
 
         const resultCells = Array.from(document.querySelectorAll("#miniResultMatrix .mini-cell"));
@@ -2692,7 +2692,7 @@
         });
         document.getElementById("miniResultMatrix")?.addEventListener("pointerleave", clear);
 
-        requestAnimationFrame(draw);
+        startDeckAnimation(draw);
       });
     </script>
     <script>
@@ -2722,7 +2722,7 @@
         };
 
         const setupHiDpiCanvas = (canvas) => {
-          const rect = canvas.getBoundingClientRect();
+          const rect = deckStaticMode ? { width: canvas.clientWidth, height: canvas.clientHeight } : canvas.getBoundingClientRect();
           const ratio = window.devicePixelRatio || 1;
           canvas.width = Math.round(rect.width * ratio);
           canvas.height = Math.round(rect.height * ratio);
@@ -2842,10 +2842,10 @@
           drawSpatialPattern(canvases.u2, 2, 1);
           drawWave(canvases.pc1, phase1, 3);
           drawWave(canvases.pc2, phase2, 6);
-          requestAnimationFrame(draw);
+          if (!deckStaticMode) requestAnimationFrame(draw);
         };
 
-        requestAnimationFrame(draw);
+        startDeckAnimation(draw);
       });
     </script>
     <script>
@@ -2864,7 +2864,7 @@
         };
 
         const setupHiDpiCanvas = (canvas) => {
-          const rect = canvas.getBoundingClientRect();
+          const rect = deckStaticMode ? { width: canvas.clientWidth, height: canvas.clientHeight } : canvas.getBoundingClientRect();
           const ratio = window.devicePixelRatio || 1;
           canvas.width = Math.round(rect.width * ratio);
           canvas.height = Math.round(rect.height * ratio);
@@ -2951,10 +2951,10 @@
           drawWave(pc1Canvas, phase1, 3);
           drawWave(pc2Canvas, phase2, 6);
           drawScatter(scatterCanvas, phase1, phase2);
-          requestAnimationFrame(draw);
+          if (!deckStaticMode) requestAnimationFrame(draw);
         };
 
-        requestAnimationFrame(draw);
+        startDeckAnimation(draw);
       });
     </script>
     <script>
@@ -2974,7 +2974,7 @@
         };
 
         const setupHiDpiCanvas = (target) => {
-          const rect = target.getBoundingClientRect();
+          const rect = deckStaticMode ? { width: target.clientWidth, height: target.clientHeight } : target.getBoundingClientRect();
           const ratio = window.devicePixelRatio || 1;
           target.width = Math.round(rect.width * ratio);
           target.height = Math.round(rect.height * ratio);
@@ -3119,7 +3119,7 @@
         };
 
         const setupHiDpiCanvas = (canvas) => {
-          const rect = canvas.getBoundingClientRect();
+          const rect = deckStaticMode ? { width: canvas.clientWidth, height: canvas.clientHeight } : canvas.getBoundingClientRect();
           const ratio = window.devicePixelRatio || 1;
           canvas.width = Math.round(rect.width * ratio);
           canvas.height = Math.round(rect.height * ratio);
@@ -3196,10 +3196,10 @@
           drawField(canvases.uBottom, (x, y) => -spatialValue(x, y));
           drawWave(canvases.vTop, phase, 1);
           drawWave(canvases.vBottom, phase, -1);
-          requestAnimationFrame(draw);
+          if (!deckStaticMode) requestAnimationFrame(draw);
         };
 
-        requestAnimationFrame(draw);
+        startDeckAnimation(draw);
       });
     </script>
     <script>
@@ -3314,8 +3314,10 @@
         });
 
         drawFrame(currentFrame);
-        preloadNearbyFrames(currentFrame);
-        animationFrame = requestAnimationFrame(step);
+        if (!deckStaticMode) {
+          preloadNearbyFrames(currentFrame);
+          animationFrame = requestAnimationFrame(step);
+        }
       });
     </script>
     <script>

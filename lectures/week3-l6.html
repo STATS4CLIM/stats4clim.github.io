@@ -2342,7 +2342,8 @@ D, p_value = lilliefors(data, dist="norm")</code></pre>
               }
               if (progress < 1) histogramFrame = requestAnimationFrame(draw);
             };
-            histogramFrame = requestAnimationFrame(draw);
+            if (deckStaticMode) draw(start + duration);
+            else histogramFrame = requestAnimationFrame(draw);
           };
           const syncHistogram = () => {
             if (Number(histogramSlide.dataset.step) >= 2) animateHistogram();
@@ -2483,7 +2484,12 @@ D, p_value = lilliefors(data, dist="norm")</code></pre>
               }
               if (elapsed < moveDuration + flattenDuration + stretchDuration) pdfFrame = requestAnimationFrame(draw);
             };
-            pdfFrame = requestAnimationFrame(draw);
+            if (deckStaticMode) {
+              pdfMovingLayer.setAttribute("transform", "translate(0 0)");
+              draw(start + moveDuration + flattenDuration + stretchDuration);
+            } else {
+              pdfFrame = requestAnimationFrame(draw);
+            }
           };
           const syncPdf = () => {
             if (Number(histogramSlide.dataset.step) >= 3) animatePdf();
@@ -2594,7 +2600,8 @@ D, p_value = lilliefors(data, dist="norm")</code></pre>
                 cdfFrame = null;
               }
             };
-            cdfFrame = requestAnimationFrame(draw);
+            if (deckStaticMode) draw(start + duration);
+            else cdfFrame = requestAnimationFrame(draw);
           };
           const syncCdf = () => {
             if (Number(histogramSlide.dataset.step) >= 4) animateCdf();
@@ -2898,6 +2905,7 @@ D, p_value = lilliefors(data, dist="norm")</code></pre>
           boundLayer.replaceChildren();
 
           for (let sigmaCount = 1; sigmaCount <= rule; sigmaCount += 1) {
+            const percentage = ["68%", "95%", "99.7%"][sigmaCount - 1];
             const lowX = xScale(mean - sigmaCount * sigma);
             const highX = xScale(mean + sigmaCount * sigma);
             boundLayer.append(
@@ -3461,11 +3469,17 @@ D, p_value = lilliefors(data, dist="norm")</code></pre>
             if (elapsed < 1) axisShiftFrame = requestAnimationFrame(draw);
             else axisShiftFrame = null;
           };
-          axisShiftFrame = requestAnimationFrame(draw);
+          if (deckStaticMode) draw(start + axisShiftDuration);
+          else axisShiftFrame = requestAnimationFrame(draw);
         };
 
         const animateStandardisation = (towardsStandard) => {
           if (standardiseTimeout) window.clearTimeout(standardiseTimeout);
+          if (deckStaticMode) {
+            animateAxisShift(towardsStandard);
+            animateCompression(towardsStandard);
+            return;
+          }
           if (towardsStandard) {
             animateAxisShift(true);
             standardiseTimeout = window.setTimeout(() => animateCompression(true), axisShiftDuration);
@@ -3523,7 +3537,8 @@ D, p_value = lilliefors(data, dist="norm")</code></pre>
               }
             }
           };
-          compressFrame = requestAnimationFrame(draw);
+          if (deckStaticMode) draw(start + totalDuration);
+          else compressFrame = requestAnimationFrame(draw);
         };
 
         const drawCdf = (progress = 0) => {
@@ -3588,7 +3603,8 @@ D, p_value = lilliefors(data, dist="norm")</code></pre>
             if (elapsed < 1) cdfFrame = requestAnimationFrame(draw);
             else cdfFrame = null;
           };
-          cdfFrame = requestAnimationFrame(draw);
+          if (deckStaticMode) draw(start + cdfBuildDuration);
+          else cdfFrame = requestAnimationFrame(draw);
         };
 
         const drawStaticStandardisedView = (values, label) => {
